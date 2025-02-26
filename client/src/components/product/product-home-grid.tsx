@@ -78,10 +78,10 @@ const ProductGrid = () => {
               </p>
               <div className="flex gap-4 mt-4">
                 <Button size="sm" className="rounded-full">
-                  Learn more
+                  <a href={`/more/${product.name}`}>Learn more</a>
                 </Button>
                 <Button size="sm" variant="outline" className="rounded-full">
-                  Buy
+                  <a href={`/shop/${product.name}`}>Buy</a>
                 </Button>
               </div>
             </div>

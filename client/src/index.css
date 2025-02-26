@@ -14,6 +14,10 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .title-margin {
+    margin-inline-start: calc(-268.46154px + 28.36538vw);
+  }
 }
 
 @layer base {

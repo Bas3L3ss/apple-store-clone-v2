@@ -2,6 +2,7 @@ import { Button } from "@/src/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Product } from "@/src/lib/types";
+import { formatPrice } from "@/src/lib/utils";
 
 interface FeaturedProductProps {
   product: Product;
@@ -24,23 +25,28 @@ export default function FeaturedProduct({ product }: FeaturedProductProps) {
             {product.description}
           </p>
           <p className="text-2xl font-medium text-gray-900">
-            From ${product.basePrice}
+            From {formatPrice(product.basePrice)}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 py-6 text-lg">
-              Buy Now
+              <a href={`/shop/${product.slug ?? product.name}`}>Buy Now</a>
             </Button>
             <Button
               variant="outline"
               className="rounded-full px-8 py-6 text-lg border-gray-300 text-gray-900"
             >
-              Learn More <ArrowRight className="ml-2 h-5 w-5" />
+              <a
+                className="flex items-center"
+                href={`/more/${product.slug ?? product.name}`}
+              >
+                Learn More <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
             </Button>
           </div>
         </div>
         <motion.div
           whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300 }}
+          transition={{ stiffness: 300 }}
           className="relative aspect-square w-full max-w-lg mx-auto lg:mx-0"
         >
           <img

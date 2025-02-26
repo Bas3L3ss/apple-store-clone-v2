@@ -35,10 +35,10 @@ const ProductHero = ({
         </p>
         <div className="flex gap-4 mt-6">
           <Button size="lg" className="rounded-full">
-            Learn more
+            <a href={`/more/${product.name}`}>Learn more</a>
           </Button>
           <Button size="lg" variant="outline" className="rounded-full">
-            Buy
+            <a href={`/shop/${product.name}`}>Buy</a>
           </Button>
         </div>
       </div>

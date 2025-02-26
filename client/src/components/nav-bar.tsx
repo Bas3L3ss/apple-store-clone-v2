@@ -1,104 +1,119 @@
+"use client";
+
 import { useState } from "react";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/src/components/ui/navigation-menu";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
+import { Apple, Search, ShoppingBag, X } from "lucide-react";
 
-import { Apple, Search, ShoppingBag } from "lucide-react";
+const navigationItems = [
+  { name: "Store", href: "" },
+  { name: "Mac", href: "macbook" },
+  { name: "iPad", href: "ipad" },
+  { name: "iPhone", href: "iphone" },
+  { name: "AirPods", href: "airpods" },
+  { name: "AppleWatch", href: "apple_watch" },
+  { name: "Accessories", href: "phonecase" },
+  { name: "Support", href: "support" },
+];
 
-const Navbar = () => {
+export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-[#181818]/90 backdrop-blur-sm">
-      <NavigationMenu className="max-w-full justify-between px-4 py-2">
-        <NavigationMenuList className="gap-4">
-          <NavigationMenuItem>
-            <NavigationMenuLink href="/">
-              <Apple className="h-6 w-6 text-gray-200" />
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <div className="relative">
+        <nav className="bg-white/80 backdrop-blur-xl ">
+          <NavigationMenu className="mx-auto max-w-[1024px] flex items-center justify-center px-4 py-3">
+            <NavigationMenuList className="flex-1 justify-center gap-8  ">
+              <NavigationMenuItem className="flex items-center">
+                <a href="/" className="flex items-center">
+                  <Apple className="h-5 w-5 text-black-200" />
+                </a>
+              </NavigationMenuItem>
 
-          {/* Store Menu */}
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="text-gray-200 hover:text-white">
-              Store
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">Shop</h4>
-                  <NavigationMenuLink
-                    href="/mac"
-                    className="block text-lg font-medium text-gray-200 hover:text-white"
+              {navigationItems.map((item) => (
+                <NavigationMenuItem key={item.name}>
+                  <a
+                    href={`/shop?category=${item.href}`}
+                    className="text-[12px] font-normal text-black-200 transition-colors hover:text-black/80"
                   >
-                    Mac
-                  </NavigationMenuLink>
-                  <NavigationMenuLink
-                    href="/ipad"
-                    className="block text-lg font-medium text-gray-200 hover:text-white"
-                  >
-                    iPad
-                  </NavigationMenuLink>
-                  {/* Add more shop items */}
-                </div>
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-400">
-                    Quick Links
-                  </h4>
-                  <NavigationMenuLink
-                    href="/orders"
-                    className="block text-lg font-medium text-gray-200 hover:text-white"
-                  >
-                    Order Status
-                  </NavigationMenuLink>
-                  {/* Add more quick links */}
+                    {item.name}
+                  </a>
+                </NavigationMenuItem>
+              ))}
+
+              <NavigationMenuItem className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 hover:bg-transparent"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                >
+                  {isSearchOpen ? (
+                    <X className="h-4 w-4 text-black-200" />
+                  ) : (
+                    <Search className="h-4 w-4 text-black-200" />
+                  )}
+                </Button>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 hover:bg-transparent"
+                >
+                  <ShoppingBag className="h-4 w-4 text-black-200" />
+                </Button>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </nav>
+
+        {/* Search Panel */}
+        {isSearchOpen && (
+          <div className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl">
+            <div className="mx-auto max-w-[680px] px-4 py-12">
+              <div className="relative">
+                <Search className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                <Input
+                  placeholder="Search apple.com"
+                  className="border-none bg-transparent pl-8 text-[22px] font-normal text-white placeholder:text-gray-400 focus-visible:ring-0"
+                  autoFocus
+                />
+              </div>
+              <div className="mt-8">
+                <h3 className="text-sm font-semibold text-gray-400">
+                  Quick as
+                </h3>
+                <div className="mt-2 grid grid-cols-2 gap-4">
+                  {[
+                    "Visiting an Apple Store",
+                    "AirPods",
+                    "Apple Vision Pro",
+                    "iPhone",
+                    "iPad",
+                    "Mac",
+                  ].map((a) => (
+                    <a
+                      key={a}
+                      href="#"
+                      className="text-sm text-gray-200 hover:text-white"
+                    >
+                      {a}
+                    </a>
+                  ))}
                 </div>
               </div>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-
-          {/* Add more navigation items */}
-        </NavigationMenuList>
-
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-          >
-            <Search className="h-5 w-5 text-gray-200" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsCartOpen(!isCartOpen)}
-          >
-            <ShoppingBag className="h-5 w-5 text-gray-200" />
-          </Button>
-        </div>
-      </NavigationMenu>
-
-      {/* Search Panel */}
-      {isSearchOpen && (
-        <div className="absolute top-full left-0 right-0 bg-[#181818] p-4">
-          <div className="mx-auto max-w-2xl">
-            <Input
-              placeholder="Search apple.com"
-              className="bg-transparent text-white text-xl border-none focus-visible:ring-0"
-            />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </header>
   );
-};
-
-export default Navbar;
+}

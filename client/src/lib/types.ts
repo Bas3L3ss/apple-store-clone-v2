@@ -24,6 +24,7 @@ export interface Product {
   name: string;
   description: string;
   productImages: string[];
+  slug?: string;
   basePrice: number;
   material: string[];
   color: string[];

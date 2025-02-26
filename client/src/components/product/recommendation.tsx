@@ -1,19 +1,21 @@
-"use client";
-
 import { Button } from "@/src/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { searchProducts } from "@/src/lib/mockData";
-import { ProductCategory } from "@/src/lib/types";
+import { Product, ProductCategory } from "@/src/lib/types";
+import { formatPrice } from "@/src/lib/utils";
 
 export default function RecommendationCarousel() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const productsByCategory = searchProducts.reduce((acc, product) => {
+    // @ts-expect-error
     if (!acc[product.category]) {
+      // @ts-expect-error
       acc[product.category] = [];
     }
+    // @ts-expect-error
     acc[product.category].push(product);
     return acc;
   }, {} as Record<number, typeof searchProducts>);
@@ -32,12 +34,22 @@ export default function RecommendationCarousel() {
       const scrollAmount = clientWidth * 0.8;
 
       if (direction === "left") {
+        if (scrollPosition <= 0) {
+          return;
+        }
         carouselRef.current.scrollBy({
           left: -scrollAmount,
           behavior: "smooth",
         });
         setScrollPosition(Math.max(0, scrollPosition - scrollAmount));
       } else {
+        if (
+          scrollPosition >=
+          (carouselRef.current?.scrollWidth || 0) -
+            (carouselRef.current?.clientWidth || 0)
+        ) {
+          return;
+        }
         carouselRef.current.scrollBy({
           left: scrollAmount,
           behavior: "smooth",
@@ -50,14 +62,13 @@ export default function RecommendationCarousel() {
   };
 
   return (
-    <div className="  mx-auto relative">
+    <div className="  mx-auto relative group">
       <div className="absolute top-1/2 -left-4 -translate-y-1/2 z-10">
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full bg-white/80 backdrop-blur-sm border-gray-200 shadow-md h-10 w-10"
+          className=" rounded-full bg-white/80 backdrop-blur-sm  border-gray-200 shadow-md h-10 w-10"
           onClick={() => scroll("left")}
-          disabled={scrollPosition <= 0}
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
@@ -65,39 +76,16 @@ export default function RecommendationCarousel() {
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto no-scrollbar gap-6 pb-4 pt-2 px-1"
+        className="flex overflow-x-auto no-scrollbar gap-6 pb-4 pt-2   pl-[15%]"
         style={{ scrollBehavior: "smooth" }}
       >
         {[...categories, ...categories, ...categories].map((category) =>
-          productsByCategory[category.id]?.slice(0, 1).map((product, index) => (
-            <motion.div
-              key={`product.id ${index}`}
-              whileHover={{ y: -8 }}
-              className="flex-shrink-0 w-[280px] bg-white rounded-xl overflow-hidden shadow-md"
-            >
-              <div className="relative h-[200px] bg-gray-100">
-                <img
-                  src={product.productImages[0] || "/placeholder.svg"}
-                  alt={product.name}
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-2 line-clamp-2">
-                  {product.description}
-                </p>
-                <p className="text-lg font-medium text-gray-900">
-                  ${product.basePrice}
-                </p>
-                <Button className="w-full mt-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Learn More
-                </Button>
-              </div>
-            </motion.div>
-          ))
+          // @ts-expect-error
+          productsByCategory[category.id]
+            ?.slice(0, 1)
+            .map((product: Product, index: number) => (
+              <SliderCard key={`product.id ${index}`} product={product} />
+            ))
         )}
       </div>
 
@@ -107,11 +95,6 @@ export default function RecommendationCarousel() {
           size="icon"
           className="rounded-full bg-white/80 backdrop-blur-sm border-gray-200 shadow-md h-10 w-10"
           onClick={() => scroll("right")}
-          disabled={
-            scrollPosition >=
-            (carouselRef.current?.scrollWidth || 0) -
-              (carouselRef.current?.clientWidth || 0)
-          }
         >
           <ChevronRight className="h-5 w-5" />
         </Button>
@@ -119,3 +102,74 @@ export default function RecommendationCarousel() {
     </div>
   );
 }
+const SliderCard = ({ product }: { product: Product }) => {
+  const isNewProduct =
+    //@ts-expect-error
+    new Date() - new Date(product.createdAt) < 30 * 24 * 60 * 60 * 1000;
+  return (
+    <motion.a
+      href={`/shop/${product.slug ?? product.name}`}
+      whileHover={{
+        scale: 1.009,
+        boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
+      }}
+      transition={{
+        duration: 0.3,
+        ease: [0, 0, 0.5, 1],
+      }}
+      className="flex-shrink-0 w-[280px] cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow  p-[30px]"
+    >
+      {/* Product Image */}
+      <div className="w-full h-[250px] flex justify-center items-center bg-gray-100 rounded-xl">
+        <img
+          src={product.productImages[0]}
+          alt={product.name}
+          className="object-cover"
+        />
+      </div>
+
+      {/* Color Options */}
+      <div>
+        {product.color && product.color.length > 0 && (
+          <div className="flex items-center gap-1   justify-center mt-[7px]">
+            {product.color.map((color: string) => (
+              <div
+                key={color}
+                className="size-[12px] rounded-full border border-gray-300"
+                style={{
+                  backgroundColor: color.toLowerCase().includes("silver")
+                    ? "#C0C0C0"
+                    : color.toLowerCase().includes("space gray")
+                    ? "#36454F"
+                    : color.toLowerCase().includes("rose gold")
+                    ? "#B76E79"
+                    : color.toLowerCase().includes("black")
+                    ? "#000000"
+                    : color.toLowerCase().includes("white")
+                    ? "#FFFFFF"
+                    : color.toLowerCase().includes("blue")
+                    ? "#0000FF"
+                    : color.toLowerCase().includes("titanium")
+                    ? "#878681"
+                    : "#CCCCCC",
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {/* Product Details */}
+      <div className="w-full text-left">
+        {isNewProduct && (
+          <p className="text-[#b64400] text-sm font-bold mb-1">New</p>
+        )}
+        <h3 className="text-[17px] font-[600] leading-[1.2353641176] ">
+          {product.name}
+        </h3>
+        <p className="mt-[27px]  font-semibold text-[14px]">
+          {formatPrice(product.basePrice)}
+        </p>
+      </div>
+    </motion.a>
+  );
+};

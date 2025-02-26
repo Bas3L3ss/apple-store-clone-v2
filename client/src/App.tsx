@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
-import ItemDetails from "./product-details-page";
+import ItemDetails from "./pages/product-details-page";
+import ItemsOrder from "./pages/product-order-page";
 import ShopPage from "@/src/pages/shop-page";
 import Navbar from "./components/nav-bar";
 import Footer from "./components/footer";
@@ -13,7 +14,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<ShopPage />} />
-          <Route path="/shop/:slug" element={<ItemDetails />} />
+          <Route path="/shop/:slug" element={<ItemsOrder />} />
+          <Route path="/more/:slug" element={<ItemDetails />} />
         </Routes>
       </main>
       <Footer />

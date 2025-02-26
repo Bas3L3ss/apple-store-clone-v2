@@ -1,6 +1,7 @@
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/src/components/ui/card";
 import { Product } from "@/src/lib/types";
+import { formatPrice } from "@/src/lib/utils";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 
@@ -33,7 +34,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
         <p className="text-lg font-medium text-gray-900">
-          ${product.basePrice}
+          {formatPrice(product.basePrice)}
         </p>
 
         {product.color && product.color.length > 0 && (
@@ -66,7 +67,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button className="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white">
-          <ShoppingCart className="h-4 w-4 mr-2" /> Add to Bag
+          <a href={`/shop/${product.slug ?? product.name}`} className="flex">
+            <ShoppingCart className="h-4 w-4 mr-2" /> Buy now
+          </a>
         </Button>
       </CardFooter>
     </Card>
