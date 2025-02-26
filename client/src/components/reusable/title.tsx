@@ -8,7 +8,7 @@ const Title = ({
   children: ReactNode;
   className: string;
 }) => {
-  return <h1 className={cn("title-margin", className)}>{children}</h1>;
+  // return <h1 className={cn("title-margin", className)}>{children}</h1>;
 };
 
 export default Title;
