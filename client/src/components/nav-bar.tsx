@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,7 +9,6 @@ import {
 } from "@/src/components/ui/navigation-menu";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent } from "@/src/components/ui/card";
 
 import { Apple, Search, ShoppingBag } from "lucide-react";
 

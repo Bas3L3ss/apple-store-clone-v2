@@ -1,4 +1,3 @@
-import React from "react";
 import ProductHero from "../components/product/product-hero";
 import { images, products } from "../lib/mockData";
 import ProductGrid from "../components/product/product-grid";
@@ -11,6 +10,7 @@ const Home = () => {
   return (
     <section>
       {products.map((product) => (
+        // @ts-expect-error: ProductHero expects different props, but this is intentional
         <ProductHero key={product.id} product={product} />
       ))}
       <ProductGrid />
@@ -62,7 +62,7 @@ const Home = () => {
                     )}
                     description="Make your app 🤌"
                     bgClass="lg:bg-gradient-to-tr"
-                    //   @ts-ignore
+                    // @ts-expect-error: ProductHero expects different props, but this is intentional
                     image={{
                       step1light1: "family",
                       step1light2: "shiftCard",

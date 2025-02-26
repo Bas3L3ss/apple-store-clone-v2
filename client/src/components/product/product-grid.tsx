@@ -46,7 +46,6 @@ const ProductGrid = () => {
       image: "/api/placeholder/600/400",
       theme: "light",
     },
-    // Add more grid products
   ];
 
   return (
