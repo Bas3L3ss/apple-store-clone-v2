@@ -1,6 +1,6 @@
 import ProductHero from "../components/product/product-hero";
 import { images, products } from "../lib/mockData";
-import ProductGrid from "../components/product/product-grid";
+import ProductGrid from "../components/product/product-home-grid";
 import { CardCarousel } from "../components/ui/card-carousel";
 import { SkiperCard } from "../components/ui/skiper-card";
 import { cn } from "../lib/utils";

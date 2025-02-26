@@ -1,94 +1,37 @@
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
+import ProductCard from "./product-card";
+import { motion } from "framer-motion";
+import { searchProducts } from "@/src/lib/mockData";
+import { useSearchParams } from "react-router";
 
-const ProductGrid = () => {
-  const gridProducts = [
-    {
-      id: "iphone-15",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
-    {
-      id: "iphone-152",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
-    {
-      id: "iphone-15",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
-    {
-      id: "iphone-152",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
+export default function ProductGrid() {
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category") || null;
 
-    {
-      id: "iphone-156",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
-    {
-      id: "iphone-158",
-      name: "iPhone 15",
-      description: "Camera mới. Thiết kế mới. Mới lịm tim.",
-      image: "/api/placeholder/600/400",
-      theme: "light",
-    },
-  ];
+  const filteredProducts =
+    category !== null
+      ? searchProducts.filter((product) => product.category === category)
+      : searchProducts;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      {gridProducts.map((product) => (
-        <Card
-          key={product.id}
-          className="overflow-hidden min-h-[400px] md:min-h-[760px]"
-        >
-          <CardContent className="p-0 relative">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-[400px] object-cover"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h2
-                className={`text-4xl font-bold ${
-                  product.theme === "dark" ? "text-white" : "text-black"
-                }`}
+    <div className="max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {filteredProducts.length > 0 ? (
+          <>
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                {product.name}
-              </h2>
-              <p
-                className={`text-xl mt-2 ${
-                  product.theme === "dark" ? "text-white" : "text-black"
-                }`}
-              >
-                {product.description}
-              </p>
-              <div className="flex gap-4 mt-4">
-                <Button size="sm" className="rounded-full">
-                  Learn more
-                </Button>
-                <Button size="sm" variant="outline" className="rounded-full">
-                  Buy
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </>
+        ) : (
+          <p className=" text-muted-foreground text-sm">No products found .</p>
+        )}
+      </div>
     </div>
   );
-};
-export default ProductGrid;
+}
