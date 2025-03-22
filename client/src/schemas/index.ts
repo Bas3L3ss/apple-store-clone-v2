@@ -46,7 +46,7 @@ const imageSchema = z.union([
       (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
     ),
-  z.string().url({ message: "Please enter a valid URL" }),
+  z.string(),
 ]);
 
 // Updated form schema

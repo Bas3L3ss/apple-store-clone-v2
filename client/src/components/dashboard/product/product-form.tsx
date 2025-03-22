@@ -298,6 +298,7 @@ export default function ProductForm({
                             const urlImages = field.value.filter(
                               (item) => typeof item === "string"
                             );
+
                             field.onChange([...urlImages, ...files]);
                           }}
                           maxFiles={5}
