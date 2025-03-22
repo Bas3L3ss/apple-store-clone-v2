@@ -4,3 +4,4 @@ metadata:
   name: frontend-configmap
 data:
   VITE_BACKEND_URL: "http://backend-service:5000"
+  VITE_WEBSOCKET_URL: "http://backend-service:3001"

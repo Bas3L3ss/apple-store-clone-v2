@@ -9,6 +9,8 @@ export const axios = Axios.create({
   // TODO: replace with env domain
   baseURL: BACKEND_URL ?? "http://localhost:5000",
 });
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export const makeAxiosRequest = async <T>(
   method: "get" | "post" | "put" | "delete",

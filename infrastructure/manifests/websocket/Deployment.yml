@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: websocket-deployment
+  labels:
+    app: frontend
 spec:
   replicas: 3
   strategy:
@@ -11,15 +13,16 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: backend
+      app: websocket
   template:
     metadata:
       labels:
-        app: backend
+        app: websocket
     spec:
       containers:
-        - name: backend
-          image: baseless060907/apple-clone-backend:latest
+        - name: websocket
+          image: baseless060907/apple-clone-websocket:latest
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "128Mi"
@@ -28,6 +31,6 @@ spec:
             - containerPort: 5000
           envFrom:
             - configMapRef:
-                name: backend-configmap
+                name: websocket-configmap
             - secretRef:
-                name: backend-secret
+                name: websocket-secret

@@ -8,6 +8,7 @@ import AdminWrapper from "./provider/AdminWrapper";
 import { Support } from "./pages/support";
 import GlobalLoader from "./components/global-loader";
 import ResetPassword from "./pages/reset-password-page";
+import AdminDashboard from "./pages/dashboard";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -21,7 +22,6 @@ const Cart = lazy(() => import("./pages/cart"));
 const OrdersPage = lazy(() => import("./pages/order"));
 const OrderDetailsPage = lazy(() => import("./pages/one-order"));
 const ProfilePage = lazy(() => import("./pages/profile"));
-const CMS = lazy(() => import("./pages/cms"));
 const CreateProductPage = lazy(
   () => import("./components/dashboard/product-form")
 );
@@ -95,7 +95,7 @@ function App() {
                 element={
                   <AppleAuthWrapper>
                     <AdminWrapper>
-                      <CMS />
+                      <AdminDashboard />
                     </AdminWrapper>
                   </AppleAuthWrapper>
                 }
