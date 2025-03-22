@@ -11,6 +11,7 @@ import OrderItemsCard from "../components/order/order-item-card";
 import ShippingInfoCard from "../components/order/shipping-info-card";
 import PaymentDetailsCard from "../components/order/payment-details-card";
 import HelpCard from "../components/order/order-help-card";
+import LoadingState from "../components/loading";
 
 export default function OrderDetailsPage() {
   const router = useNavigate();
@@ -19,14 +20,7 @@ export default function OrderDetailsPage() {
 
   // Handle loading state
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-12 flex justify-center items-center h-64">
-        <div className="flex flex-col items-center">
-          <div className="h-8 w-8 border-4 border-t-blue-600 border-r-gray-200 border-b-gray-200 border-l-gray-200 rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600">Loading order details...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   // Handle error state

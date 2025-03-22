@@ -22,7 +22,7 @@ const AppleAuthPage = lazy(() => import("./pages/auth"));
 const ForgotPasswordPage = lazy(() => import("./pages/forgot-password-page"));
 const Cart = lazy(() => import("./pages/cart"));
 const OrdersPage = lazy(() => import("./pages/order"));
-const OrderDetailsPage = lazy(() => import("./pages/one-order"));
+const OrderDetailsPage = lazy(() => import("./pages/order-details-page"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const ProductEditPage = lazy(() => import("./pages/admin/product-edit-page"));
 const ProductCreatePage = lazy(
