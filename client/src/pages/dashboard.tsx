@@ -1,10 +1,13 @@
+import DashboardContainer from "../components/dashboard/dashboard-container";
 import DashboardLayout from "../components/dashboard/ui/layout";
 import { Outlet } from "react-router";
 
 const AdminDashboard = () => {
   return (
     <DashboardLayout>
-      <Outlet />
+      <DashboardContainer>
+        <Outlet />
+      </DashboardContainer>
     </DashboardLayout>
   );
 };

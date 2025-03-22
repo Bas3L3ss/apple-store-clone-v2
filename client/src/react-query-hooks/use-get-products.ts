@@ -4,15 +4,15 @@ import { getProducts } from "../action/products";
 interface UseGetProductsParams {
   search?: string;
   category?: string;
-  page?: number;
-  limit?: number;
+  page?: string;
+  limit?: string;
 }
 
 export const useGetProducts = ({
   search = "",
   category = "",
-  page = 1,
-  limit = 10,
+  page = "1",
+  limit = "10",
 }: UseGetProductsParams) => {
   return useQuery({
     queryKey: ["products", { search, category, page, limit }],

@@ -18,13 +18,13 @@ export const getFeaturedProductsWithAmount = async (amount: number) => {
 export const getProducts = async ({
   search = "",
   category = "",
-  page = 1,
-  limit = 10,
+  page = "1",
+  limit = "10",
 }: {
   search?: string;
   category?: string;
-  page?: number;
-  limit?: number;
+  page?: string | number;
+  limit?: string | number;
 }): Promise<FetchProductsResponse> => {
   try {
     const response = await axios.get<FetchProductsResponse>("/products", {

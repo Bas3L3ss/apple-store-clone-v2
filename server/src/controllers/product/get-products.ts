@@ -6,7 +6,7 @@ export const GetProducts = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   try {
     const {
       search,
@@ -20,12 +20,10 @@ export const GetProducts = async (
       limit?: string;
     };
 
-    // Create a cache key based on all query parameters
     const cacheKey = `products:${search || ""}:${
       category || ""
     }:${page}:${limit}`;
 
-    // Try to get products from cache first
     const cachedResult = await redis.get(cacheKey);
 
     if (cachedResult) {
@@ -43,8 +41,18 @@ export const GetProducts = async (
       filter.$text = { $search: search };
     }
 
+    // Handle multiple categories
     if (category) {
-      filter.category = category;
+      // Split the category string into an array if it contains commas
+      const categories = category.split(",").map((cat) => cat.trim());
+
+      // If there's more than one category, use $in operator
+      if (categories.length > 1) {
+        filter.category = { $in: categories };
+      } else {
+        // For a single category, use direct equality
+        filter.category = categories[0];
+      }
     }
 
     // Convert pagination values to numbers
@@ -73,8 +81,6 @@ export const GetProducts = async (
       },
     };
 
-    // Store in cache for future requests (cache for 15 minutes)
-    // Using a moderate TTL since product listings change more frequently than individual products
     await redis.set(cacheKey, result, 900);
     console.log(`✅ Cached ${cacheKey} for 15 minutes`);
 

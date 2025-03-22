@@ -19,7 +19,12 @@ import {
   SidebarRail,
 } from "@/src/components/ui/sidebar";
 import { navItems } from "@/src/constants";
-import { ChevronRight, GalleryVerticalEnd } from "lucide-react";
+import {
+  ChevronRight,
+  GalleryVerticalEnd,
+  Plus,
+  PlusCircleIcon,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Icons } from "./Icons";
 
@@ -95,9 +100,20 @@ export default function AppSidebar() {
                     tooltip={item.title}
                     isActive={pathname === item.url}
                   >
-                    <Link to={item.url}>
+                    <Link to={item.url} className={`flex`}>
                       <Icon />
                       <span>{item.title}</span>
+                      {item.title == "Product" && (
+                        <>
+                          <Link
+                            to={"/dashboard/product/create"}
+                            className={`  ml-auto  group-hover:opacity-100 opacity-0 transition-opacity `}
+                            about="create-product"
+                          >
+                            <Plus size={16} />
+                          </Link>
+                        </>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

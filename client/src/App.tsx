@@ -9,7 +9,8 @@ import { Support } from "./pages/support";
 import GlobalLoader from "./components/global-loader";
 import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
-import OverViewLayout from "./pages/overview";
+import OverViewLayout from "./pages/admin/overview";
+import ProductPage from "./pages/admin/product-page";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -26,9 +27,7 @@ const ProfilePage = lazy(() => import("./pages/profile"));
 const CreateProductPage = lazy(
   () => import("./components/dashboard/product-form")
 );
-const CreateProductOptionPage = lazy(
-  () => import("./components/dashboard/product-option-form")
-);
+
 const CheckoutSuccess = lazy(() =>
   import("./pages/checkout").then((m) => ({ default: m.CheckoutSuccess }))
 );
@@ -102,9 +101,14 @@ function App() {
                 }
               >
                 <Route index element={<OverViewLayout />} />
+                <Route path="product" element={<ProductPage />} />
                 <Route path="product/create" element={<CreateProductPage />} />
-                <Route path="orders/create" element={<CreateProductPage />} />
-                <Route path="orders/create" element={<CreateProductPage />} />
+                <Route path="product/:id" element={<ProductPage />} />
+                <Route path="user" element={<CreateProductPage />} />
+                <Route path="user/create" element={<CreateProductPage />} />
+                <Route path="user/:id" element={<CreateProductPage />} />
+                <Route path="orders" element={<CreateProductPage />} />
+                <Route path="orders/:id" element={<CreateProductPage />} />
               </Route>
               <Route path="/checkout-success" element={<CheckoutSuccess />} />
               <Route
