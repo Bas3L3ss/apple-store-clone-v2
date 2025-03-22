@@ -40,14 +40,14 @@ export const navItems = [
     items: [
       {
         title: "Users",
-        url: "/dashboard/users",
+        url: "/dashboard/user",
         icon: "billing",
         shortcut: ["u", "u"],
       },
       {
         title: "Orders",
         shortcut: ["l", "l"],
-        url: "/dashboard/orders",
+        url: "/dashboard/order",
         icon: "login",
       },
     ],

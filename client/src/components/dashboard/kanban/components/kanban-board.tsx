@@ -40,7 +40,6 @@ const defaultCols = [
 export type ColumnId = (typeof defaultCols)[number]["id"];
 
 export function KanbanBoard() {
-  // const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columns = useTaskStore((state) => state.columns);
   const setColumns = useTaskStore((state) => state.setCols);
   const pickedUpTaskColumn = useRef<ColumnId | "TODO" | "IN_PROGRESS" | "DONE">(
@@ -56,13 +55,7 @@ export function KanbanBoard() {
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor)
-    // useSensor(KeyboardSensor, {
-    //   coordinateGetter: coordinateGetter,
-    // }),
-  );
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   useEffect(() => {
     setIsMounted(true);

@@ -1,6 +1,6 @@
 import { SidebarInset, SidebarProvider } from "@/src/components/ui/sidebar";
 import Header from "./header";
-import AppSidebar from "./app-sidebar";
+import AdminSidebar from "./admin-sidebar";
 
 export default async function DashboardLayout({
   children,
@@ -9,7 +9,7 @@ export default async function DashboardLayout({
 }) {
   return (
     <SidebarProvider defaultOpen={true}>
-      <AppSidebar />
+      <AdminSidebar />
       <SidebarInset>
         <Header />
         {children}

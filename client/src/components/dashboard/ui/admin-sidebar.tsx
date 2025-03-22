@@ -19,30 +19,25 @@ import {
   SidebarRail,
 } from "@/src/components/ui/sidebar";
 import { navItems } from "@/src/constants";
-import {
-  ChevronRight,
-  GalleryVerticalEnd,
-  Plus,
-  PlusCircleIcon,
-} from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Icons } from "./Icons";
+import AppleLogo from "@/src/icon/Apple";
 
-export const company = {
-  name: "Acme Inc",
-  logo: GalleryVerticalEnd,
-  plan: "Enterprise",
-};
-
-export default function AppSidebar() {
+export default function AdminSidebar() {
   const { pathname } = useLocation();
+  const company = {
+    name: "Apple Inc",
+    logo: AppleLogo,
+    plan: "E-commerce",
+  };
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <div className="text-sidebar-accent-foreground flex gap-2 py-2">
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-            <company.logo className="size-4" />
+      <SidebarHeader className="mt-20">
+        <div className="  text-sidebar-accent-foreground flex gap-2 py-2">
+          <div className=" text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+            <company.logo className="size-31" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{company.name}</span>
