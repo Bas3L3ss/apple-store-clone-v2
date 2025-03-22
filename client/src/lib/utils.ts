@@ -6,12 +6,8 @@ import { colorHexMap } from "../constants/color";
 import { BACKEND_URL } from "../constants";
 
 export const axios = Axios.create({
-  // TODO: replace with env domain
   baseURL: BACKEND_URL ?? "http://localhost:5000",
 });
-export const delay = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 export const makeAxiosRequest = async <T>(
   method: "get" | "post" | "put" | "delete",
   url: string,
@@ -34,8 +30,28 @@ export const makeAxiosRequest = async <T>(
     throw error?.response?.data?.message || error.message;
   }
 };
-
 // other utils
+
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+export function formatBytes(
+  bytes: number,
+  opts: {
+    decimals?: number;
+    sizeType?: "accurate" | "normal";
+  } = {}
+) {
+  const { decimals = 0, sizeType = "normal" } = opts;
+
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const accurateSizes = ["Bytes", "KiB", "MiB", "GiB", "TiB"];
+  if (bytes === 0) return "0 Byte";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
+    sizeType === "accurate" ? accurateSizes[i] ?? "Bytest" : sizes[i] ?? "Bytes"
+  }`;
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

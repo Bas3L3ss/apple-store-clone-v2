@@ -9,6 +9,7 @@ import {
 import { useBreadcrumbs } from "@/src/hooks/use-breadcrumbs";
 import { Slash } from "lucide-react";
 import { Fragment } from "react";
+import { Link } from "react-router";
 
 export function Breadcrumbs() {
   const items = useBreadcrumbs();
@@ -21,9 +22,11 @@ export function Breadcrumbs() {
         {items.map((item, index) => (
           <Fragment key={item.title}>
             {index !== items.length - 1 && (
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
-              </BreadcrumbItem>
+              <Link to={item.link}>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink>{item.title}</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Link>
             )}
             {index < items.length - 1 && (
               <BreadcrumbSeparator className="hidden md:block">

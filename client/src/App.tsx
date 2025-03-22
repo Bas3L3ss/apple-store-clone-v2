@@ -11,6 +11,8 @@ import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
 import OverViewLayout from "./pages/admin/overview";
 import ProductPage from "./pages/admin/product-page";
+import ProductEditPage from "./pages/admin/product-edit-page";
+import ProductCreatePage from "./pages/admin/product-create-page";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -24,9 +26,6 @@ const Cart = lazy(() => import("./pages/cart"));
 const OrdersPage = lazy(() => import("./pages/order"));
 const OrderDetailsPage = lazy(() => import("./pages/one-order"));
 const ProfilePage = lazy(() => import("./pages/profile"));
-const CreateProductPage = lazy(
-  () => import("./components/dashboard/product-form")
-);
 
 const CheckoutSuccess = lazy(() =>
   import("./pages/checkout").then((m) => ({ default: m.CheckoutSuccess }))
@@ -102,13 +101,13 @@ function App() {
               >
                 <Route index element={<OverViewLayout />} />
                 <Route path="product" element={<ProductPage />} />
-                <Route path="product/create" element={<CreateProductPage />} />
-                <Route path="product/:id" element={<ProductPage />} />
-                <Route path="user" element={<CreateProductPage />} />
-                <Route path="user/create" element={<CreateProductPage />} />
-                <Route path="user/:id" element={<CreateProductPage />} />
-                <Route path="orders" element={<CreateProductPage />} />
-                <Route path="orders/:id" element={<CreateProductPage />} />
+                <Route path="product/create" element={<ProductCreatePage />} />
+                <Route path="product/:id" element={<ProductEditPage />} />
+                <Route path="user" element={<ProductEditPage />} />
+                <Route path="user/create" element={<ProductEditPage />} />
+                <Route path="user/:id" element={<ProductEditPage />} />
+                <Route path="orders" element={<ProductEditPage />} />
+                <Route path="orders/:id" element={<ProductEditPage />} />
               </Route>
               <Route path="/checkout-success" element={<CheckoutSuccess />} />
               <Route

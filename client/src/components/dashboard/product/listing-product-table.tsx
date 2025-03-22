@@ -30,6 +30,7 @@ export default function ProductListingPage({
   return (
     <ProductTable
       columns={columns}
+      // @ts-expect-error: no prob
       data={
         data || {
           data: [],

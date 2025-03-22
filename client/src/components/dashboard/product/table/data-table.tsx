@@ -107,7 +107,7 @@ export function DataTable<TData>({
       }
     },
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true, // We're handling pagination server-side
+    manualPagination: true,
   });
 
   // Sync table with URL parameters when they change externally

@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import CloudinaryImage from "@/src/components/reusable/cloudinary-image";
 import { Product } from "@/src/@types";
+import { formatPrice } from "@/src/lib/utils";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -46,12 +47,8 @@ export const columns: ColumnDef<Product>[] = [
     header: "PRICE",
     cell: ({ row }) => {
       const price = parseFloat(row.getValue("basePrice"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(price);
 
-      return formatted;
+      return formatPrice(price);
     },
   },
   {
@@ -67,6 +64,9 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => {
+      const productId = row.original._id;
+      return <CellAction productId={productId} />;
+    },
   },
 ];
