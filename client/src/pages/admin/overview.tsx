@@ -10,7 +10,7 @@ import Sales from "../../components/dashboard/overview/sales";
 import AreaStats from "../../components/dashboard/overview/area-stats";
 import Stats from "../../components/dashboard/overview/stats";
 
-export default function OverViewLayout() {
+export default function OverViewPage() {
   return (
     <div className="flex flex-1 flex-col space-y-2">
       <div className="flex items-center justify-between space-y-2">

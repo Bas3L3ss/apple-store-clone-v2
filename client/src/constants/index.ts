@@ -47,7 +47,7 @@ export const navItems = [
       {
         title: "Orders",
         shortcut: ["l", "l"],
-        url: "/dashboard/order",
+        url: "/dashboard/orders",
         icon: "login",
       },
     ],
