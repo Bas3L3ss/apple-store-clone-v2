@@ -1,9 +1,12 @@
 import clsx, { ClassValue } from "clsx";
+import { Active, DataRef, Over } from "@dnd-kit/core";
+import { ColumnDragData } from "../components/board-column";
 import { twMerge } from "tailwind-merge";
 import Axios from "axios";
 import { OrderStatus, ShippingAddress } from "../@types";
 import { colorHexMap } from "../constants/color";
 import { BACKEND_URL } from "../constants";
+import { TaskDragData } from "../components/dashboard/kanban/components/task-card";
 
 export const axios = Axios.create({
   baseURL: BACKEND_URL ?? "http://localhost:5000",
@@ -168,3 +171,23 @@ export const calculateTimeSinceLastPurchase = (lastPurchaseDate: string) => {
   if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
   return `${Math.floor(diffDays / 365)} years ago`;
 };
+
+type DraggableData = ColumnDragData | TaskDragData;
+
+export function hasDraggableData<T extends Active | Over>(
+  entry: T | null | undefined
+): entry is T & {
+  data: DataRef<DraggableData>;
+} {
+  if (!entry) {
+    return false;
+  }
+
+  const data = entry.data.current;
+
+  if (data?.type === "Column" || data?.type === "Task") {
+    return true;
+  }
+
+  return false;
+}

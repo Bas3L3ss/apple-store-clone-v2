@@ -11,8 +11,6 @@ import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
 import OverViewLayout from "./pages/admin/overview";
 import ProductPage from "./pages/admin/product-page";
-import ProductEditPage from "./pages/admin/product-edit-page";
-import ProductCreatePage from "./pages/admin/product-create-page";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -26,6 +24,11 @@ const Cart = lazy(() => import("./pages/cart"));
 const OrdersPage = lazy(() => import("./pages/order"));
 const OrderDetailsPage = lazy(() => import("./pages/one-order"));
 const ProfilePage = lazy(() => import("./pages/profile"));
+const ProductEditPage = lazy(() => import("./pages/admin/product-edit-page"));
+const ProductCreatePage = lazy(
+  () => import("./pages/admin/product-create-page")
+);
+const KanbanPage = lazy(() => import("./pages/admin/kanban-page"));
 
 const CheckoutSuccess = lazy(() =>
   import("./pages/checkout").then((m) => ({ default: m.CheckoutSuccess }))
@@ -108,6 +111,7 @@ function App() {
                 <Route path="user/:id" element={<ProductEditPage />} />
                 <Route path="orders" element={<ProductEditPage />} />
                 <Route path="orders/:id" element={<ProductEditPage />} />
+                <Route path="kanban" element={<KanbanPage />} />
               </Route>
               <Route path="/checkout-success" element={<CheckoutSuccess />} />
               <Route
