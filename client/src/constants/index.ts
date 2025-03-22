@@ -17,11 +17,11 @@ export type Product = {
 export const navItems = [
   {
     title: "Dashboard",
-    url: "/dashboard/overview",
+    url: "/dashboard/",
     icon: "dashboard",
     isActive: false,
     shortcut: ["d", "d"],
-    items: [], // Empty array as there are no child items for Dashboard
+    items: [],
   },
   {
     title: "Product",
@@ -32,22 +32,22 @@ export const navItems = [
     items: [], // No child items
   },
   {
-    title: "Account",
+    title: "Accounts",
     url: "#", // Placeholder as there is no direct link for the parent
     icon: "billing",
     isActive: true,
 
     items: [
       {
-        title: "Profile",
-        url: "/dashboard/profile",
-        icon: "userPen",
-        shortcut: ["m", "m"],
+        title: "Users",
+        url: "/dashboard/users",
+        icon: "billing",
+        shortcut: ["u", "u"],
       },
       {
-        title: "Login",
+        title: "Orders",
         shortcut: ["l", "l"],
-        url: "/",
+        url: "/dashboard/orders",
         icon: "login",
       },
     ],

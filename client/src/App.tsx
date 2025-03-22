@@ -9,6 +9,7 @@ import { Support } from "./pages/support";
 import GlobalLoader from "./components/global-loader";
 import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
+import OverViewLayout from "./pages/overview";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -100,19 +101,10 @@ function App() {
                   </AppleAuthWrapper>
                 }
               >
-                <Route path="products/create" element={<CreateProductPage />} />
-                <Route
-                  path="products/edit/:id"
-                  element={<CreateProductPage />}
-                />
-                <Route
-                  path="product-options/create"
-                  element={<CreateProductOptionPage />}
-                />
-                <Route
-                  path="product-options/edit/:id"
-                  element={<CreateProductOptionPage />}
-                />
+                <Route index element={<OverViewLayout />} />
+                <Route path="product/create" element={<CreateProductPage />} />
+                <Route path="orders/create" element={<CreateProductPage />} />
+                <Route path="orders/create" element={<CreateProductPage />} />
               </Route>
               <Route path="/checkout-success" element={<CheckoutSuccess />} />
               <Route
