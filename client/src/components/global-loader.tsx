@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import LoadingState from "./loading";
 
 const GlobalLoader = () => {
   return (
@@ -8,11 +9,7 @@ const GlobalLoader = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <div className="flex space-x-2">
-        <div className="w-4 h-4 bg-black rounded-full animate-bounce"></div>
-        <div className="w-4 h-4 bg-black rounded-full animate-bounce delay-200"></div>
-        <div className="w-4 h-4 bg-black rounded-full animate-bounce delay-400"></div>
-      </div>
+      <LoadingState />
     </motion.div>
   );
 };
