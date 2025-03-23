@@ -10,7 +10,7 @@ export const GetOrderById = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { _id: userId } = req.auth;
+    const { _id: userId, role } = req.auth;
 
     if (!id) {
       return next({ statusCode: 400, message: "Order ID is required" });
@@ -25,7 +25,7 @@ export const GetOrderById = async (
 
     if (cachedOrder) {
       console.log(`✅ Cache hit for ${cacheKey}`);
-      res.status(200).json(JSON.parse(cachedOrder));
+      res.status(200).json(cachedOrder);
       return;
     }
 
@@ -50,10 +50,12 @@ export const GetOrderById = async (
     }
 
     if (order.userId.toString() !== userId.toString()) {
-      return next({
-        statusCode: 403,
-        message: "You are not authorized to view this order",
-      });
+      if (role !== "admin") {
+        return next({
+          statusCode: 403,
+          message: "You are not authorized to view this order",
+        });
+      }
     }
 
     const result = { success: true, data: order };
