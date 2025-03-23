@@ -8,12 +8,8 @@ import { Heading } from "@/src/components/ui/heading";
 import ProductListingPage from "@/src/components/dashboard/product/listing-product-table";
 import ProductTableAction from "@/src/components/dashboard/product/product-tables/product-table-action";
 
-export const metadata = {
-  title: "Dashboard: Products",
-};
-
 export default function ProductPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   return (
     <div className="flex flex-1 flex-col space-y-4">

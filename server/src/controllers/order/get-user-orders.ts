@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { OrderModel } from "../../models/Order";
 import redis from "../../utils/redis";
 
-export const GetOrders = async (
+export const GetUserOrders = async (
   req: Request,
   res: Response,
   next: NextFunction

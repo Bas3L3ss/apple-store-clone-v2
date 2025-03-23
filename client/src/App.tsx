@@ -10,7 +10,7 @@ import GlobalLoader from "./components/global-loader";
 import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
 import OverViewLayout from "./pages/admin/overview";
-import ProductPage from "./pages/admin/product-page";
+import ProductPage from "./pages/admin/admin-products-page";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -29,6 +29,8 @@ const ProductCreatePage = lazy(
   () => import("./pages/admin/product-create-page")
 );
 const KanbanPage = lazy(() => import("./pages/admin/kanban-page"));
+const AdminUsersPage = lazy(() => import("./pages/admin/admin-users-page"));
+const AdminOrdersPage = lazy(() => import("./pages/admin/admin-orders-page"));
 
 const CheckoutSuccess = lazy(() =>
   import("./pages/checkout").then((m) => ({ default: m.CheckoutSuccess }))
@@ -106,10 +108,10 @@ function App() {
                 <Route path="product" element={<ProductPage />} />
                 <Route path="product/create" element={<ProductCreatePage />} />
                 <Route path="product/:id" element={<ProductEditPage />} />
-                <Route path="user" element={<ProductEditPage />} />
+                <Route path="user" element={<AdminUsersPage />} />
                 <Route path="user/create" element={<ProductEditPage />} />
                 <Route path="user/:id" element={<ProductEditPage />} />
-                <Route path="orders" element={<ProductEditPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />
                 <Route path="orders/:id" element={<ProductEditPage />} />
                 <Route path="kanban" element={<KanbanPage />} />
               </Route>

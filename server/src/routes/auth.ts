@@ -10,6 +10,8 @@ import verifyEmail from "../controllers/auth/verify-email";
 import errorHandlerWithHtml from "../middlewares/error-handler";
 import sendResetPasswordEmail from "../controllers/auth/send-reset-password-email";
 import resetPassword from "../controllers/auth/reset-password";
+import checkAdminRole from "../controllers/auth/check-admin-role";
+import { GetUsers } from "../controllers/auth/get-users";
 
 // initialize router
 const router = express.Router();
@@ -37,4 +39,10 @@ router.post("/send-reset-link", sendResetPasswordEmail, errorHandler);
 
 // POST: reset password with jwt
 router.post("/reset-password", [checkBearerToken, resetPassword], errorHandler);
+
+// ADMIN ONLY
+
+// GET: get users paginated
+router.get("/", [checkBearerToken, checkAdminRole, GetUsers], errorHandler);
+
 export default router;

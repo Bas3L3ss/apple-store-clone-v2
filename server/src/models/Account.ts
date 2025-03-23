@@ -46,6 +46,8 @@ const instance = new Schema<I>(
   }
 );
 
+instance.index({ verified: 1, role: 1 });
+
 const modelName = "Account";
 
 export default model<I>(modelName, instance);
