@@ -14,10 +14,7 @@ export default function ProductPage() {
   return (
     <div className="flex flex-1 flex-col space-y-4">
       <div className="flex items-start justify-between">
-        <Heading
-          title="Products"
-          description="Manage products (Server side table functionalities.)"
-        />
+        <Heading title="Products" description="Manage products" />
         <Link
           to="/dashboard/product/create"
           className={cn(buttonVariants(), "text-xs md:text-sm")}

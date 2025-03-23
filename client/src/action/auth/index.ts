@@ -1,7 +1,22 @@
+import { FetchProductsResponse } from "@/src/@types";
 import { axios, makeAxiosRequest } from "@/src/lib/utils";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
+export const editUserProfile = async (data: {
+  avatar?: string;
+  username: string;
+  email: string;
+}) => {
+  try {
+    const response = await makeAxiosRequest("put", `/auth/account`, data);
+
+    return response;
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+    throw error;
+  }
+};
 export async function sendVerificationEmail() {
   try {
     await makeAxiosRequest<{ url: string }>("post", "/auth/verify");
@@ -59,17 +74,41 @@ export async function resetPassword(password: string, token?: string | null) {
   }
 }
 
-export const editUserProfile = async (data: {
-  avatar?: string;
-  username: string;
-  email: string;
-}) => {
+export const GetDashboardUsers = async ({
+  search = "",
+  type = "",
+  isVerified = "None",
+  page = "1",
+  limit = "10",
+}: {
+  search?: string;
+  type?: string;
+  isVerified?: string;
+  page?: string | number;
+  limit?: string | number;
+}): Promise<FetchProductsResponse> => {
   try {
-    const response = await makeAxiosRequest("put", `/auth/account`, data);
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("remember");
 
-    return response;
+    const response = await axios.get("/auth", {
+      params: { search, type, isVerified, page, limit },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    return response.data;
   } catch (error) {
-    console.error("Failed to fetch orders:", error);
-    throw error;
+    console.log("Error fetching users: ", error);
+
+    return {
+      data: [],
+      pagination: {
+        currentPage: 0,
+        limit: 0,
+        total: 0,
+        totalPages: 0,
+      },
+      success: false,
+    };
   }
 };

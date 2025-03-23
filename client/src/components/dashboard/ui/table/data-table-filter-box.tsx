@@ -58,10 +58,10 @@ export function DataTableFilterBox({
     } else {
       newSet.add(value);
     }
-    setFilterValue(Array.from(newSet).join(",") || null);
+    setFilterValue(Array.from(newSet).join(",") || null, filterKey);
   };
 
-  const resetFilter = () => setFilterValue(null);
+  const resetFilter = () => setFilterValue(null, filterKey);
 
   return (
     <Popover>

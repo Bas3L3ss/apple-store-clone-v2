@@ -5,6 +5,7 @@ import { GetOrderById } from "../controllers/order/get-order-by-id";
 import { GetUserOrders } from "../controllers/order/get-user-orders";
 import { GetCustomerAnalytics } from "../controllers/stripe/get-customer-analytics";
 import checkAdminRole from "../controllers/auth/check-admin-role";
+import { GetOrders } from "../controllers/order/get-orders";
 
 const router = express.Router();
 

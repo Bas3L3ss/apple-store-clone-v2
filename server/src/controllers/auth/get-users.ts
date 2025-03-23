@@ -49,7 +49,7 @@ export const GetUsers = async (
     }
 
     // Add type filter if present
-    if (type) {
+    if (type && type.length > 0) {
       // Split the type string into an array if it contains commas
       const types = type.split(",").map((t) => t.trim());
 
@@ -61,11 +61,11 @@ export const GetUsers = async (
         filter.role = types[0];
       }
     }
-
     // Add verification filter if specified
-    if (isVerified !== "None") {
+    if (isVerified !== "None" && isVerified !== "") {
       filter.verified = isVerified === "true";
     }
+    console.log(filter);
 
     // Convert pagination values to numbers
     const pageNumber = parseInt(page, 10) || 1;

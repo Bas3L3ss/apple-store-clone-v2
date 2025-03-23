@@ -2,19 +2,21 @@ import { DataTableFilterBox } from "../../ui/table/data-table-filter-box";
 import { DataTableResetFilter } from "../../ui/table/data-table-reset-filter";
 import { DataTableSearch } from "../../ui/table/data-table-search";
 import {
-  CATEGORY_OPTIONS,
-  useProductTableFilters,
-} from "./use-product-table-filters";
+  USER_TYPE_OPTIONS,
+  useUserTableFilters,
+  VERIFIED_OPTIONS,
+} from "./use-user-table-filters";
 
-export default function ProductTableAction() {
+export default function UserTableAction() {
   const {
-    categoriesFilter,
+    typeFilter,
     setCategoriesFilter,
     isAnyFilterActive,
     resetFilters,
+    isVerifiedFilter,
     searchQuery,
     setSearchQuery,
-  } = useProductTableFilters();
+  } = useUserTableFilters();
   return (
     <div className="flex flex-wrap items-center gap-4">
       <DataTableSearch
@@ -23,11 +25,18 @@ export default function ProductTableAction() {
         setSearchQuery={setSearchQuery}
       />
       <DataTableFilterBox
-        filterKey="categories"
-        title="Categories"
-        options={CATEGORY_OPTIONS}
+        filterKey="type"
+        title="User types"
+        options={USER_TYPE_OPTIONS}
         setFilterValue={setCategoriesFilter}
-        filterValue={categoriesFilter}
+        filterValue={typeFilter}
+      />
+      <DataTableFilterBox
+        filterKey="isVerified"
+        title="verified?"
+        options={VERIFIED_OPTIONS}
+        setFilterValue={setCategoriesFilter}
+        filterValue={isVerifiedFilter}
       />
       <DataTableResetFilter
         isFilterActive={isAnyFilterActive}

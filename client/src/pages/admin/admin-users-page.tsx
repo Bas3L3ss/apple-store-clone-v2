@@ -5,12 +5,8 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { cn } from "@/src/lib/utils";
 import { Heading } from "@/src/components/ui/heading";
-import ProductListingPage from "@/src/components/dashboard/product/listing-product-table";
-import ProductTableAction from "@/src/components/dashboard/product/product-tables/product-table-action";
-
-export const metadata = {
-  title: "Dashboard: Products",
-};
+import UsersListingPage from "@/src/components/dashboard/users/listing-user-table";
+import UserTableAction from "@/src/components/dashboard/users/users-tables/user-table-action";
 
 export default function AdminUsersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,16 +19,16 @@ export default function AdminUsersPage() {
           description="Manage products (Server side table functionalities.)"
         />
         <Link
-          to="/dashboard/product/create"
+          to="/dashboard/user/create"
           className={cn(buttonVariants(), "text-xs md:text-sm")}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Link>
       </div>
       <Separator />
-      <ProductTableAction />
+      <UserTableAction />
 
-      <ProductListingPage searchParams={searchParams} />
+      <UsersListingPage searchParams={searchParams} />
     </div>
   );
 }
