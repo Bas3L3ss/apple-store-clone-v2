@@ -180,14 +180,12 @@ export default function Navbar() {
           </NavigationMenu>
         </nav>
 
-        {/* Search Dropdown - Responsive */}
         <SeachDropDown
           isSearchOpen={isSearchOpen}
           navigate={navigate}
           searchRef={searchRef}
         />
 
-        {/* Shopping Bag Dropdown - Responsive */}
         <ShoppingBagDropDown
           account={account}
           isAuthenticated={isAuthenticated}

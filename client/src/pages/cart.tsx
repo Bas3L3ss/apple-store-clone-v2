@@ -31,6 +31,8 @@ const Cart = () => {
   const [orderNotes, setOrderNotes] = useState<string>("");
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const currentPath = window.location.pathname;
+
   const items = isAuthenticated ? userItems : guestItems;
   useEffect(() => {
     // illusion, will find workaround
@@ -235,7 +237,7 @@ const Cart = () => {
             ) : (
               <div className="mt-6 space-y-4">
                 <Link
-                  to="/auth"
+                  to={`/auth?redirect=${encodeURIComponent(currentPath)}`}
                   className="block w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium text-center hover:bg-blue-700 transition-colors"
                 >
                   Sign in to Checkout

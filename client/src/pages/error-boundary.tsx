@@ -47,32 +47,59 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
       // Default error UI
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-          <div className="max-w-lg w-full bg-white rounded-lg shadow-md p-8">
-            <h1 className="text-3xl font-bold text-red-600 mb-4">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-white">
+          <div className="max-w-md w-full rounded-xl p-8">
+            <div className="flex justify-center mb-6">
+              {/* Apple-style warning icon */}
+              <svg
+                className="w-16 h-16 text-red-500"
+                viewBox="0 0 64 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M32 12C20.96 12 12 20.96 12 32C12 43.04 20.96 52 32 52C43.04 52 52 43.04 52 32C52 20.96 43.04 12 32 12Z"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M32 22V36"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <circle cx="32" cy="42" r="2" fill="currentColor" />
+              </svg>
+            </div>
+
+            <h1 className="text-2xl font-medium text-gray-900 mb-2 text-center">
               Something went wrong
             </h1>
-            <p className="text-gray-700 mb-6">
-              We've encountered an unexpected error. You can try refreshing the
-              page or returning to the home page.
+
+            <p className="text-gray-500 mb-8 text-center text-sm leading-relaxed">
+              We've encountered an unexpected error. Please try refreshing the
+              page or returning to the home screen.
             </p>
-            <div className="bg-gray-100 p-4 rounded mb-6 overflow-auto max-h-40">
-              <p className="font-mono text-sm text-gray-800">
+
+            {this.state.error && (
+              <div className="bg-gray-50 p-5 rounded-lg mb-8 overflow-auto max-h-32 font-mono text-xs text-gray-600">
                 {this.state.error?.toString()}
-              </p>
-            </div>
-            <div className="flex space-x-4">
+              </div>
+            )}
+
+            <div className="flex flex-col space-y-3">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="w-full py-3 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Refresh Page
               </button>
+
               <Link
                 to="/"
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                className="w-full py-3 px-4 bg-gray-100 text-gray-800 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors text-center focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
               >
-                Go to Home
+                Go to Home Screen
               </Link>
             </div>
           </div>

@@ -28,7 +28,10 @@ const AppleAuthWrapper = ({ children }: { children: ReactNode }) => {
         <div className="flex flex-col space-y-4">
           <Button
             className="w-full bg-white text-black hover:bg-gray-200 transition-colors duration-200"
-            onClick={() => navigate("/auth")}
+            onClick={() => {
+              const currentPath = window.location.pathname;
+              navigate(`/auth?redirect=${encodeURIComponent(currentPath)}`);
+            }}
           >
             Sign In
           </Button>
