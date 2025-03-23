@@ -11,6 +11,7 @@ import ResetPassword from "./pages/reset-password-page";
 import AdminDashboard from "./pages/dashboard";
 import OverViewLayout from "./pages/admin/overview";
 import ProductPage from "./pages/admin/admin-products-page";
+import ErrorBoundary from "./pages/error-boundary"; // Import ErrorBoundary
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/home"));
@@ -47,15 +48,45 @@ function App() {
         <main className="min-h-[100vh] pt-16">
           <Suspense fallback={<GlobalLoader />}>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/shop/:slug" element={<ProductOrderPage />} />
-              <Route path="/more/:slug" element={<ItemDetails />} />
+              <Route
+                path="/"
+                element={
+                  <ErrorBoundary>
+                    <Home />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/shop"
+                element={
+                  <ErrorBoundary>
+                    <ShopPage />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/shop/:slug"
+                element={
+                  <ErrorBoundary>
+                    <ProductOrderPage />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/more/:slug"
+                element={
+                  <ErrorBoundary>
+                    <ItemDetails />
+                  </ErrorBoundary>
+                }
+              />
               <Route
                 path="/auth"
                 element={
                   <GuestOnlyWrapper>
-                    <AppleAuthPage />
+                    <ErrorBoundary>
+                      <AppleAuthPage />
+                    </ErrorBoundary>
                   </GuestOnlyWrapper>
                 }
               />
@@ -63,18 +94,43 @@ function App() {
                 path="/auth/forgot"
                 element={
                   <GuestOnlyWrapper>
-                    <ForgotPasswordPage />
+                    <ErrorBoundary>
+                      <ForgotPasswordPage />
+                    </ErrorBoundary>
                   </GuestOnlyWrapper>
                 }
               />
-              <Route path="/auth/reset-password" element={<ResetPassword />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/cart" element={<Cart />} />
+              <Route
+                path="/auth/reset-password"
+                element={
+                  <ErrorBoundary>
+                    <ResetPassword />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/support"
+                element={
+                  <ErrorBoundary>
+                    <Support />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/cart"
+                element={
+                  <ErrorBoundary>
+                    <Cart />
+                  </ErrorBoundary>
+                }
+              />
               <Route
                 path="/order"
                 element={
                   <AppleAuthWrapper>
-                    <OrdersPage />
+                    <ErrorBoundary>
+                      <OrdersPage />
+                    </ErrorBoundary>
                   </AppleAuthWrapper>
                 }
               />
@@ -82,7 +138,9 @@ function App() {
                 path="/order/:id"
                 element={
                   <AppleAuthWrapper>
-                    <OrderDetailsPage />
+                    <ErrorBoundary>
+                      <OrderDetailsPage />
+                    </ErrorBoundary>
                   </AppleAuthWrapper>
                 }
               />
@@ -90,7 +148,9 @@ function App() {
                 path="/profile"
                 element={
                   <AppleAuthWrapper>
-                    <ProfilePage />
+                    <ErrorBoundary>
+                      <ProfilePage />
+                    </ErrorBoundary>
                   </AppleAuthWrapper>
                 }
               />
@@ -99,7 +159,9 @@ function App() {
                 element={
                   <AppleAuthWrapper>
                     <AdminWrapper>
-                      <AdminDashboard />
+                      <ErrorBoundary>
+                        <AdminDashboard />
+                      </ErrorBoundary>
                     </AdminWrapper>
                   </AppleAuthWrapper>
                 }
@@ -115,12 +177,30 @@ function App() {
                 <Route path="orders/:id" element={<ProductEditPage />} />
                 <Route path="kanban" element={<KanbanPage />} />
               </Route>
-              <Route path="/checkout-success" element={<CheckoutSuccess />} />
+              <Route
+                path="/checkout-success"
+                element={
+                  <ErrorBoundary>
+                    <CheckoutSuccess />
+                  </ErrorBoundary>
+                }
+              />
               <Route
                 path="/checkout-cancelled"
-                element={<CheckoutCancelled />}
+                element={
+                  <ErrorBoundary>
+                    <CheckoutCancelled />
+                  </ErrorBoundary>
+                }
               />
-              <Route path="*" element={<NotFound />} />
+              <Route
+                path="*"
+                element={
+                  <ErrorBoundary>
+                    <NotFound />
+                  </ErrorBoundary>
+                }
+              />
             </Routes>
           </Suspense>
         </main>
