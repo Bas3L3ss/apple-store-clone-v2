@@ -55,7 +55,6 @@ export const useCartStore = create<CartState>()(
         socket.on("connect", () => {
           set({ isConnected: true });
 
-          // Fetch the user's cart from the database when connected
           socket.emit(
             "cart:get",
             null,
@@ -129,10 +128,8 @@ export const useCartStore = create<CartState>()(
             updatedItems = [...userItems, newItem];
           }
 
-          // Update local state first for immediate feedback
           set({ userItems: updatedItems });
 
-          // Then sync with backend
           syncCartWithBackend(updatedItems).catch((error) => {
             console.error("Failed to sync cart with backend:", error);
             // Store the failed operation for retry
@@ -191,15 +188,12 @@ export const useCartStore = create<CartState>()(
       removeItem: (cartId: string) => {
         const { userItems, guestItems } = get();
 
-        // Check if item exists in user cart
         const userItem = userItems.find((item) => item._id === cartId);
 
         if (userItem) {
-          // Remove from user items
           const updatedItems = userItems.filter((item) => item._id !== cartId);
           set({ userItems: updatedItems });
 
-          // Sync with backend
           removeCartItem(cartId).catch((error) => {
             console.error("Failed to remove item from backend:", error);
             toast.error("Failed to remove item", {
@@ -207,10 +201,9 @@ export const useCartStore = create<CartState>()(
             });
           });
         } else {
-          // Remove from guest items
           set({
             guestItems: guestItems.filter((item) => item._id !== cartId),
-            hasGuestCart: guestItems.length > 1, // Will be true if there are still items after removal
+            hasGuestCart: guestItems.length > 1,
           });
         }
       },
@@ -218,19 +211,16 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (cartId: string, change: -1 | 1) => {
         const { userItems } = get();
 
-        // Check if item exists in user cart
         const userItem = userItems.find((item) => item._id === cartId);
 
         if (userItem) {
-          // Update user items
           const updatedItems = userItems
             .map((item) => {
               if (item._id === cartId) {
                 const newQuantity = item.quantity + change;
 
-                // If quantity goes to 0 or below, remove the item
                 if (newQuantity <= 0) {
-                  return null; // Will be filtered out below
+                  return null;
                 }
 
                 return {
@@ -241,7 +231,7 @@ export const useCartStore = create<CartState>()(
               }
               return item;
             })
-            .filter(Boolean); // Remove null values
+            .filter(Boolean);
           //@ts-expect-error:no problem
           set({ userItems: updatedItems });
 
@@ -304,10 +294,8 @@ export const useCartStore = create<CartState>()(
         const { guestItems, userItems } = get();
 
         if (guestItems.length > 0) {
-          // Merge guest items with user items and sync with backend
           const mergedItems = [...userItems];
 
-          // For each guest item, check if it exists in user items
           const authenticatedGuesItems = guestItems.map((i) => ({
             ...i,
             userId,
@@ -321,7 +309,6 @@ export const useCartStore = create<CartState>()(
             );
 
             if (existingItemIndex >= 0) {
-              // Update existing item quantity and price
               const existingItem = mergedItems[existingItemIndex];
               mergedItems[existingItemIndex] = {
                 ...existingItem,
@@ -329,18 +316,15 @@ export const useCartStore = create<CartState>()(
                 totalPrice: existingItem.totalPrice + guestItem.totalPrice,
               };
             } else {
-              // Add as new item (with user ID)
               mergedItems.push({
                 ...guestItem,
-                userId: userId, // Use the userId from existing user items
+                userId: userId,
               });
             }
           });
 
-          // Update local state
           set({ userItems: mergedItems, guestItems: [], hasGuestCart: false });
 
-          // Sync with backend
           syncCartWithBackend(mergedItems).catch((error) => {
             console.error("Failed to sync merged cart with backend:", error);
             toast.error("Failed to sync guest cart", {
@@ -354,7 +338,6 @@ export const useCartStore = create<CartState>()(
       },
 
       rejectGuestCart: () => {
-        // Clear the guest cart and mark that we no longer have one
         set({ guestItems: [], hasGuestCart: false });
       },
 
@@ -362,7 +345,6 @@ export const useCartStore = create<CartState>()(
         const { temporaryFailedItems, userItems } = get();
 
         if (temporaryFailedItems.length > 0) {
-          // Attempt to sync all failed items with the backend
           syncCartWithBackend([...userItems, ...temporaryFailedItems])
             .then(() => {
               // On success, clear the failed items list
@@ -386,10 +368,8 @@ export const useCartStore = create<CartState>()(
         temporaryFailedItems: state.temporaryFailedItems,
         hasGuestCart: state.hasGuestCart,
         isConnected: state.isConnected,
-        // Explicitly exclude socket from persistence
       }),
       onRehydrateStorage: () => (state) => {
-        // Check if there's a guest cart when the store is rehydrated
         if (state && state.guestItems.length > 0) {
           state.hasGuestCart = true;
         }

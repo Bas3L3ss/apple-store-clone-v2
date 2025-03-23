@@ -3,7 +3,7 @@ import { useCartStore } from "../store/useCartStore";
 import { useAuth } from "../contexts/AuthContext";
 import GlobalLoader from "../components/global-loader";
 
-const WebSocketProvider = ({ children }: { children: ReactNode }) => {
+const SyncCartLayer = ({ children }: { children: ReactNode }) => {
   const { connectSocket, disconnectSocket } = useCartStore();
   const { account, isLoading } = useAuth();
 
@@ -24,4 +24,4 @@ const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   return children;
 };
 
-export default WebSocketProvider;
+export default SyncCartLayer;
