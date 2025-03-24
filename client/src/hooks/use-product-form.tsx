@@ -12,7 +12,7 @@ import { createProduct } from "../action/products";
 const useProductForm = ({
   initialData,
 }: {
-  initialData: Partial<FormValues> | null;
+  initialData?: Partial<FormValues> | null;
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOptionDialogOpen, setIsOptionDialogOpen] = useState(false);
@@ -20,7 +20,10 @@ const useProductForm = ({
     null
   );
 
-  const initialOptions = initialData?.productOptions || [];
+  const initialOptions = useMemo(
+    () => initialData?.productOptions || [],
+    [initialData]
+  );
 
   const productSelectionOptions = useMemo(
     () =>
@@ -31,18 +34,21 @@ const useProductForm = ({
     []
   );
 
-  const defaultValues: Partial<FormValues> = {
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    productImages: initialData?.productImages || [""],
-    slug: initialData?.slug || "",
-    basePrice: initialData?.basePrice || 99,
-    category: initialData?.category || "phonecase",
-    stock: initialData?.stock || 99,
-    isFeatured: initialData?.isFeatured || false,
-    productSelectionStep: initialData?.productSelectionStep || [""],
-    productOptions: initialOptions,
-  };
+  const defaultValues = useMemo(
+    () => ({
+      name: initialData?.name || "",
+      description: initialData?.description || "",
+      productImages: initialData?.productImages || [""],
+      slug: initialData?.slug || "",
+      basePrice: initialData?.basePrice || 99,
+      category: initialData?.category || "phonecase",
+      stock: initialData?.stock || 99,
+      isFeatured: initialData?.isFeatured || false,
+      productSelectionStep: initialData?.productSelectionStep || [""],
+      productOptions: initialOptions,
+    }),
+    [initialData, initialOptions]
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(extendedFormSchema),
@@ -77,28 +83,30 @@ const useProductForm = ({
     },
   });
 
-  // Handle option dialog opening for edit
-  const handleEditOption = (index: number) => {
-    const options = form.getValues("productOptions") || [];
-    const option = options[index];
-    if (!option) return;
+  const handleEditOption = useCallback(
+    (index: number) => {
+      const options = form.getValues("productOptions") || [];
+      const option = options[index];
+      if (!option) return;
 
-    const { type, value } = formatOption(option);
+      const { type, value } = formatOption(option);
 
-    optionForm.reset({
-      _id: option._id || "",
-      optionType: type,
-      optionValue: value,
-      price: option.price,
-      stock: option.stock,
-    });
+      optionForm.reset({
+        _id: option._id || "",
+        optionType: type,
+        optionValue: value,
+        price: option.price,
+        stock: option.stock,
+      });
 
-    setEditingOptionIndex(index);
-    setIsOptionDialogOpen(true);
-  };
+      setEditingOptionIndex(index);
+      setIsOptionDialogOpen(true);
+    },
+    [form, optionForm]
+  );
 
   // Handle option dialog opening for create
-  const handleAddOption = () => {
+  const handleAddOption = useCallback(() => {
     optionForm.reset({
       _id: "",
       optionType: "",
@@ -108,7 +116,7 @@ const useProductForm = ({
     });
     setEditingOptionIndex(null);
     setIsOptionDialogOpen(true);
-  };
+  }, [form, optionForm]);
 
   // Handle save option
   const handleSaveOption = useCallback(
