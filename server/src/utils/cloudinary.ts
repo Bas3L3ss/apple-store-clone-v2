@@ -137,7 +137,8 @@ class CloudinaryClient {
     }
 
     try {
-      return await cloudinary.uploader.destroy(publicId);
+      await cloudinary.uploader.destroy(publicId);
+      console.log("removed image", publicId);
     } catch (error: unknown) {
       // @ts-expect-error:no prob
       console.log("❌ Error deleting image from Cloudinary:", error.message);

@@ -16,6 +16,7 @@ import { invalidateAllProductCaches } from "./controllers/product/utils/invalida
 import { invalidateUserCache } from "./controllers/auth/utils/invalidate-user-cache";
 import { invalidateFeaturedProductsCache } from "./controllers/product/utils/invalidate-featured-products-cache";
 import { invalidateUserOrderCaches } from "./controllers/order/utils/invalidate-user-order-cache";
+import { invalidateProductsCache } from "./controllers/product/utils/invalidate-products-cache";
 
 const bootstrap = async () => {
   await mongo.connect();
@@ -40,6 +41,9 @@ const bootstrap = async () => {
     const data = await helper.safeParse(message);
     if (!data) return;
     invalidateAllProductCaches(data.productId, data.slug);
+  });
+  await redis.subscribe("product-created", async () => {
+    invalidateProductsCache();
   });
 
   await redis.subscribe("user-modified", async (message) => {

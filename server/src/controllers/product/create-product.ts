@@ -12,6 +12,7 @@ export const CreateProduct = async (
 ) => {
   const session = await mongoose.startSession();
   session.startTransaction();
+  const uploadedImagePublicIds: string[] = []; // Track uploaded images
 
   try {
     const {
@@ -24,7 +25,6 @@ export const CreateProduct = async (
       isFeatured: unParsedIsFeatured,
       productSelectionStep: unParsedProductSelectionStep,
       productOptions: unParsedProductOptions,
-      productImagesPublicIds: unParsedProductImagesPublicIds,
     } = req.body;
     const productImages = req.files;
 
@@ -41,7 +41,7 @@ export const CreateProduct = async (
     if (productImages && productImages?.length > 0) {
       if (Array.isArray(productImages)) {
         imageUrls = await cloudinary.uploadImages(productImages);
-        console.log(imageUrls);
+        uploadedImagePublicIds.push(...imageUrls);
       }
     }
 
@@ -104,10 +104,22 @@ export const CreateProduct = async (
       message: "Product created successfully",
     });
 
+    redis.publish("product-created", null);
+
     return;
   } catch (error) {
+    for (const publicId of uploadedImagePublicIds) {
+      try {
+        await cloudinary.deleteImage(publicId);
+      } catch (deleteError) {
+        console.error(
+          "Failed to delete uploaded image:",
+          publicId,
+          deleteError
+        );
+      }
+    }
     await session.abortTransaction();
-
     // Handle duplicate slug error
     if (error.code === 11000 && error.keyPattern?.slug) {
       res.status(400).json({

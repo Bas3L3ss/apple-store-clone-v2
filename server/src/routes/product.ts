@@ -9,10 +9,10 @@ import { GetFeaturedProducts } from "../controllers/product/get-featured-product
 import { GetProductBySlug } from "../controllers/product/get-product-by-slug";
 import { GetProductRecommendations } from "../controllers/product/get-product-recommendations";
 import { EditProduct } from "../controllers/product/edit-product";
-// import { CreateMockProduct } from "../controllers/product/create-random-mockdata";
 import multer from "multer";
 
-// Configure multer for file uploads
+// import { CreateMockProduct } from "../controllers/product/create-random-mockdata";
+
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
