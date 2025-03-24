@@ -10,6 +10,13 @@ import { GetOrders } from "../controllers/order/get-orders";
 const router = express.Router();
 
 // TODO: implement apple card, cod
+// ADMIN ONLY:
+// GET: Fetch all users orders
+router.get(
+  "/admin",
+  [checkBearerToken, checkAdminRole, GetOrders],
+  errorHandler
+);
 
 // GET: Fetch all orders of one user
 router.get("/", [checkBearerToken, GetUserOrders], errorHandler);
@@ -23,13 +30,5 @@ router.get(
 
 // GET: Fetch a single order by ID
 router.get("/:id", [checkBearerToken, GetOrderById], errorHandler);
-
-// ADMIN ONLY:
-// GET: Fetch all users orders
-router.get(
-  "/admin",
-  [checkBearerToken, checkAdminRole, GetOrders],
-  errorHandler
-);
 
 export default router;

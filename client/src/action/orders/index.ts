@@ -1,5 +1,5 @@
-import { Order } from "@/src/@types";
-import { makeAxiosRequest } from "@/src/lib/utils";
+import { FetchProductsResponse, Order } from "@/src/@types";
+import { axios, makeAxiosRequest } from "@/src/lib/utils";
 
 export const getOrdersOfUser = async (
   page = 1,
@@ -60,4 +60,43 @@ export const getOrderById = async (
       data: null,
     };
   } // Return empty array on failure to handle edge cases
+};
+
+export const getAllOrders = async ({
+  search = "",
+  status = "",
+  paymentMethod = "",
+  page = "1",
+  limit = "10",
+}: {
+  search?: string;
+  paymentMethod?: string;
+  status?: string;
+  page?: string | number;
+  limit?: string | number;
+}): Promise<FetchProductsResponse> => {
+  try {
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("remember");
+
+    const response = await axios.get("/orders/admin", {
+      params: { search, status, paymentMethod, page, limit },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching users: ", error);
+
+    return {
+      data: [],
+      pagination: {
+        currentPage: 0,
+        limit: 0,
+        total: 0,
+        totalPages: 0,
+      },
+      success: false,
+    };
+  }
 };

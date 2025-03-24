@@ -32,7 +32,6 @@ export function useProductConfiguration(product?: Product) {
   }, [selectionSteps]);
 
   useEffect(() => {
-    console.log("start of effect");
     if (!product) return;
 
     let newPrice = basePrice;
@@ -55,7 +54,6 @@ export function useProductConfiguration(product?: Product) {
       }
     }
 
-    console.log(newPrice, "end of effect");
     setTotalPrice(newPrice);
   }, [selectedOptions, product, basePrice, productOptions]);
 

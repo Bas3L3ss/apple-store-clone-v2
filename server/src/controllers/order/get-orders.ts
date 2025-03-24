@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { OrderModel } from "../../models/Order";
 import redis from "../../utils/redis";
+import mongoose from "mongoose";
 
 export const GetOrders = async (
   req: Request,
@@ -14,22 +15,18 @@ export const GetOrders = async (
       paymentMethod,
       page = "1",
       limit = "10",
-      fromDate,
-      toDate,
     } = req.query as {
       search?: string;
       status?: string;
       paymentMethod?: string;
       page?: string;
       limit?: string;
-      fromDate?: string;
-      toDate?: string;
     };
 
     // Build cache key
     const cacheKey = `orders:${search || ""}:${status || ""}:${
       paymentMethod || ""
-    }:${page}:${limit}:${fromDate || ""}:${toDate || ""}`;
+    }:${page}:${limit}`;
 
     // Check cache first
     const cachedResult = await redis.get(cacheKey);
@@ -44,14 +41,17 @@ export const GetOrders = async (
     // Build filter object
     const filter: Record<string, any> = {};
 
-    // Add text search if present (searching by ObjectId)
+    // Add search for orderId or userId if present (both as ObjectId)
     if (search) {
-      // Try to match user's ObjectId if it's a valid ObjectId format
+      // Check if search string is a valid ObjectId format
       if (/^[0-9a-fA-F]{24}$/.test(search)) {
-        filter.userId = search;
+        // Search for either orderId or userId using $or operator
+        filter.$or = [
+          { _id: new mongoose.Types.ObjectId(search) }, // Search by orderId
+          { userId: new mongoose.Types.ObjectId(search) }, // Search by userId
+        ];
       } else {
-        // Otherwise, we'll need to populate and search in user details
-        // This will be handled after initial query
+        // We'll handle non-ObjectId searches after the initial query
       }
     }
 
@@ -76,34 +76,16 @@ export const GetOrders = async (
       }
     }
 
-    if (fromDate || toDate) {
-      filter.createdAt = {};
-
-      if (fromDate) {
-        filter.createdAt.$gte = new Date(fromDate);
-      }
-
-      if (toDate) {
-        // Set time to end of day for toDate
-        const endDate = new Date(toDate);
-        endDate.setHours(23, 59, 59, 999);
-        filter.createdAt.$lte = endDate;
-      }
-    }
-
     const pageNumber = parseInt(page, 10) || 1;
     const limitNumber = parseInt(limit, 10) || 10;
     const skip = (pageNumber - 1) * limitNumber;
 
     let orders = await OrderModel.find(filter)
-      .populate({
-        path: "userId",
-        select: "username email",
-      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNumber);
 
+    // Handle non-ObjectId search (username or email search)
     if (search && !/^[0-9a-fA-F]{24}$/.test(search)) {
       orders = orders.filter(
         (order) =>
@@ -117,11 +99,16 @@ export const GetOrders = async (
       );
     }
 
-    let total = await OrderModel.countDocuments(filter);
-
+    // Count total documents
+    let total;
     if (search && !/^[0-9a-fA-F]{24}$/.test(search)) {
+      // For text searches, we need to count filtered results
       total = orders.length;
+    } else {
+      // For database-level filters, we can use countDocuments
+      total = await OrderModel.countDocuments(filter);
     }
+
     const totalPages = Math.ceil(total / limitNumber);
 
     const result = {
@@ -136,7 +123,7 @@ export const GetOrders = async (
     };
 
     // Cache the result
-    await redis.set(cacheKey, JSON.stringify(result), 900); // Cache for 15 minutes
+    await redis.set(cacheKey, result, 900); // Cache for 15 minutes
     console.log(`✅ Cached ${cacheKey} for 15 minutes`);
 
     res.status(200).json(result);
