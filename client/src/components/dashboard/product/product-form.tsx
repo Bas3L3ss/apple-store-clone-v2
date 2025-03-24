@@ -1,667 +1,4 @@
-// import { z } from "zod";
-// import { Plus, Trash2, Upload, Edit } from "lucide-react";
-
-// import { Button } from "@/src/components/ui/button";
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/src/components/ui/card";
-// import {
-//   Form,
-//   FormControl,
-//   FormDescription,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/src/components/ui/form";
-// import { Input } from "@/src/components/ui/input";
-// import { Textarea } from "@/src/components/ui/textarea";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/src/components/ui/select";
-// import { Separator } from "@/src/components/ui/separator";
-// import { FileUploader } from "../../ui/file-uploader";
-// import { extendedFormSchema } from "@/src/schemas";
-// import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
-// import { Link } from "react-router";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "@/src/components/ui/table";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/src/components/ui/dialog";
-// import { Switch } from "@/src/components/ui/switch";
-// import { formatPrice, getPlaceholder } from "@/src/lib/utils";
-// import { optionTypes } from "@/src/constants/product-form";
-// import useProductForm from "@/src/hooks/use-product-form";
-
-// export type FormValues = z.infer<typeof extendedFormSchema>;
-
-// export default function ProductForm({
-//   initialData,
-//   pageTitle = "Create New Product",
-// }: {
-//   initialData?: Partial<FormValues> | null;
-//   pageTitle?: string;
-// }) {
-//   const {
-//     addImageField,
-//     addSelectionStep,
-//     editingOptionIndex,
-//     form,
-//     formatOption,
-//     handleAddOption,
-//     handleDeleteOption,
-//     handleEditOption,
-//     handleSaveOption,
-//     isOptionDialogOpen,
-//     isSubmitting,
-//     onSubmit,
-//     productSelectionOptions,
-//     removeImageField,
-//     removeSelectionStep,
-//     setIsOptionDialogOpen,
-//     optionForm,
-//   } = useProductForm({ initialData: initialData });
-//   return (
-//     <>
-//       <Card className="mx-auto w-full max-w-3xl">
-//         <CardHeader>
-//           <CardTitle className="text-left text-2xl font-bold">
-//             {pageTitle}
-//           </CardTitle>
-//           <CardDescription>
-//             {initialData
-//               ? "Edit product details and options"
-//               : "Add a new product to your inventory. Fill in all required fields."}
-//           </CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <Form {...form}>
-//             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-//               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//                 {/* Product Name */}
-//                 <FormField
-//                   control={form.control}
-//                   name="name"
-//                   render={({ field }) => (
-//                     <FormItem>
-//                       <FormLabel>Product Name</FormLabel>
-//                       <FormControl>
-//                         <Input placeholder="iPhone 15 Pro" {...field} />
-//                       </FormControl>
-//                       <FormDescription>
-//                         Enter the exact product name
-//                       </FormDescription>
-//                       <FormMessage />
-//                     </FormItem>
-//                   )}
-//                 />
-
-//                 {/* Slug */}
-//                 <FormField
-//                   control={form.control}
-//                   name="slug"
-//                   render={({ field }) => (
-//                     <FormItem>
-//                       <FormLabel>Slug</FormLabel>
-//                       <FormControl>
-//                         <Input
-//                           placeholder="iphone-15-pro"
-//                           value={form.watch("name")}
-//                           {...field}
-//                         />
-//                       </FormControl>
-//                       <FormDescription>
-//                         URL-friendly version of the name
-//                       </FormDescription>
-//                       <FormMessage />
-//                     </FormItem>
-//                   )}
-//                 />
-//               </div>
-//               {/* Description */}
-//               <FormField
-//                 control={form.control}
-//                 name="description"
-//                 render={({ field }) => (
-//                   <FormItem>
-//                     <FormLabel>Description</FormLabel>
-//                     <FormControl>
-//                       <Textarea
-//                         placeholder="Enter product description..."
-//                         className="min-h-[120px] resize-none"
-//                         {...field}
-//                       />
-//                     </FormControl>
-//                     <FormMessage />
-//                   </FormItem>
-//                 )}
-//               />
-//               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//                 {/* Base Price */}
-//                 <FormField
-//                   control={form.control}
-//                   name="basePrice"
-//                   render={({ field }) => (
-//                     <FormItem>
-//                       <FormLabel>Base Price ($)</FormLabel>
-//                       <FormControl>
-//                         <Input type="number" min="0" step="0.01" {...field} />
-//                       </FormControl>
-//                       <FormMessage />
-//                     </FormItem>
-//                   )}
-//                 />
-
-//                 {/* Category */}
-//                 <FormField
-//                   control={form.control}
-//                   name="category"
-//                   render={({ field }) => (
-//                     <FormItem>
-//                       <FormLabel>Category</FormLabel>
-//                       <Select
-//                         onValueChange={field.onChange}
-//                         defaultValue={field.value}
-//                       >
-//                         <FormControl>
-//                           <SelectTrigger>
-//                             <SelectValue placeholder="Select category" />
-//                           </SelectTrigger>
-//                         </FormControl>
-//                         <SelectContent>
-//                           <SelectItem value="iphone">iPhone</SelectItem>
-//                           <SelectItem value="macbook">MacBook</SelectItem>
-//                           <SelectItem value="apple_watch">
-//                             Apple Watch
-//                           </SelectItem>
-//                           <SelectItem value="ipad">iPad</SelectItem>
-//                           <SelectItem value="airpods">AirPods</SelectItem>
-//                           <SelectItem value="phonecase">Phone Case</SelectItem>
-//                         </SelectContent>
-//                       </Select>
-//                       <FormMessage />
-//                     </FormItem>
-//                   )}
-//                 />
-
-//                 {/* Stock */}
-//                 <FormField
-//                   control={form.control}
-//                   name="stock"
-//                   render={({ field }) => (
-//                     <FormItem>
-//                       <FormLabel>Stock</FormLabel>
-//                       <FormControl>
-//                         <Input type="number" min="0" step="1" {...field} />
-//                       </FormControl>
-//                       <FormMessage />
-//                     </FormItem>
-//                   )}
-//                 />
-//               </div>
-//               {/* Featured Product Switch */}
-//               <FormField
-//                 control={form.control}
-//                 name="isFeatured"
-//                 render={({ field }) => (
-//                   <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-//                     <div className="space-y-0.5">
-//                       <p>Featured Product</p>
-//                       <FormDescription>
-//                         Display this product on the featured section of the
-//                         homepage
-//                       </FormDescription>
-//                     </div>
-//                     <FormControl>
-//                       <Switch
-//                         checked={field.value}
-//                         onCheckedChange={field.onChange}
-//                       />
-//                     </FormControl>
-//                   </FormLabel>
-//                 )}
-//               />
-//               <Separator />
-//               {/* Product Images */}
-//               <div>
-//                 <div className="flex justify-between items-center mb-2">
-//                   <FormLabel className="text-base">Product Images</FormLabel>
-//                   <FormDescription className="text-xs">
-//                     Upload 2-5 images (max 5MB each)
-//                   </FormDescription>
-//                   <Button
-//                     type="button"
-//                     variant="outline"
-//                     size="sm"
-//                     onClick={addImageField}
-//                     disabled={form.watch("productImages").length >= 5}
-//                   >
-//                     <Plus className="h-4 w-4 mr-2" />
-//                     Add Image
-//                   </Button>
-//                 </div>
-
-//                 <div className="space-y-4">
-//                   {/* File uploader for multiple image files */}
-//                   <FormField
-//                     control={form.control}
-//                     name="productImages"
-//                     render={({ field }) => (
-//                       <FormItem>
-//                         <FormControl>
-//                           <FileUploader
-//                             value={field.value.filter(
-//                               (item) => item instanceof File
-//                             )}
-//                             onValueChange={(files) => {
-//                               const urlImages = field.value.filter(
-//                                 (item) => typeof item === "string"
-//                               );
-
-//                               field.onChange([...urlImages, ...files]);
-//                             }}
-//                             maxFiles={5}
-//                             maxSize={MAX_FILE_SIZE}
-//                             accept={ACCEPTED_IMAGE_TYPES}
-//                           />
-//                         </FormControl>
-//                         <FormMessage />
-//                       </FormItem>
-//                     )}
-//                   />
-
-//                   {/* URL inputs for image URLs */}
-//                   {form.watch("productImages").map((image, index) => {
-//                     // Skip file objects, only render inputs for string URLs
-//                     if (image instanceof File) return null;
-
-//                     return (
-//                       <div key={`image-url-${index}`} className="flex gap-3">
-//                         <FormField
-//                           control={form.control}
-//                           name={`productImages.${index}`}
-//                           render={({ field }) => (
-//                             <FormItem className="flex-1">
-//                               <FormControl>
-//                                 <div className="flex">
-//                                   <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
-//                                     <Upload className="h-4 w-4 text-muted-foreground" />
-//                                   </div>
-//                                   <Input
-//                                     placeholder="https://example.com/image.jpg"
-//                                     className="rounded-l-none"
-//                                     {...field}
-//                                   />
-//                                 </div>
-//                               </FormControl>
-//                               <FormMessage />
-//                             </FormItem>
-//                           )}
-//                         />
-//                         <Button
-//                           type="button"
-//                           variant="ghost"
-//                           size="icon"
-//                           onClick={() => removeImageField(index)}
-//                           disabled={form.watch("productImages").length <= 2}
-//                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
-//                         >
-//                           <Trash2 className="h-4 w-4" />
-//                           <span className="sr-only">Remove</span>
-//                         </Button>
-//                       </div>
-//                     );
-//                   })}
-//                 </div>
-//               </div>
-//               <Separator />
-//               {/* Product Selection Steps */}
-//               <div>
-//                 <div className="flex justify-between items-center mb-2">
-//                   <FormLabel className="text-base">
-//                     Product Selection Steps
-//                   </FormLabel>
-//                   <Button
-//                     type="button"
-//                     variant="outline"
-//                     size="sm"
-//                     onClick={addSelectionStep}
-//                   >
-//                     <Plus className="h-4 w-4 mr-2" />
-//                     Add Step
-//                   </Button>
-//                 </div>
-
-//                 {form.watch("productSelectionStep").map((_, index) => (
-//                   <div key={index} className="flex gap-3 mb-3">
-//                     <FormField
-//                       control={form.control}
-//                       name={`productSelectionStep.${index}`}
-//                       render={({ field }) => (
-//                         <FormItem className="flex-1">
-//                           <FormControl>
-//                             <Select
-//                               onValueChange={field.onChange}
-//                               value={field.value}
-//                             >
-//                               <SelectTrigger>
-//                                 <SelectValue placeholder="Select a step" />
-//                               </SelectTrigger>
-//                               <SelectContent>
-//                                 {productSelectionOptions.map(
-//                                   ({ label, value }) => (
-//                                     <SelectItem key={value} value={value}>
-//                                       {label}
-//                                     </SelectItem>
-//                                   )
-//                                 )}
-//                               </SelectContent>
-//                             </Select>
-//                           </FormControl>
-//                           <FormMessage />
-//                         </FormItem>
-//                       )}
-//                     />
-//                     <Button
-//                       type="button"
-//                       variant="ghost"
-//                       size="icon"
-//                       onClick={() => removeSelectionStep(index)}
-//                       disabled={form.watch("productSelectionStep").length <= 1}
-//                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
-//                     >
-//                       <Trash2 className="h-4 w-4" />
-//                       <span className="sr-only">Remove</span>
-//                     </Button>
-//                   </div>
-//                 ))}
-
-//                 <FormDescription>
-//                   Select steps that customers will follow when choosing product
-//                   options (e.g., "Color", "Storage").
-//                 </FormDescription>
-//               </div>
-//               <Separator />
-//               {/* Product Options Management */}
-//               <div>
-//                 <div className="flex justify-between items-center mb-4">
-//                   <div>
-//                     <h3 className="text-lg font-medium">Product Options</h3>
-//                     <p className="text-sm text-muted-foreground">
-//                       Manage variations of this product (colors, materials,
-//                       etc.)
-//                     </p>
-//                   </div>
-//                   <Button type="button" onClick={handleAddOption} size="sm">
-//                     <Plus className="h-4 w-4 mr-2" />
-//                     Add Option
-//                   </Button>
-//                 </div>
-
-//                 {form.watch("productOptions")?.length > 0 ? (
-//                   <div className="border rounded-md">
-//                     <Table>
-//                       <TableHeader>
-//                         <TableRow>
-//                           <TableHead>Type</TableHead>
-//                           <TableHead>Value</TableHead>
-//                           <TableHead>Price ($)</TableHead>
-//                           <TableHead>Stock</TableHead>
-//                           <TableHead className="w-[100px] text-right">
-//                             Actions
-//                           </TableHead>
-//                         </TableRow>
-//                       </TableHeader>
-//                       <TableBody>
-//                         {form.watch("productOptions").map((option, index) => {
-//                           const { type, value } = formatOption(option);
-//                           return (
-//                             <TableRow key={option._id || index}>
-//                               <TableCell className="font-medium capitalize">
-//                                 {type}
-//                               </TableCell>
-//                               <TableCell>
-//                                 {type === "color" ? (
-//                                   <div className="flex items-center gap-2">
-//                                     <div
-//                                       className="w-6 h-6 rounded-full border"
-//                                       style={{ backgroundColor: value }}
-//                                     />
-//                                     {value}
-//                                   </div>
-//                                 ) : (
-//                                   value
-//                                 )}
-//                               </TableCell>
-//                               <TableCell>{formatPrice(option.price)}</TableCell>
-//                               <TableCell>{option.stock}</TableCell>
-//                               <TableCell className="text-right">
-//                                 <div className="flex justify-end gap-2">
-//                                   <Button
-//                                     type="button"
-//                                     variant="ghost"
-//                                     size="icon"
-//                                     onClick={() => handleEditOption(index)}
-//                                   >
-//                                     <Edit className="h-4 w-4" />
-//                                     <span className="sr-only">Edit</span>
-//                                   </Button>
-//                                   <Button
-//                                     type="button"
-//                                     variant="ghost"
-//                                     size="icon"
-//                                     onClick={() => handleDeleteOption(index)}
-//                                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
-//                                   >
-//                                     <Trash2 className="h-4 w-4" />
-//                                     <span className="sr-only">Delete</span>
-//                                   </Button>
-//                                 </div>
-//                               </TableCell>
-//                             </TableRow>
-//                           );
-//                         })}
-//                       </TableBody>
-//                     </Table>
-//                   </div>
-//                 ) : (
-//                   <div className="border rounded-md p-8 text-center">
-//                     <p className="text-muted-foreground">
-//                       No options added yet
-//                     </p>
-//                     <Button
-//                       type="button"
-//                       variant="outline"
-//                       className="mt-4"
-//                       onClick={handleAddOption}
-//                     >
-//                       <Plus className="h-4 w-4 mr-2" />
-//                       Add Your First Option
-//                     </Button>
-//                   </div>
-//                 )}
-//               </div>
-//               <div className="flex justify-end gap-3 pt-4">
-//                 <Link to={"/dashboard/product"}>
-//                   <Button type="button" variant="outline">
-//                     Cancel
-//                   </Button>
-//                 </Link>
-//                 <Button type="submit" disabled={isSubmitting}>
-//                   {isSubmitting
-//                     ? "Submitting..."
-//                     : initialData
-//                     ? "Update Product"
-//                     : "Create Product"}
-//                 </Button>
-//               </div>
-//             </form>
-//           </Form>
-//         </CardContent>
-//       </Card>
-
-//       {/* Product Option Dialog */}
-//       <Dialog open={isOptionDialogOpen} onOpenChange={setIsOptionDialogOpen}>
-//         <DialogContent className="sm:max-w-md">
-//           <DialogHeader>
-//             <DialogTitle>
-//               {editingOptionIndex !== null
-//                 ? "Edit Option"
-//                 : "Add Product Option"}
-//             </DialogTitle>
-//             <DialogDescription>
-//               {editingOptionIndex !== null
-//                 ? "Update the details for this product option"
-//                 : "Create a new option for this product"}
-//             </DialogDescription>
-//           </DialogHeader>
-
-//           <form
-//             onSubmit={optionForm.handleSubmit(handleSaveOption)}
-//             className="space-y-6"
-//           >
-//             {/* Option Type Selection */}
-//             <div className="grid w-full gap-1.5">
-//               <label htmlFor="optionType" className="text-sm font-medium">
-//                 Option Type
-//               </label>
-//               <Select
-//                 value={optionForm.watch("optionType")}
-//                 onValueChange={(value) =>
-//                   optionForm.setValue("optionType", value)
-//                 }
-//               >
-//                 <SelectTrigger>
-//                   <SelectValue placeholder="Select option type" />
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                   {optionTypes.map((option) => (
-//                     <SelectItem key={option.value} value={option.value}>
-//                       {option.label}
-//                     </SelectItem>
-//                   ))}
-//                 </SelectContent>
-//               </Select>
-//               {optionForm.formState.errors.optionType && (
-//                 <p className="text-sm text-destructive">
-//                   {optionForm.formState.errors.optionType.message}
-//                 </p>
-//               )}
-//             </div>
-
-//             {/* Option Value */}
-//             <div className="grid w-full gap-1.5">
-//               <label htmlFor="optionValue" className="text-sm font-medium">
-//                 Option Value
-//               </label>
-//               <Input
-//                 id="optionValue"
-//                 type={
-//                   optionForm.watch("optionType") === "color" ? "color" : "text"
-//                 }
-//                 placeholder={getPlaceholder(
-//                   optionForm.watch("optionType") || ""
-//                 )}
-//                 value={optionForm.watch("optionValue")}
-//                 onChange={(e) =>
-//                   optionForm.setValue("optionValue", e.target.value)
-//                 }
-//                 className="col-span-3"
-//               />
-//               {optionForm.formState.errors.optionValue && (
-//                 <p className="text-sm text-destructive">
-//                   {optionForm.formState.errors.optionValue.message}
-//                 </p>
-//               )}
-//             </div>
-
-//             <div className="grid grid-cols-2 gap-4">
-//               {/* Price */}
-//               <div className="grid w-full gap-1.5">
-//                 <label htmlFor="price" className="text-sm font-medium">
-//                   Price ($)
-//                 </label>
-//                 <Input
-//                   id="price"
-//                   type="number"
-//                   min="0"
-//                   step="0.01"
-//                   value={optionForm.watch("price")}
-//                   onChange={(e) =>
-//                     optionForm.setValue("price", parseFloat(e.target.value))
-//                   }
-//                 />
-//                 {optionForm.formState.errors.price && (
-//                   <p className="text-sm text-destructive">
-//                     {optionForm.formState.errors.price.message}
-//                   </p>
-//                 )}
-//               </div>
-
-//               {/* Stock */}
-//               <div className="grid w-full gap-1.5">
-//                 <label htmlFor="stock" className="text-sm font-medium">
-//                   Stock
-//                 </label>
-//                 <Input
-//                   id="stock"
-//                   type="number"
-//                   min="0"
-//                   step="1"
-//                   value={optionForm.watch("stock")}
-//                   onChange={(e) =>
-//                     optionForm.setValue("stock", parseInt(e.target.value))
-//                   }
-//                 />
-//                 {optionForm.formState.errors.stock && (
-//                   <p className="text-sm text-destructive">
-//                     {optionForm.formState.errors.stock.message}
-//                   </p>
-//                 )}
-//               </div>
-//             </div>
-
-//             <DialogFooter>
-//               <Button
-//                 type="button"
-//                 variant="outline"
-//                 onClick={() => setIsOptionDialogOpen(false)}
-//               >
-//                 Cancel
-//               </Button>
-//               <Button type="submit">
-//                 {editingOptionIndex !== null ? "Update Option" : "Add Option"}
-//               </Button>
-//             </DialogFooter>
-//           </form>
-//         </DialogContent>
-//       </Dialog>
-//     </>
-//   );
-// }
-
 import { z } from "zod";
-import React, { useMemo } from "react";
 import { Plus, Trash2, Upload, Edit } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
@@ -715,587 +52,476 @@ import { Switch } from "@/src/components/ui/switch";
 import { formatPrice, getPlaceholder } from "@/src/lib/utils";
 import { optionTypes } from "@/src/constants/product-form";
 import useProductForm from "@/src/hooks/use-product-form";
-import { UseFormReturn } from "react-hook-form";
 
 export type FormValues = z.infer<typeof extendedFormSchema>;
 
-// Basic Info Component
-const BasicInfoFields = React.memo(
-  ({ form }: { form: UseFormReturn<FormValues> }) => {
-    return (
-      <>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Product Name */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Product Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="iPhone 15 Pro" {...field} />
-                </FormControl>
-                <FormDescription>Enter the exact product name</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Slug */}
-          <FormField
-            control={form.control}
-            name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Slug</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="iphone-15-pro"
-                    value={form.watch("name")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  URL-friendly version of the name
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Description */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Enter product description..."
-                  className="min-h-[120px] resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </>
-    );
-  }
-);
-
-// Product Pricing and Category Component
-const PricingAndCategoryFields = React.memo(
-  ({ form }: { form: UseFormReturn<FormValues> }) => {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Base Price */}
-        <FormField
-          control={form.control}
-          name="basePrice"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Base Price ($)</FormLabel>
-              <FormControl>
-                <Input type="number" min="0" step="0.01" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Category */}
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="iphone">iPhone</SelectItem>
-                  <SelectItem value="macbook">MacBook</SelectItem>
-                  <SelectItem value="apple_watch">Apple Watch</SelectItem>
-                  <SelectItem value="ipad">iPad</SelectItem>
-                  <SelectItem value="airpods">AirPods</SelectItem>
-                  <SelectItem value="phonecase">Phone Case</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Stock */}
-        <FormField
-          control={form.control}
-          name="stock"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Stock</FormLabel>
-              <FormControl>
-                <Input type="number" min="0" step="1" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-    );
-  }
-);
-
-// Featured Product Switch Component
-const FeaturedProductSwitch = React.memo(
-  ({ form }: { form: UseFormReturn<FormValues> }) => {
-    return (
-      <FormField
-        control={form.control}
-        name="isFeatured"
-        render={({ field }) => (
-          <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-            <div className="space-y-0.5">
-              <p>Featured Product</p>
-              <FormDescription>
-                Display this product on the featured section of the homepage
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormControl>
-          </FormLabel>
-        )}
-      />
-    );
-  }
-);
-
-// Product Images Component
-const ProductImagesSection = React.memo(
-  ({
-    form,
+export default function ProductForm({
+  initialData,
+  pageTitle = "Create New Product",
+}: {
+  initialData?: Partial<FormValues> | null;
+  pageTitle?: string;
+}) {
+  const {
     addImageField,
+    addSelectionStep,
+    editingOptionIndex,
+    form,
+    formatOption,
+    handleAddOption,
+    handleDeleteOption,
+    handleEditOption,
+    handleSaveOption,
+    isOptionDialogOpen,
+    isSubmitting,
+    onSubmit,
+    productSelectionOptions,
     removeImageField,
-  }: {
-    form: UseFormReturn<FormValues>;
-    addImageField: () => void;
-    removeImageField: (index: number) => void;
-  }) => {
-    const imageCount = useMemo(
-      () => form.watch("productImages").length,
-      [form.watch("productImages")]
-    );
-
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <FormLabel className="text-base">Product Images</FormLabel>
-          <FormDescription className="text-xs">
-            Upload 2-5 images (max 5MB each)
-          </FormDescription>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={addImageField}
-            disabled={imageCount >= 5}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Image
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          {/* File uploader for multiple image files */}
-          <FormField
-            control={form.control}
-            name="productImages"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FileUploader
-                    value={field.value.filter((item) => item instanceof File)}
-                    onValueChange={(files) => {
-                      const urlImages = field.value.filter(
-                        (item) => typeof item === "string"
-                      );
-
-                      field.onChange([...urlImages, ...files]);
-                    }}
-                    maxFiles={5}
-                    maxSize={MAX_FILE_SIZE}
-                    accept={ACCEPTED_IMAGE_TYPES}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* URL inputs for image URLs */}
-          {form.watch("productImages").map((image, index) => {
-            // Skip file objects, only render inputs for string URLs
-            if (image instanceof File) return null;
-
-            return (
-              <div key={`image-url-${index}`} className="flex gap-3">
+    removeSelectionStep,
+    setIsOptionDialogOpen,
+    optionForm,
+  } = useProductForm({ initialData: initialData });
+  return (
+    <>
+      <Card className="mx-auto w-full max-w-3xl">
+        <CardHeader>
+          <CardTitle className="text-left text-2xl font-bold">
+            {pageTitle}
+          </CardTitle>
+          <CardDescription>
+            {initialData
+              ? "Edit product details and options"
+              : "Add a new product to your inventory. Fill in all required fields."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Product Name */}
                 <FormField
                   control={form.control}
-                  name={`productImages.${index}`}
+                  name="name"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
+                    <FormItem>
+                      <FormLabel>Product Name</FormLabel>
                       <FormControl>
-                        <div className="flex">
-                          <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
-                            <Upload className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                          <Input
-                            placeholder="https://example.com/image.jpg"
-                            className="rounded-l-none"
-                            {...field}
-                          />
-                        </div>
+                        <Input placeholder="iPhone 15 Pro" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter the exact product name
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Slug */}
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="iphone-15-pro"
+                          value={form.watch("name")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        URL-friendly version of the name
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter product description..."
+                        className="min-h-[120px] resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Base Price */}
+                <FormField
+                  control={form.control}
+                  name="basePrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Base Price ($)</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="0.01" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeImageField(index)}
-                  disabled={imageCount <= 2}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Remove</span>
+
+                {/* Category */}
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="iphone">iPhone</SelectItem>
+                          <SelectItem value="macbook">MacBook</SelectItem>
+                          <SelectItem value="apple_watch">
+                            Apple Watch
+                          </SelectItem>
+                          <SelectItem value="ipad">iPad</SelectItem>
+                          <SelectItem value="airpods">AirPods</SelectItem>
+                          <SelectItem value="phonecase">Phone Case</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Stock */}
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="1" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Featured Product Switch */}
+              <FormField
+                control={form.control}
+                name="isFeatured"
+                render={({ field }) => (
+                  <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <p>Featured Product</p>
+                      <FormDescription>
+                        Display this product on the featured section of the
+                        homepage
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormLabel>
+                )}
+              />
+              <Separator />
+              {/* Product Images */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <FormLabel className="text-base">Product Images</FormLabel>
+                  <FormDescription className="text-xs">
+                    Upload 2-5 images (max 5MB each)
+                  </FormDescription>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addImageField}
+                    disabled={form.watch("productImages").length >= 5}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Image
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* File uploader for multiple image files */}
+                  <FormField
+                    control={form.control}
+                    name="productImages"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <FileUploader
+                            value={field.value.filter(
+                              (item) => item instanceof File
+                            )}
+                            onValueChange={(files) => {
+                              const urlImages = field.value.filter(
+                                (item) => typeof item === "string"
+                              );
+
+                              field.onChange([...urlImages, ...files]);
+                            }}
+                            maxFiles={5}
+                            maxSize={MAX_FILE_SIZE}
+                            accept={ACCEPTED_IMAGE_TYPES}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* URL inputs for image URLs */}
+                  {form.watch("productImages").map((image, index) => {
+                    // Skip file objects, only render inputs for string URLs
+                    if (image instanceof File) return null;
+
+                    return (
+                      <div key={`image-url-${index}`} className="flex gap-3">
+                        <FormField
+                          control={form.control}
+                          name={`productImages.${index}`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <div className="flex">
+                                  <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
+                                    <Upload className="h-4 w-4 text-muted-foreground" />
+                                  </div>
+                                  <Input
+                                    placeholder="https://example.com/image.jpg"
+                                    className="rounded-l-none"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeImageField(index)}
+                          disabled={form.watch("productImages").length <= 2}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Remove</span>
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <Separator />
+              {/* Product Selection Steps */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <FormLabel className="text-base">
+                    Product Selection Steps
+                  </FormLabel>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addSelectionStep}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Step
+                  </Button>
+                </div>
+
+                {form.watch("productSelectionStep").map((_, index) => (
+                  <div key={index} className="flex gap-3 mb-3">
+                    <FormField
+                      control={form.control}
+                      name={`productSelectionStep.${index}`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a step" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {productSelectionOptions.map(
+                                  ({ label, value }) => (
+                                    <SelectItem key={value} value={value}>
+                                      {label}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeSelectionStep(index)}
+                      disabled={form.watch("productSelectionStep").length <= 1}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Remove</span>
+                    </Button>
+                  </div>
+                ))}
+
+                <FormDescription>
+                  Select steps that customers will follow when choosing product
+                  options (e.g., "Color", "Storage").
+                </FormDescription>
+              </div>
+              <Separator />
+              {/* Product Options Management */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-lg font-medium">Product Options</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Manage variations of this product (colors, materials,
+                      etc.)
+                    </p>
+                  </div>
+                  <Button type="button" onClick={handleAddOption} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Option
+                  </Button>
+                </div>
+
+                {form.watch("productOptions")?.length > 0 ? (
+                  <div className="border rounded-md">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Value</TableHead>
+                          <TableHead>Price ($)</TableHead>
+                          <TableHead>Stock</TableHead>
+                          <TableHead className="w-[100px] text-right">
+                            Actions
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {form.watch("productOptions").map((option, index) => {
+                          const { type, value } = formatOption(option);
+                          return (
+                            <TableRow key={option._id || index}>
+                              <TableCell className="font-medium capitalize">
+                                {type}
+                              </TableCell>
+                              <TableCell>
+                                {type === "color" ? (
+                                  <div className="flex items-center gap-2">
+                                    <div
+                                      className="w-6 h-6 rounded-full border"
+                                      style={{ backgroundColor: value }}
+                                    />
+                                    {value}
+                                  </div>
+                                ) : (
+                                  value
+                                )}
+                              </TableCell>
+                              <TableCell>{formatPrice(option.price)}</TableCell>
+                              <TableCell>{option.stock}</TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditOption(index)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                    <span className="sr-only">Edit</span>
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteOption(index)}
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Delete</span>
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="border rounded-md p-8 text-center">
+                    <p className="text-muted-foreground">
+                      No options added yet
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="mt-4"
+                      onClick={handleAddOption}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Option
+                    </Button>
+                  </div>
+                )}
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <Link to={"/dashboard/product"}>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
+                </Link>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting
+                    ? "Submitting..."
+                    : initialData
+                    ? "Update Product"
+                    : "Create Product"}
                 </Button>
               </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-);
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
-// Selection Steps Component
-const SelectionStepsSection = React.memo(
-  ({
-    form,
-    addSelectionStep,
-    removeSelectionStep,
-    productSelectionOptions,
-  }: {
-    form: UseFormReturn<FormValues>;
-    addSelectionStep: () => void;
-    removeSelectionStep: (index: number) => void;
-    productSelectionOptions: {
-      label: string;
-      value: string;
-    }[];
-  }) => {
-    const selectionSteps = useMemo(
-      () => form.watch("productSelectionStep"),
-      [form.watch("productSelectionStep")]
-    );
-
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <FormLabel className="text-base">Product Selection Steps</FormLabel>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={addSelectionStep}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Step
-          </Button>
-        </div>
-
-        {selectionSteps.map((_, index) => (
-          <div key={index} className="flex gap-3 mb-3">
-            <FormField
-              control={form.control}
-              name={`productSelectionStep.${index}`}
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a step" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {productSelectionOptions.map(({ label, value }) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => removeSelectionStep(index)}
-              disabled={selectionSteps.length <= 1}
-              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-            >
-              <Trash2 className="h-4 w-4" />
-              <span className="sr-only">Remove</span>
-            </Button>
-          </div>
-        ))}
-
-        <FormDescription>
-          Select steps that customers will follow when choosing product options
-          (e.g., "Color", "Storage").
-        </FormDescription>
-      </div>
-    );
-  }
-);
-
-// Product Option Table Component
-const ProductOptionTable = React.memo(
-  ({
-    options,
-    formatOption,
-    handleEditOption,
-    handleDeleteOption,
-  }: {
-    options: {
-      stock: number;
-      price: number;
-      _id?: string | undefined;
-      productId?: string | undefined;
-      optionType?: string | undefined;
-      optionValue?: string | undefined;
-      createdAt?: string | undefined;
-      updatedAt?: string | undefined;
-    }[];
-    formatOption: (option: any) => {
-      type: string;
-      value: any;
-    };
-    handleEditOption: (index: number) => void;
-    handleDeleteOption: (index: number) => void;
-  }) => {
-    if (!options || options.length === 0) return null;
-
-    return (
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Value</TableHead>
-              <TableHead>Price ($)</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead className="w-[100px] text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {options.map((option, index) => {
-              const { type, value } = formatOption(option);
-              return (
-                <TableRow key={option._id || index}>
-                  <TableCell className="font-medium capitalize">
-                    {type}
-                  </TableCell>
-                  <TableCell>
-                    {type === "color" ? (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-6 h-6 rounded-full border"
-                          style={{ backgroundColor: value }}
-                        />
-                        {value}
-                      </div>
-                    ) : (
-                      value
-                    )}
-                  </TableCell>
-                  <TableCell>{formatPrice(option.price)}</TableCell>
-                  <TableCell>{option.stock}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEditOption(index)}
-                      >
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteOption(index)}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
-    );
-  }
-);
-
-// Empty Product Options Component
-const EmptyProductOptions = React.memo(
-  ({ handleAddOption }: { handleAddOption: () => void }) => {
-    return (
-      <div className="border rounded-md p-8 text-center">
-        <p className="text-muted-foreground">No options added yet</p>
-        <Button
-          type="button"
-          variant="outline"
-          className="mt-4"
-          onClick={handleAddOption}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Your First Option
-        </Button>
-      </div>
-    );
-  }
-);
-
-// Product Options Section Component
-const ProductOptionsSection = React.memo(
-  ({
-    form,
-    handleAddOption,
-    handleEditOption,
-    handleDeleteOption,
-    formatOption,
-  }: {
-    form: UseFormReturn<FormValues>;
-    handleAddOption: () => void;
-    handleEditOption: (index: number) => void;
-    handleDeleteOption: (index: number) => void;
-    formatOption: (option: any) => {
-      type: string;
-      value: any;
-    };
-  }) => {
-    const productOptions = useMemo(
-      () => form.watch("productOptions") || [],
-      [form.watch("productOptions")]
-    );
-
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h3 className="text-lg font-medium">Product Options</h3>
-            <p className="text-sm text-muted-foreground">
-              Manage variations of this product (colors, materials, etc.)
-            </p>
-          </div>
-          <Button type="button" onClick={handleAddOption} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Option
-          </Button>
-        </div>
-
-        {productOptions.length > 0 ? (
-          <ProductOptionTable
-            options={productOptions}
-            formatOption={formatOption}
-            handleEditOption={handleEditOption}
-            handleDeleteOption={handleDeleteOption}
-          />
-        ) : (
-          <EmptyProductOptions handleAddOption={handleAddOption} />
-        )}
-      </div>
-    );
-  }
-);
-
-// Form Action Buttons Component
-const FormActionButtons = React.memo(
-  ({
-    isSubmitting,
-    initialData,
-  }: {
-    isSubmitting: boolean;
-    initialData?: Partial<FormValues> | null;
-  }) => {
-    return (
-      <div className="flex justify-end gap-3 pt-4">
-        <Link to={"/dashboard/product"}>
-          <Button type="button" variant="outline">
-            Cancel
-          </Button>
-        </Link>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting
-            ? "Submitting..."
-            : initialData
-            ? "Update Product"
-            : "Create Product"}
-        </Button>
-      </div>
-    );
-  }
-);
-
-// Product Option Dialog Component
-const ProductOptionDialog = React.memo(
-  ({
-    isOpen,
-    setIsOpen,
-    editingOptionIndex,
-    optionForm,
-    handleSaveOption,
-    optionTypes,
-  }: {
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    editingOptionIndex: number | null;
-    optionForm: UseFormReturn<{
-      stock: number;
-      optionType: string;
-      optionValue: string;
-      price: number;
-      _id?: string;
-    }>;
-    handleSaveOption: (data: any) => void;
-    optionTypes: {
-      value: string;
-      label: string;
-    }[];
-  }) => {
-    return (
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {/* Product Option Dialog */}
+      <Dialog open={isOptionDialogOpen} onOpenChange={setIsOptionDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
@@ -1419,7 +645,7 @@ const ProductOptionDialog = React.memo(
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsOpen(false)}
+                onClick={() => setIsOptionDialogOpen(false)}
               >
                 Cancel
               </Button>
@@ -1430,112 +656,883 @@ const ProductOptionDialog = React.memo(
           </form>
         </DialogContent>
       </Dialog>
-    );
-  }
-);
-
-// Main ProductForm Component
-export default function ProductForm({
-  initialData,
-  pageTitle = "Create New Product",
-}: {
-  initialData?: Partial<FormValues> | null;
-  pageTitle?: string;
-}) {
-  const {
-    addImageField,
-    addSelectionStep,
-    editingOptionIndex,
-    form,
-    formatOption,
-    handleAddOption,
-    handleDeleteOption,
-    handleEditOption,
-    handleSaveOption,
-    isOptionDialogOpen,
-    isSubmitting,
-    onSubmit,
-    productSelectionOptions,
-    removeImageField,
-    removeSelectionStep,
-    setIsOptionDialogOpen,
-    optionForm,
-  } = useProductForm({ initialData });
-
-  return (
-    <>
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader>
-          <CardTitle className="text-left text-2xl font-bold">
-            {pageTitle}
-          </CardTitle>
-          <CardDescription>
-            {initialData
-              ? "Edit product details and options"
-              : "Add a new product to your inventory. Fill in all required fields."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Basic Info Section */}
-              <BasicInfoFields form={form} />
-
-              {/* Pricing and Category Section */}
-              <PricingAndCategoryFields form={form} />
-
-              {/* Featured Product Switch */}
-              <FeaturedProductSwitch form={form} />
-
-              <Separator />
-
-              {/* Product Images Section */}
-              <ProductImagesSection
-                form={form}
-                addImageField={addImageField}
-                removeImageField={removeImageField}
-              />
-
-              <Separator />
-
-              {/* Product Selection Steps Section */}
-              <SelectionStepsSection
-                form={form}
-                addSelectionStep={addSelectionStep}
-                removeSelectionStep={removeSelectionStep}
-                productSelectionOptions={productSelectionOptions}
-              />
-
-              <Separator />
-
-              {/* Product Options Section */}
-              <ProductOptionsSection
-                form={form}
-                handleAddOption={handleAddOption}
-                handleEditOption={handleEditOption}
-                handleDeleteOption={handleDeleteOption}
-                formatOption={formatOption}
-              />
-
-              {/* Form Actions */}
-              <FormActionButtons
-                isSubmitting={isSubmitting}
-                initialData={initialData}
-              />
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      {/* Product Option Dialog */}
-      <ProductOptionDialog
-        isOpen={isOptionDialogOpen}
-        setIsOpen={setIsOptionDialogOpen}
-        editingOptionIndex={editingOptionIndex}
-        optionForm={optionForm}
-        handleSaveOption={handleSaveOption}
-        optionTypes={optionTypes}
-      />
     </>
   );
 }
+
+// import { z } from "zod";
+// import React, { useMemo } from "react";
+// import { Plus, Trash2, Upload, Edit } from "lucide-react";
+
+// import { Button } from "@/src/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/src/components/ui/card";
+// import {
+//   Form,
+//   FormControl,
+//   FormDescription,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from "@/src/components/ui/form";
+// import { Input } from "@/src/components/ui/input";
+// import { Textarea } from "@/src/components/ui/textarea";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/src/components/ui/select";
+// import { Separator } from "@/src/components/ui/separator";
+// import { FileUploader } from "../../ui/file-uploader";
+// import { extendedFormSchema } from "@/src/schemas";
+// import { MAX_FILE_SIZE } from "@/src/constants";
+// import { Link } from "react-router";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/src/components/ui/table";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+// } from "@/src/components/ui/dialog";
+// import { Switch } from "@/src/components/ui/switch";
+// import { formatPrice, getPlaceholder } from "@/src/lib/utils";
+// import { optionTypes } from "@/src/constants/product-form";
+// import useProductForm from "@/src/hooks/use-product-form";
+// import { UseFormReturn } from "react-hook-form";
+
+// export type FormValues = z.infer<typeof extendedFormSchema>;
+
+// // Basic Info Component
+// const BasicInfoFields = React.memo(
+//   ({ form }: { form: UseFormReturn<FormValues> }) => {
+//     return (
+//       <>
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//           {/* Product Name */}
+//           <FormField
+//             control={form.control}
+//             name="name"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Product Name</FormLabel>
+//                 <FormControl>
+//                   <Input placeholder="iPhone 15 Pro" {...field} />
+//                 </FormControl>
+//                 <FormDescription>Enter the exact product name</FormDescription>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           {/* Slug */}
+//           <FormField
+//             control={form.control}
+//             name="slug"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Slug</FormLabel>
+//                 <FormControl>
+//                   <Input placeholder="iphone-15-pro" {...field} />
+//                 </FormControl>
+//                 <FormDescription>
+//                   URL-friendly version of the name
+//                 </FormDescription>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//         </div>
+
+//         {/* Description */}
+//         <FormField
+//           control={form.control}
+//           name="description"
+//           render={({ field }) => (
+//             <FormItem>
+//               <FormLabel>Description</FormLabel>
+//               <FormControl>
+//                 <Textarea
+//                   placeholder="Enter product description..."
+//                   className="min-h-[120px] resize-none"
+//                   {...field}
+//                 />
+//               </FormControl>
+//               <FormMessage />
+//             </FormItem>
+//           )}
+//         />
+//       </>
+//     );
+//   }
+// );
+
+// // Product Pricing and Category Component
+// const PricingAndCategoryFields = React.memo(
+//   ({ form }: { form: UseFormReturn<FormValues> }) => {
+//     return (
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//         {/* Base Price */}
+//         <FormField
+//           control={form.control}
+//           name="basePrice"
+//           render={({ field }) => (
+//             <FormItem>
+//               <FormLabel>Base Price ($)</FormLabel>
+//               <FormControl>
+//                 <Input type="number" min="0" step="0.01" {...field} />
+//               </FormControl>
+//               <FormMessage />
+//             </FormItem>
+//           )}
+//         />
+
+//         {/* Category */}
+//         <FormField
+//           control={form.control}
+//           name="category"
+//           render={({ field }) => (
+//             <FormItem>
+//               <FormLabel>Category</FormLabel>
+//               <Select onValueChange={field.onChange} defaultValue={field.value}>
+//                 <FormControl>
+//                   <SelectTrigger>
+//                     <SelectValue placeholder="Select category" />
+//                   </SelectTrigger>
+//                 </FormControl>
+//                 <SelectContent>
+//                   <SelectItem value="iphone">iPhone</SelectItem>
+//                   <SelectItem value="macbook">MacBook</SelectItem>
+//                   <SelectItem value="apple_watch">Apple Watch</SelectItem>
+//                   <SelectItem value="ipad">iPad</SelectItem>
+//                   <SelectItem value="airpods">AirPods</SelectItem>
+//                   <SelectItem value="phonecase">Phone Case</SelectItem>
+//                 </SelectContent>
+//               </Select>
+//               <FormMessage />
+//             </FormItem>
+//           )}
+//         />
+
+//         {/* Stock */}
+//         <FormField
+//           control={form.control}
+//           name="stock"
+//           render={({ field }) => (
+//             <FormItem>
+//               <FormLabel>Stock</FormLabel>
+//               <FormControl>
+//                 <Input type="number" min="0" step="1" {...field} />
+//               </FormControl>
+//               <FormMessage />
+//             </FormItem>
+//           )}
+//         />
+//       </div>
+//     );
+//   }
+// );
+
+// // Featured Product Switch Component
+// const FeaturedProductSwitch = React.memo(
+//   ({ form }: { form: UseFormReturn<FormValues> }) => {
+//     return (
+//       <FormField
+//         control={form.control}
+//         name="isFeatured"
+//         render={({ field }) => (
+//           <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+//             <div className="space-y-0.5">
+//               <p>Featured Product</p>
+//               <FormDescription>
+//                 Display this product on the featured section of the homepage
+//               </FormDescription>
+//             </div>
+//             <FormControl>
+//               <Switch checked={field.value} onCheckedChange={field.onChange} />
+//             </FormControl>
+//           </FormLabel>
+//         )}
+//       />
+//     );
+//   }
+// );
+
+// // Product Images Component
+// const ProductImagesSection = React.memo(
+//   ({
+//     form,
+//     addImageField,
+//     removeImageField,
+//   }: {
+//     form: UseFormReturn<FormValues>;
+//     addImageField: () => void;
+//     removeImageField: (index: number) => void;
+//   }) => {
+//     const imageCount = useMemo(
+//       () => form.watch("productImages").length,
+//       [form]
+//     );
+
+//     return (
+//       <div>
+//         <div className="flex justify-between items-center mb-2">
+//           <FormLabel className="text-base">Product Images</FormLabel>
+//           <FormDescription className="text-xs">
+//             Upload 2-5 images (max 5MB each)
+//           </FormDescription>
+//           <Button
+//             type="button"
+//             variant="outline"
+//             size="sm"
+//             onClick={addImageField}
+//             disabled={imageCount >= 5}
+//           >
+//             <Plus className="h-4 w-4 mr-2" />
+//             Add Image
+//           </Button>
+//         </div>
+
+//         <div className="space-y-4">
+//           {/* File uploader for multiple image files */}
+//           <FormField
+//             control={form.control}
+//             name="productImages"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormControl>
+//                   <FileUploader
+//                     value={field.value.filter((item) => item instanceof File)}
+//                     onValueChange={(files) => {
+//                       const urlImages = field.value.filter(
+//                         (item) => typeof item === "string"
+//                       );
+//                       // @ts-expect-error: no sure what's the issue here TODO
+//                       field.onChange([...urlImages, ...files]);
+//                     }}
+//                     maxFiles={5}
+//                     maxSize={MAX_FILE_SIZE}
+//                     accept={{ "image/*": [] }}
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+
+//           {/* URL inputs for image URLs */}
+//           {form.watch("productImages").map((image, index) => {
+//             // Skip file objects, only render inputs for string URLs
+//             if (image instanceof File) return null;
+
+//             return (
+//               <div key={`image-url-${index}`} className="flex gap-3">
+//                 <FormField
+//                   control={form.control}
+//                   name={`productImages.${index}`}
+//                   render={({ field }) => (
+//                     <FormItem className="flex-1">
+//                       <FormControl>
+//                         <div className="flex">
+//                           <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
+//                             <Upload className="h-4 w-4 text-muted-foreground" />
+//                           </div>
+//                           {/* @ts-expect-error: no prob */}
+//                           <Input
+//                             placeholder="https://example.com/image.jpg"
+//                             className="rounded-l-none"
+//                             {...field}
+//                           />
+//                         </div>
+//                       </FormControl>
+//                       <FormMessage />
+//                     </FormItem>
+//                   )}
+//                 />
+//                 <Button
+//                   type="button"
+//                   variant="ghost"
+//                   size="icon"
+//                   onClick={() => removeImageField(index)}
+//                   disabled={imageCount <= 2}
+//                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
+//                 >
+//                   <Trash2 className="h-4 w-4" />
+//                   <span className="sr-only">Remove</span>
+//                 </Button>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </div>
+//     );
+//   }
+// );
+
+// // Selection Steps Component
+// const SelectionStepsSection = React.memo(
+//   ({
+//     form,
+//     addSelectionStep,
+//     removeSelectionStep,
+//     productSelectionOptions,
+//   }: {
+//     form: UseFormReturn<FormValues>;
+//     addSelectionStep: () => void;
+//     removeSelectionStep: (index: number) => void;
+//     productSelectionOptions: {
+//       label: string;
+//       value: string;
+//     }[];
+//   }) => {
+//     const selectionSteps = useMemo(
+//       () => form.watch("productSelectionStep"),
+//       [form]
+//     );
+
+//     return (
+//       <div>
+//         <div className="flex justify-between items-center mb-2">
+//           <FormLabel className="text-base">Product Selection Steps</FormLabel>
+//           <Button
+//             type="button"
+//             variant="outline"
+//             size="sm"
+//             onClick={addSelectionStep}
+//           >
+//             <Plus className="h-4 w-4 mr-2" />
+//             Add Step
+//           </Button>
+//         </div>
+
+//         {selectionSteps.map((_, index) => (
+//           <div key={index} className="flex gap-3 mb-3">
+//             <FormField
+//               control={form.control}
+//               name={`productSelectionStep.${index}`}
+//               render={({ field }) => (
+//                 <FormItem className="flex-1">
+//                   <FormControl>
+//                     <Select onValueChange={field.onChange} value={field.value}>
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Select a step" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         {productSelectionOptions.map(({ label, value }) => (
+//                           <SelectItem key={value} value={value}>
+//                             {label}
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+//             <Button
+//               type="button"
+//               variant="ghost"
+//               size="icon"
+//               onClick={() => removeSelectionStep(index)}
+//               disabled={selectionSteps.length <= 1}
+//               className="text-destructive hover:text-destructive hover:bg-destructive/10"
+//             >
+//               <Trash2 className="h-4 w-4" />
+//               <span className="sr-only">Remove</span>
+//             </Button>
+//           </div>
+//         ))}
+
+//         <FormDescription>
+//           Select steps that customers will follow when choosing product options
+//           (e.g., "Color", "Storage").
+//         </FormDescription>
+//       </div>
+//     );
+//   }
+// );
+
+// // Product Option Table Component
+// const ProductOptionTable = React.memo(
+//   ({
+//     options,
+//     formatOption,
+//     handleEditOption,
+//     handleDeleteOption,
+//   }: {
+//     options: {
+//       stock: number;
+//       price: number;
+//       _id?: string | undefined;
+//       productId?: string | undefined;
+//       optionType?: string | undefined;
+//       optionValue?: string | undefined;
+//       createdAt?: string | undefined;
+//       updatedAt?: string | undefined;
+//     }[];
+//     formatOption: (option: any) => {
+//       type: string;
+//       value: any;
+//     };
+//     handleEditOption: (index: number) => void;
+//     handleDeleteOption: (index: number) => void;
+//   }) => {
+//     if (!options || options.length === 0) return null;
+
+//     return (
+//       <div className="border rounded-md">
+//         <Table>
+//           <TableHeader>
+//             <TableRow>
+//               <TableHead>Type</TableHead>
+//               <TableHead>Value</TableHead>
+//               <TableHead>Price ($)</TableHead>
+//               <TableHead>Stock</TableHead>
+//               <TableHead className="w-[100px] text-right">Actions</TableHead>
+//             </TableRow>
+//           </TableHeader>
+//           <TableBody>
+//             {options.map((option, index) => {
+//               const { type, value } = formatOption(option);
+//               return (
+//                 <TableRow key={option._id || index}>
+//                   <TableCell className="font-medium capitalize">
+//                     {type}
+//                   </TableCell>
+//                   <TableCell>
+//                     {type === "color" ? (
+//                       <div className="flex items-center gap-2">
+//                         <div
+//                           className="w-6 h-6 rounded-full border"
+//                           style={{ backgroundColor: value }}
+//                         />
+//                         {value}
+//                       </div>
+//                     ) : (
+//                       value
+//                     )}
+//                   </TableCell>
+//                   <TableCell>{formatPrice(option.price)}</TableCell>
+//                   <TableCell>{option.stock}</TableCell>
+//                   <TableCell className="text-right">
+//                     <div className="flex justify-end gap-2">
+//                       <Button
+//                         type="button"
+//                         variant="ghost"
+//                         size="icon"
+//                         onClick={() => handleEditOption(index)}
+//                       >
+//                         <Edit className="h-4 w-4" />
+//                         <span className="sr-only">Edit</span>
+//                       </Button>
+//                       <Button
+//                         type="button"
+//                         variant="ghost"
+//                         size="icon"
+//                         onClick={() => handleDeleteOption(index)}
+//                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
+//                       >
+//                         <Trash2 className="h-4 w-4" />
+//                         <span className="sr-only">Delete</span>
+//                       </Button>
+//                     </div>
+//                   </TableCell>
+//                 </TableRow>
+//               );
+//             })}
+//           </TableBody>
+//         </Table>
+//       </div>
+//     );
+//   }
+// );
+
+// // Empty Product Options Component
+// const EmptyProductOptions = React.memo(
+//   ({ handleAddOption }: { handleAddOption: () => void }) => {
+//     return (
+//       <div className="border rounded-md p-8 text-center">
+//         <p className="text-muted-foreground">No options added yet</p>
+//         <Button
+//           type="button"
+//           variant="outline"
+//           className="mt-4"
+//           onClick={handleAddOption}
+//         >
+//           <Plus className="h-4 w-4 mr-2" />
+//           Add Your First Option
+//         </Button>
+//       </div>
+//     );
+//   }
+// );
+
+// // Product Options Section Component
+// const ProductOptionsSection = React.memo(
+//   ({
+//     form,
+//     handleAddOption,
+//     handleEditOption,
+//     handleDeleteOption,
+//     formatOption,
+//   }: {
+//     form: UseFormReturn<FormValues>;
+//     handleAddOption: () => void;
+//     handleEditOption: (index: number) => void;
+//     handleDeleteOption: (index: number) => void;
+//     formatOption: (option: any) => {
+//       type: string;
+//       value: any;
+//     };
+//   }) => {
+//     const productOptions = useMemo(
+//       () => form.watch("productOptions") || [],
+//       [form]
+//     );
+
+//     return (
+//       <div>
+//         <div className="flex justify-between items-center mb-4">
+//           <div>
+//             <h3 className="text-lg font-medium">Product Options</h3>
+//             <p className="text-sm text-muted-foreground">
+//               Manage variations of this product (colors, materials, etc.)
+//             </p>
+//           </div>
+//           <Button type="button" onClick={handleAddOption} size="sm">
+//             <Plus className="h-4 w-4 mr-2" />
+//             Add Option
+//           </Button>
+//         </div>
+
+//         {productOptions.length > 0 ? (
+//           <ProductOptionTable
+//             options={productOptions}
+//             formatOption={formatOption}
+//             handleEditOption={handleEditOption}
+//             handleDeleteOption={handleDeleteOption}
+//           />
+//         ) : (
+//           <EmptyProductOptions handleAddOption={handleAddOption} />
+//         )}
+//       </div>
+//     );
+//   }
+// );
+
+// // Form Action Buttons Component
+// const FormActionButtons = React.memo(
+//   ({
+//     isSubmitting,
+//     initialData,
+//   }: {
+//     isSubmitting: boolean;
+//     initialData?: Partial<FormValues> | null;
+//   }) => {
+//     return (
+//       <div className="flex justify-end gap-3 pt-4">
+//         <Link to={"/dashboard/product"}>
+//           <Button type="button" variant="outline">
+//             Cancel
+//           </Button>
+//         </Link>
+//         <Button type="submit" disabled={isSubmitting}>
+//           {isSubmitting
+//             ? "Submitting..."
+//             : initialData
+//             ? "Update Product"
+//             : "Create Product"}
+//         </Button>
+//       </div>
+//     );
+//   }
+// );
+
+// // Product Option Dialog Component
+// const ProductOptionDialog = React.memo(
+//   ({
+//     isOpen,
+//     setIsOpen,
+//     editingOptionIndex,
+//     optionForm,
+//     handleSaveOption,
+//     optionTypes,
+//   }: {
+//     isOpen: boolean;
+//     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+//     editingOptionIndex: number | null;
+//     optionForm: UseFormReturn<{
+//       stock: number;
+//       optionType: string;
+//       optionValue: string;
+//       price: number;
+//       _id?: string;
+//     }>;
+//     handleSaveOption: (data: any) => void;
+//     optionTypes: {
+//       value: string;
+//       label: string;
+//     }[];
+//   }) => {
+//     return (
+//       <Dialog open={isOpen} onOpenChange={setIsOpen}>
+//         <DialogContent className="sm:max-w-md">
+//           <DialogHeader>
+//             <DialogTitle>
+//               {editingOptionIndex !== null
+//                 ? "Edit Option"
+//                 : "Add Product Option"}
+//             </DialogTitle>
+//             <DialogDescription>
+//               {editingOptionIndex !== null
+//                 ? "Update the details for this product option"
+//                 : "Create a new option for this product"}
+//             </DialogDescription>
+//           </DialogHeader>
+
+//           <form
+//             onSubmit={optionForm.handleSubmit(handleSaveOption)}
+//             className="space-y-6"
+//           >
+//             {/* Option Type Selection */}
+//             <div className="grid w-full gap-1.5">
+//               <label htmlFor="optionType" className="text-sm font-medium">
+//                 Option Type
+//               </label>
+//               <Select
+//                 value={optionForm.watch("optionType")}
+//                 onValueChange={(value) =>
+//                   optionForm.setValue("optionType", value)
+//                 }
+//               >
+//                 <SelectTrigger>
+//                   <SelectValue placeholder="Select option type" />
+//                 </SelectTrigger>
+//                 <SelectContent>
+//                   {optionTypes.map((option) => (
+//                     <SelectItem key={option.value} value={option.value}>
+//                       {option.label}
+//                     </SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+//               {optionForm.formState.errors.optionType && (
+//                 <p className="text-sm text-destructive">
+//                   {optionForm.formState.errors.optionType.message}
+//                 </p>
+//               )}
+//             </div>
+
+//             {/* Option Value */}
+//             <div className="grid w-full gap-1.5">
+//               <label htmlFor="optionValue" className="text-sm font-medium">
+//                 Option Value
+//               </label>
+//               <Input
+//                 id="optionValue"
+//                 type={
+//                   optionForm.watch("optionType") === "color" ? "color" : "text"
+//                 }
+//                 placeholder={getPlaceholder(
+//                   optionForm.watch("optionType") || ""
+//                 )}
+//                 value={optionForm.watch("optionValue")}
+//                 onChange={(e) =>
+//                   optionForm.setValue("optionValue", e.target.value)
+//                 }
+//                 className="col-span-3"
+//               />
+//               {optionForm.formState.errors.optionValue && (
+//                 <p className="text-sm text-destructive">
+//                   {optionForm.formState.errors.optionValue.message}
+//                 </p>
+//               )}
+//             </div>
+
+//             <div className="grid grid-cols-2 gap-4">
+//               {/* Price */}
+//               <div className="grid w-full gap-1.5">
+//                 <label htmlFor="price" className="text-sm font-medium">
+//                   Price ($)
+//                 </label>
+//                 <Input
+//                   id="price"
+//                   type="number"
+//                   min="0"
+//                   step="0.01"
+//                   value={optionForm.watch("price")}
+//                   onChange={(e) =>
+//                     optionForm.setValue("price", parseFloat(e.target.value))
+//                   }
+//                 />
+//                 {optionForm.formState.errors.price && (
+//                   <p className="text-sm text-destructive">
+//                     {optionForm.formState.errors.price.message}
+//                   </p>
+//                 )}
+//               </div>
+
+//               {/* Stock */}
+//               <div className="grid w-full gap-1.5">
+//                 <label htmlFor="stock" className="text-sm font-medium">
+//                   Stock
+//                 </label>
+//                 <Input
+//                   id="stock"
+//                   type="number"
+//                   min="0"
+//                   step="1"
+//                   value={optionForm.watch("stock")}
+//                   onChange={(e) =>
+//                     optionForm.setValue("stock", parseInt(e.target.value))
+//                   }
+//                 />
+//                 {optionForm.formState.errors.stock && (
+//                   <p className="text-sm text-destructive">
+//                     {optionForm.formState.errors.stock.message}
+//                   </p>
+//                 )}
+//               </div>
+//             </div>
+
+//             <DialogFooter>
+//               <Button
+//                 type="button"
+//                 variant="outline"
+//                 onClick={() => setIsOpen(false)}
+//               >
+//                 Cancel
+//               </Button>
+//               <Button type="submit">
+//                 {editingOptionIndex !== null ? "Update Option" : "Add Option"}
+//               </Button>
+//             </DialogFooter>
+//           </form>
+//         </DialogContent>
+//       </Dialog>
+//     );
+//   }
+// );
+
+// // Main ProductForm Component
+// export default function ProductForm({
+//   initialData,
+//   pageTitle = "Create New Product",
+// }: {
+//   initialData?: Partial<FormValues> | null;
+//   pageTitle?: string;
+// }) {
+//   const {
+//     addImageField,
+//     addSelectionStep,
+//     editingOptionIndex,
+//     form,
+//     formatOption,
+//     handleAddOption,
+//     handleDeleteOption,
+//     handleEditOption,
+//     handleSaveOption,
+//     isOptionDialogOpen,
+//     isSubmitting,
+//     onSubmit,
+//     productSelectionOptions,
+//     removeImageField,
+//     removeSelectionStep,
+//     setIsOptionDialogOpen,
+//     optionForm,
+//   } = useProductForm({ initialData });
+
+//   return (
+//     <>
+//       <Card className="mx-auto w-full max-w-3xl">
+//         <CardHeader>
+//           <CardTitle className="text-left text-2xl font-bold">
+//             {pageTitle}
+//           </CardTitle>
+//           <CardDescription>
+//             {initialData
+//               ? "Edit product details and options"
+//               : "Add a new product to your inventory. Fill in all required fields."}
+//           </CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           <Form {...form}>
+//             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+//               {/* Basic Info Section */}
+//               <BasicInfoFields form={form} />
+
+//               {/* Pricing and Category Section */}
+//               <PricingAndCategoryFields form={form} />
+
+//               {/* Featured Product Switch */}
+//               <FeaturedProductSwitch form={form} />
+
+//               <Separator />
+
+//               {/* Product Images Section */}
+//               <ProductImagesSection
+//                 form={form}
+//                 addImageField={addImageField}
+//                 removeImageField={removeImageField}
+//               />
+
+//               <Separator />
+
+//               {/* Product Selection Steps Section */}
+//               <SelectionStepsSection
+//                 form={form}
+//                 addSelectionStep={addSelectionStep}
+//                 removeSelectionStep={removeSelectionStep}
+//                 productSelectionOptions={productSelectionOptions}
+//               />
+
+//               <Separator />
+
+//               {/* Product Options Section */}
+//               <ProductOptionsSection
+//                 form={form}
+//                 handleAddOption={handleAddOption}
+//                 handleEditOption={handleEditOption}
+//                 handleDeleteOption={handleDeleteOption}
+//                 formatOption={formatOption}
+//               />
+
+//               {/* Form Actions */}
+//               <FormActionButtons
+//                 isSubmitting={isSubmitting}
+//                 initialData={initialData}
+//               />
+//             </form>
+//           </Form>
+//         </CardContent>
+//       </Card>
+
+//       {/* Product Option Dialog */}
+//       <ProductOptionDialog
+//         isOpen={isOptionDialogOpen}
+//         setIsOpen={setIsOptionDialogOpen}
+//         editingOptionIndex={editingOptionIndex}
+//         optionForm={optionForm}
+//         handleSaveOption={handleSaveOption}
+//         optionTypes={optionTypes}
+//       />
+//     </>
+//   );
+// }
