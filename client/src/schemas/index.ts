@@ -37,7 +37,7 @@ export const passwordFormSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
-// Schema for image validation that accepts both files and URLs
+
 const imageSchema = z.union([
   z
     .instanceof(File)
@@ -49,7 +49,6 @@ const imageSchema = z.union([
   z.string(),
 ]);
 
-// Updated form schema
 export const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   description: z

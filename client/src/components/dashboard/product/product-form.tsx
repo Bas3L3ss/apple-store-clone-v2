@@ -56,6 +56,7 @@ import {
 import { toast } from "sonner";
 import { Switch } from "@/src/components/ui/switch";
 import { formatPrice, getColorHex } from "@/src/lib/utils";
+import { createProduct } from "@/src/action/products";
 
 // Product Selection Types
 const ProductSelectionTypes = {
@@ -86,7 +87,6 @@ const extendedFormSchema = formSchema.extend({
       z.object({
         _id: z.string().optional(),
         productId: z.string().optional(),
-        // Dynamic field for option type (color, material, etc.)
         optionType: z.string().optional(),
         optionValue: z.string().optional(),
         price: z.number().positive(),
@@ -98,7 +98,7 @@ const extendedFormSchema = formSchema.extend({
     .optional(),
 });
 
-type FormValues = z.infer<typeof extendedFormSchema>;
+export type FormValues = z.infer<typeof extendedFormSchema>;
 
 // Helper function to format option type and value for display
 const formatOption = (option) => {
@@ -260,13 +260,15 @@ export default function ProductForm({
     toast.success("Product option removed");
   };
 
-  // Handle product form submission
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       console.log(data);
-      // Here you would call your API function, e.g.:
-      // await createProduct(data);
+      if (initialData) {
+        // await editProduct(data);
+      } else {
+        await createProduct(data);
+      }
       toast.success(
         `Product ${initialData ? "updated" : "created"} successfully`
       );
@@ -278,7 +280,6 @@ export default function ProductForm({
     }
   }
 
-  // Helper functions for array fields
   const addImageField = () => {
     const currentImages = form.getValues("productImages");
     if (currentImages.length < 5) {
@@ -375,7 +376,11 @@ export default function ProductForm({
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input placeholder="iphone-15-pro" {...field} />
+                        <Input
+                          placeholder="iphone-15-pro"
+                          value={form.watch("name")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormDescription>
                         URL-friendly version of the name
@@ -385,7 +390,6 @@ export default function ProductForm({
                   )}
                 />
               </div>
-
               {/* Description */}
               <FormField
                 control={form.control}
@@ -404,7 +408,6 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Base Price */}
                 <FormField
@@ -468,15 +471,14 @@ export default function ProductForm({
                   )}
                 />
               </div>
-
               {/* Featured Product Switch */}
               <FormField
                 control={form.control}
                 name="isFeatured"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                     <div className="space-y-0.5">
-                      <FormLabel>Featured Product</FormLabel>
+                      <p>Featured Product</p>
                       <FormDescription>
                         Display this product on the featured section of the
                         homepage
@@ -488,12 +490,10 @@ export default function ProductForm({
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                  </FormItem>
+                  </FormLabel>
                 )}
               />
-
               <Separator />
-
               {/* Product Images */}
               <div>
                 <div className="flex justify-between items-center mb-2">
@@ -586,9 +586,7 @@ export default function ProductForm({
                   })}
                 </div>
               </div>
-
               <Separator />
-
               {/* Product Selection Steps */}
               <div>
                 <div className="flex justify-between items-center mb-2">
@@ -655,9 +653,7 @@ export default function ProductForm({
                   options (e.g., "Color", "Storage").
                 </FormDescription>
               </div>
-
               <Separator />
-
               {/* Product Options Management */}
               <div>
                 <div className="flex justify-between items-center mb-4">
@@ -674,7 +670,6 @@ export default function ProductForm({
                   </Button>
                 </div>
 
-                {/* Product Options Table */}
                 {form.watch("productOptions")?.length > 0 ? (
                   <div className="border rounded-md">
                     <Table>
@@ -758,7 +753,6 @@ export default function ProductForm({
                   </div>
                 )}
               </div>
-
               <div className="flex justify-end gap-3 pt-4">
                 <Link to={"/dashboard/product"}>
                   <Button type="button" variant="outline">

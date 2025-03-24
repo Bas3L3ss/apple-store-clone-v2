@@ -8,16 +8,33 @@ import checkAdminRole from "../controllers/auth/check-admin-role";
 import { GetFeaturedProducts } from "../controllers/product/get-featured-products";
 import { GetProductBySlug } from "../controllers/product/get-product-by-slug";
 import { GetProductRecommendations } from "../controllers/product/get-product-recommendations";
+import { EditProduct } from "../controllers/product/edit-product";
 // import { CreateMockProduct } from "../controllers/product/create-random-mockdata";
+import multer from "multer";
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
+// ADMIN ROUTES
+//
 router.post(
   "/",
-  [checkBearerToken, checkAdminRole, CreateProduct],
+  [
+    checkBearerToken,
+    checkAdminRole,
+    upload.array("productImages", 10),
+
+    CreateProduct,
+  ],
   errorHandler
 );
+// router.put("/", [checkBearerToken, checkAdminRole, EditProduct], errorHandler);
 
+// USER
 // GET: Fetch all products
 router.get("/", GetProducts, errorHandler);
 

@@ -20,6 +20,9 @@ const WEBHOOKSECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 const EMAIL = process.env.EMAIL ?? "";
 const PASSWORD = process.env.PASSWORD ?? "";
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME ?? "";
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY ?? "";
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET ?? "";
 
 export {
   ISDEVELOPMENT,
@@ -34,4 +37,7 @@ export {
   APP_URL,
   BACKEND_URL,
   REDIS_URL,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+  CLOUDINARY_CLOUD_NAME,
 };

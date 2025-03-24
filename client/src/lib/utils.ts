@@ -14,17 +14,28 @@ export const axios = Axios.create({
 export const makeAxiosRequest = async <T>(
   method: "get" | "post" | "put" | "delete",
   url: string,
-  data?: unknown
+  data?: unknown,
+  isFormData: boolean = false
 ): Promise<T> => {
   const token =
     sessionStorage.getItem("token") || localStorage.getItem("remember");
+
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
 
   try {
     const response = await axios({
       method,
       url,
       data,
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers,
     });
 
     return response.data;
@@ -125,7 +136,7 @@ export const getStatusProgress = (status: OrderStatus) => {
 
 // Function to get hex color
 export const getColorHex = (color: string): string => {
-  return colorHexMap[color] || "#000000"; // Default to black if not found
+  return colorHexMap[color] || color; // Default to black if not found
 };
 // Format address for display
 export const formatAddress = (address: ShippingAddress) => {

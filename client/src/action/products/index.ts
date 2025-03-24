@@ -1,4 +1,5 @@
 import { FetchProductsResponse, Product, ProductOption } from "@/src/@types";
+import { FormValues } from "@/src/components/dashboard/product/product-form";
 import { axios, makeAxiosRequest } from "@/src/lib/utils";
 import { toast } from "sonner";
 
@@ -91,39 +92,48 @@ export const getProductRecommendations = async (
   }
 };
 
-export const createProduct = async (
-  setIsLoading: (loading: boolean) => void,
-  product: {
-    name: string;
-    description: string;
-    productImages: string[];
-    slug: string;
-    basePrice: number;
-    category:
-      | "iphone"
-      | "macbook"
-      | "apple_watch"
-      | "ipad"
-      | "airpods"
-      | "phonecase";
-    stock: number;
-    productSelectionStep: string[];
-  }
-) => {
-  setIsLoading(true);
+export const createProduct = async (product: FormValues) => {
   try {
-    await makeAxiosRequest<{ url: string }>("post", "/products/", { product });
+    const formData = new FormData();
+
+    // Append text fields
+    for (const [key, val] of Object.entries(product)) {
+      if (key !== "productImages") {
+        formData.append(
+          key,
+          typeof val === "string" ? val : JSON.stringify(val)
+        );
+      }
+    }
+
+    // Append images correctly
+    if (product.productImages) {
+      product.productImages.forEach((file) => {
+        if (typeof file == "string") {
+          formData.append("productImagesPublicIds[]", file);
+        } else {
+          formData.append(`productImages`, file);
+        }
+      });
+    }
+    console.log(formData.get("productImages"));
+    await makeAxiosRequest<{ url: string }>(
+      "post",
+      "/products/",
+      formData,
+      true
+    );
+
     toast.success("Success", {
       description: "Product Created.",
     });
-  } catch (err) {
-    console.error("Stripe Checkout Error:", err);
+  } catch (error) {
+    console.error("Create product Error:", error);
     toast.error("Create Product Failed", {
       description:
         "There was an issue creating product, ask maintainer about this issue or view the log.",
     });
-  } finally {
-    setIsLoading(false);
+    throw error;
   }
 };
 
