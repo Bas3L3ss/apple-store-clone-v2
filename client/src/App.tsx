@@ -26,6 +26,7 @@ const OrdersPage = lazy(() => import("./pages/order"));
 const OrderDetailsPage = lazy(() => import("./pages/order-details-page"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const ProductEditPage = lazy(() => import("./pages/admin/product-edit-page"));
+const UserEditPage = lazy(() => import("./pages/admin/user-edit-page"));
 const ProductCreatePage = lazy(
   () => import("./pages/admin/product-create-page")
 );
@@ -171,8 +172,7 @@ function App() {
                 <Route path="product/create" element={<ProductCreatePage />} />
                 <Route path="product/:id" element={<ProductEditPage />} />
                 <Route path="user" element={<AdminUsersPage />} />
-                <Route path="user/create" element={<ProductEditPage />} />
-                <Route path="user/:id" element={<ProductEditPage />} />
+                <Route path="user/:id" element={<UserEditPage />} />
                 <Route path="orders" element={<AdminOrdersPage />} />
                 <Route path="orders/:id" element={<ProductEditPage />} />
                 <Route path="kanban" element={<KanbanPage />} />

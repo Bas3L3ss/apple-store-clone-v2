@@ -1,4 +1,4 @@
-import { FetchProductsResponse } from "@/src/@types";
+import { FetchProductsResponse, User } from "@/src/@types";
 import { axios, makeAxiosRequest } from "@/src/lib/utils";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -110,5 +110,26 @@ export const GetDashboardUsers = async ({
       },
       success: false,
     };
+  }
+};
+
+export const GetUserById = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<User[] | null> => {
+  try {
+    const token =
+      sessionStorage.getItem("token") || localStorage.getItem("remember");
+
+    const response = await axios.get(`/auth/admin/${userId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching users: ", error);
+
+    return null;
   }
 };

@@ -12,6 +12,7 @@ import sendResetPasswordEmail from "../controllers/auth/send-reset-password-emai
 import resetPassword from "../controllers/auth/reset-password";
 import checkAdminRole from "../controllers/auth/check-admin-role";
 import { GetUsers } from "../controllers/auth/get-users";
+import { GetUserById } from "../controllers/auth/get-user-by-id";
 
 // initialize router
 const router = express.Router();
@@ -44,5 +45,12 @@ router.post("/reset-password", [checkBearerToken, resetPassword], errorHandler);
 
 // GET: get users paginated
 router.get("/", [checkBearerToken, checkAdminRole, GetUsers], errorHandler);
+
+// GET: get user by their id
+router.get(
+  "/admin/:uid",
+  [checkBearerToken, checkAdminRole, GetUserById],
+  errorHandler
+);
 
 export default router;

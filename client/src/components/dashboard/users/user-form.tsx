@@ -4,7 +4,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Plus, Trash2, Upload } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import {
@@ -24,7 +24,6 @@ import {
   FormMessage,
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
-import { Textarea } from "@/src/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -33,101 +32,71 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Separator } from "@/src/components/ui/separator";
+import { Switch } from "@/src/components/ui/switch";
 import { FileUploader } from "../../ui/file-uploader";
-import { formSchema } from "@/src/schemas";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
 import { Link } from "react-router";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
 
-// Product Selection Types
-const ProductSelectionTypes = {
-  Color: "color",
-  Storage: "storage",
-  Size: "size",
-  Model: "model",
-  Material: "material",
-  Design: "design",
+// Define user roles
+const UserRoles = {
+  User: "user",
+  Admin: "admin",
 };
 
-type FormValues = z.infer<typeof formSchema>;
+// Create schema for form validation
+const userFormSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  role: z.string(),
+  verified: z.boolean(),
+  avatar: z.any().optional(), // Can be a File object or a string URL
+});
 
-export default function ProductForm({
+type UserFormValues = z.infer<typeof userFormSchema>;
+
+export default function UserEditForm({
   initialData,
-  pageTitle = "Create New Product",
+  pageTitle,
 }: {
-  initialData?: Partial<FormValues> | null;
-  pageTitle?: string;
+  initialData: any | null;
+  pageTitle: string;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Convert option enum to array for dropdown
-  const productSelectionOptions = Object.entries(ProductSelectionTypes).map(
-    ([label, value]) => ({ label, value: value.toString() })
-  );
+  // Convert role enum to array for dropdown
+  const userRoleOptions = Object.entries(UserRoles).map(([label, value]) => ({
+    label,
+    value: value.toString(),
+  }));
 
-  // Initialize form with default values
-  const defaultValues: Partial<FormValues> = {
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    productImages: initialData?.productImages || [""],
-    slug: initialData?.slug || "",
-    basePrice: initialData?.basePrice || 99,
-    category: initialData?.category || "phonecase",
-    stock: initialData?.stock || 99,
-    productSelectionStep: initialData?.productSelectionStep || [""],
+  // Initialize form with default values from initialData
+  const defaultValues: Partial<UserFormValues> = {
+    username: initialData?.username || "",
+    email: initialData?.email || "",
+    role: initialData?.role || "user",
+    verified: initialData?.verified || false,
+    avatar: initialData?.avatar || "",
   };
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UserFormValues>({
+    resolver: zodResolver(userFormSchema),
     defaultValues,
   });
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: UserFormValues) {
     setIsSubmitting(true);
     try {
-      console.log(data);
+      console.log("Submitting user data:", data);
       // Here you would call your API function, e.g.:
-      // await createProduct(data);
-      // toast.success("Product created successfully");
+      // await updateUser(initialData._id, data);
+      // toast.success("User updated successfully");
     } catch (error) {
-      console.error("Error submitting product:", error);
-      // toast.error("Failed to create product");
+      console.error("Error updating user:", error);
+      // toast.error("Failed to update user");
     } finally {
       setIsSubmitting(false);
     }
   }
-
-  // Helper functions for array fields
-  const addImageField = () => {
-    const currentImages = form.getValues("productImages");
-    if (currentImages.length < 5) {
-      form.setValue("productImages", [...currentImages, ""]);
-    }
-  };
-
-  const removeImageField = (index: number) => {
-    const currentImages = form.getValues("productImages");
-    if (currentImages.length > 2) {
-      form.setValue(
-        "productImages",
-        currentImages.filter((_, i) => i !== index)
-      );
-    }
-  };
-
-  const addSelectionStep = () => {
-    const currentSteps = form.getValues("productSelectionStep");
-    form.setValue("productSelectionStep", [...currentSteps, ""]);
-  };
-
-  const removeSelectionStep = (index: number) => {
-    const currentSteps = form.getValues("productSelectionStep");
-    if (currentSteps.length > 1) {
-      form.setValue(
-        "productSelectionStep",
-        currentSteps.filter((_, i) => i !== index)
-      );
-    }
-  };
 
   return (
     <Card className="mx-auto w-full max-w-3xl">
@@ -136,126 +105,102 @@ export default function ProductForm({
           {pageTitle}
         </CardTitle>
         <CardDescription>
-          Add a new product to your inventory. Fill in all required fields.
+          Edit user information. Changes will be applied immediately after
+          submission.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Product Name */}
+              {/* Username */}
               <FormField
                 control={form.control}
-                name="name"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Name</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="iPhone 15 Pro" {...field} />
+                      <Input placeholder="Jane Doe" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Enter the exact product name
-                    </FormDescription>
+                    <FormDescription>Display name for the user</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Slug */}
+              {/* Email */}
               <FormField
                 control={form.control}
-                name="slug"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Slug</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="iphone-15-pro" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="user@example.com"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>
-                      URL-friendly version of the name
-                    </FormDescription>
+                    <FormDescription>Primary contact email</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* Description */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter product description..."
-                      className="min-h-[120px] resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Base Price */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Role */}
               <FormField
                 control={form.control}
-                name="basePrice"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Base Price ($)</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" step="0.01" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Category */}
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>User Role</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="iphone">iPhone</SelectItem>
-                        <SelectItem value="macbook">MacBook</SelectItem>
-                        <SelectItem value="apple_watch">Apple Watch</SelectItem>
-                        <SelectItem value="ipad">iPad</SelectItem>
-                        <SelectItem value="airpods">AirPods</SelectItem>
-                        <SelectItem value="phonecase">Phone Case</SelectItem>
+                        {userRoleOptions.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
+                    <FormDescription>
+                      Determines user permissions
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Stock */}
+              {/* Verified Status */}
               <FormField
                 control={form.control}
-                name="stock"
+                name="verified"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock</FormLabel>
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Verified</FormLabel>
+                      <FormDescription>
+                        User account verification status
+                      </FormDescription>
+                    </div>
                     <FormControl>
-                      <Input type="number" min="0" step="1" {...field} />
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -263,45 +208,41 @@ export default function ProductForm({
 
             <Separator />
 
-            {/* Product Images */}
+            {/* Avatar */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <FormLabel className="text-base">Product Images</FormLabel>
-                <FormDescription className="text-xs">
-                  Upload 2-5 images (max 5MB each)
-                </FormDescription>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addImageField}
-                  disabled={form.watch("productImages").length >= 5}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Image
-                </Button>
-              </div>
+              <FormLabel className="text-base">User Avatar</FormLabel>
+              <FormDescription className="text-xs mb-2">
+                Upload a profile picture (max 5MB)
+              </FormDescription>
 
               <div className="space-y-4">
-                {/* File uploader for multiple image files */}
+                {/* Current avatar preview - only shown if there's an avatar URL */}
+                {typeof form.watch("avatar") === "string" &&
+                  form.watch("avatar") && (
+                    <div className="w-24 h-24 rounded-full overflow-hidden border border-input">
+                      <img
+                        src={form.watch("avatar")}
+                        alt="Current avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                {/* File uploader for avatar image */}
                 <FormField
                   control={form.control}
-                  name="productImages"
+                  name="avatar"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <FileUploader
-                          value={field.value.filter(
-                            (item) => item instanceof File
-                          )}
+                          value={
+                            field.value instanceof File ? [field.value] : []
+                          }
                           onValueChange={(files) => {
-                            const urlImages = field.value.filter(
-                              (item) => typeof item === "string"
-                            );
-
-                            field.onChange([...urlImages, ...files]);
+                            field.onChange(files.length > 0 ? files[0] : "");
                           }}
-                          maxFiles={5}
+                          maxFiles={1}
                           maxSize={MAX_FILE_SIZE}
                           accept={ACCEPTED_IMAGE_TYPES}
                         />
@@ -311,132 +252,77 @@ export default function ProductForm({
                   )}
                 />
 
-                {/* URL inputs for image URLs */}
-                {form.watch("productImages").map((image, index) => {
-                  // Skip file objects, only render inputs for string URLs
-                  if (image instanceof File) return null;
-
-                  return (
-                    <div key={`image-url-${index}`} className="flex gap-3">
-                      <FormField
-                        control={form.control}
-                        name={`productImages.${index}`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <div className="flex">
-                                <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
-                                  <Upload className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <Input
-                                  placeholder="https://example.com/image.jpg"
-                                  className="rounded-l-none"
-                                  {...field}
-                                />
+                {/* Avatar URL input - shown when avatar is a string */}
+                {typeof form.watch("avatar") === "string" && (
+                  <div className="flex gap-3">
+                    <FormField
+                      control={form.control}
+                      name="avatar"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <div className="flex">
+                              <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
+                                <Upload className="h-4 w-4 text-muted-foreground" />
                               </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeImageField(index)}
-                        disabled={form.watch("productImages").length <= 2}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Remove</span>
-                      </Button>
-                    </div>
-                  );
-                })}
+                              <Input
+                                placeholder="https://example.com/avatar.jpg"
+                                className="rounded-l-none"
+                                value={
+                                  typeof field.value === "string"
+                                    ? field.value
+                                    : ""
+                                }
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => form.setValue("avatar", "")}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Remove</span>
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
             <Separator />
 
-            {/* Product Selection Steps */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <FormLabel className="text-base">
-                  Product Selection Steps
-                </FormLabel>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addSelectionStep}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Step
-                </Button>
-              </div>
+            {/* Account information display only */}
+            {initialData && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Account Information</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-muted-foreground">User ID:</div>
+                  <div>{initialData._id}</div>
 
-              {form.watch("productSelectionStep").map((_, index) => (
-                <div key={index} className="flex gap-3 mb-3">
-                  <FormField
-                    control={form.control}
-                    name={`productSelectionStep.${index}`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a step" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {productSelectionOptions.map(
-                                ({ label, value }) => (
-                                  <SelectItem key={value} value={value}>
-                                    {label}
-                                  </SelectItem>
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeSelectionStep(index)}
-                    disabled={form.watch("productSelectionStep").length <= 1}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Remove</span>
-                  </Button>
+                  <div className="text-muted-foreground">Created:</div>
+                  <div>{new Date(initialData.createdAt).toLocaleString()}</div>
+
+                  <div className="text-muted-foreground">Last Updated:</div>
+                  <div>{new Date(initialData.updatedAt).toLocaleString()}</div>
                 </div>
-              ))}
-
-              <FormDescription>
-                Select steps that customers will follow when choosing product
-                options (e.g., "Color", "Storage").
-              </FormDescription>
-            </div>
+              </div>
+            )}
 
             <div className="flex justify-end gap-3 pt-4">
-              <Link to={"/dashboard/product"}>
+              <Link to={"/dashboard/users"}>
                 <Button type="button" variant="outline">
                   Cancel
                 </Button>
               </Link>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting
-                  ? "Submitting..."
-                  : initialData
-                  ? "Update Product"
-                  : "Create Product"}
+                {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
@@ -445,4 +331,3 @@ export default function ProductForm({
     </Card>
   );
 }
-// TODO: done with user ,create, mocking and editing

@@ -32,24 +32,32 @@ export function useProductConfiguration(product?: Product) {
   }, [selectionSteps]);
 
   useEffect(() => {
+    console.log("start of effect");
     if (!product) return;
 
     let newPrice = basePrice;
-    Object.entries(selectedOptions).forEach(([_, value]) => {
-      if (!value) return;
+    const matchedOptionIds = new Set();
 
-      for (const opt of productOptions) {
-        for (const [key, val] of Object.entries(selectedOptions)) {
-          //@ts-expect-error: no prob
-          if (opt[key] == val) {
-            newPrice += opt.price;
-          }
+    for (const [optionKey, selectedValue] of Object.entries(selectedOptions)) {
+      if (!selectedValue) continue;
+      for (const option of productOptions) {
+        if (matchedOptionIds.has(option._id)) continue;
+
+        // @ts-expect-error: dynamic property access
+        if (option[optionKey] === selectedValue) {
+          console.log(
+            `Adding price ${option.price} for option ${option._id} (${optionKey}=${selectedValue})`
+          );
+          newPrice += option.price;
+          matchedOptionIds.add(option._id);
+          break;
         }
       }
-    });
+    }
 
+    console.log(newPrice, "end of effect");
     setTotalPrice(newPrice);
-  }, [selectedOptions, basePrice, productOptions, product]);
+  }, [selectedOptions, product, basePrice, productOptions]);
 
   const handleSelect = (value: string, optionType: string) => {
     setSelectedOptions((prev) => ({
