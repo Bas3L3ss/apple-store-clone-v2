@@ -79,6 +79,7 @@ export const CreateProduct = async (
           parsedOptions = [];
         }
       }
+      console.log(parsedOptions);
 
       const optionIds = await saveProductOptions(
         parsedOptions,
@@ -87,6 +88,7 @@ export const CreateProduct = async (
       );
 
       // Update product with option references
+
       product.productOptions = optionIds;
       await product.save({ session });
     }

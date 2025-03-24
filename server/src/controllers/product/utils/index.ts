@@ -8,6 +8,7 @@ async function saveProductOptions(
   session: mongoose.ClientSession
 ): Promise<mongoose.Types.ObjectId[]> {
   const optionIds: mongoose.Types.ObjectId[] = [];
+  console.log(options);
 
   for (const option of options) {
     // Skip options that don't have a type or value

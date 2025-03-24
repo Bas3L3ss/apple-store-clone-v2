@@ -1,8 +1,3 @@
-"use client";
-
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Plus, Trash2, Upload, Edit } from "lucide-react";
 
@@ -34,7 +29,7 @@ import {
 } from "@/src/components/ui/select";
 import { Separator } from "@/src/components/ui/separator";
 import { FileUploader } from "../../ui/file-uploader";
-import { formSchema } from "@/src/schemas";
+import { extendedFormSchema } from "@/src/schemas";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
 import { Link } from "react-router";
 import {
@@ -53,73 +48,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/components/ui/dialog";
-import { toast } from "sonner";
 import { Switch } from "@/src/components/ui/switch";
-import { formatPrice, getColorHex } from "@/src/lib/utils";
-import { createProduct } from "@/src/action/products";
-
-// Product Selection Types
-const ProductSelectionTypes = {
-  Color: "color",
-  Storage: "storage",
-  Size: "size",
-  Model: "model",
-  Material: "material",
-  Design: "design",
-};
-
-// Option Types for creating product options
-const optionTypes = [
-  { value: "color", label: "Color" },
-  { value: "storage", label: "Storage" },
-  { value: "size", label: "Size" },
-  { value: "material", label: "Material" },
-  { value: "processor", label: "Processor" },
-  { value: "accessories", label: "Accessories" },
-  { value: "carrier", label: "Carrier" },
-];
-
-// Extended form schema to include product options
-const extendedFormSchema = formSchema.extend({
-  isFeatured: z.boolean().default(false),
-  productOptions: z
-    .array(
-      z.object({
-        _id: z.string().optional(),
-        productId: z.string().optional(),
-        optionType: z.string().optional(),
-        optionValue: z.string().optional(),
-        price: z.number().positive(),
-        stock: z.number().int().nonnegative(),
-        createdAt: z.string().optional(),
-        updatedAt: z.string().optional(),
-      })
-    )
-    .optional(),
-});
+import { formatPrice, getPlaceholder } from "@/src/lib/utils";
+import { optionTypes } from "@/src/constants/product-form";
+import useProductForm from "@/src/hooks/use-product-form";
 
 export type FormValues = z.infer<typeof extendedFormSchema>;
-
-// Helper function to format option type and value for display
-const formatOption = (option) => {
-  for (const key in option) {
-    if (
-      key !== "_id" &&
-      key !== "productId" &&
-      key !== "price" &&
-      key !== "stock" &&
-      key !== "__v" &&
-      key !== "createdAt" &&
-      key !== "updatedAt"
-    ) {
-      return {
-        type: key,
-        value: key === "color" ? getColorHex(option[key]) : option[key],
-      };
-    }
-  }
-  return { type: "", value: "" };
-};
 
 export default function ProductForm({
   initialData,
@@ -128,211 +62,25 @@ export default function ProductForm({
   initialData?: Partial<FormValues> | null;
   pageTitle?: string;
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isOptionDialogOpen, setIsOptionDialogOpen] = useState(false);
-  const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(
-    null
-  );
-
-  // Initialize product options from initial data
-  const initialOptions = initialData?.productOptions || [];
-
-  // Convert option enum to array for dropdown
-  const productSelectionOptions = Object.entries(ProductSelectionTypes).map(
-    ([label, value]) => ({ label, value: value.toString() })
-  );
-
-  // Initialize form with default values
-  const defaultValues: Partial<FormValues> = {
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    productImages: initialData?.productImages || [""],
-    slug: initialData?.slug || "",
-    basePrice: initialData?.basePrice || 99,
-    category: initialData?.category || "phonecase",
-    stock: initialData?.stock || 99,
-    isFeatured: initialData?.isFeatured || false,
-    productSelectionStep: initialData?.productSelectionStep || [""],
-    productOptions: initialOptions,
-  };
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(extendedFormSchema),
-    defaultValues,
-  });
-
-  // Form for product options
-  const optionForm = useForm({
-    resolver: zodResolver(
-      z.object({
-        _id: z.string().optional(),
-        optionType: z.string({
-          required_error: "Please select an option type",
-        }),
-        optionValue: z.string().min(1, {
-          message: "Please enter a value for the selected option",
-        }),
-        price: z.coerce
-          .number()
-          .positive({ message: "Price must be a positive number" }),
-        stock: z.coerce
-          .number()
-          .int()
-          .nonnegative({ message: "Stock must be a non-negative integer" }),
-      })
-    ),
-    defaultValues: {
-      _id: "",
-      optionType: "",
-      optionValue: "",
-      price: 0,
-      stock: 0,
-    },
-  });
-
-  // Handle option dialog opening for edit
-  const handleEditOption = (index: number) => {
-    const options = form.getValues("productOptions") || [];
-    const option = options[index];
-    if (!option) return;
-
-    const { type, value } = formatOption(option);
-
-    optionForm.reset({
-      _id: option._id || "",
-      optionType: type,
-      optionValue: value,
-      price: option.price,
-      stock: option.stock,
-    });
-
-    setEditingOptionIndex(index);
-    setIsOptionDialogOpen(true);
-  };
-
-  // Handle option dialog opening for create
-  const handleAddOption = () => {
-    optionForm.reset({
-      _id: "",
-      optionType: "",
-      optionValue: "",
-      price: form.getValues("basePrice") || 0,
-      stock: 0,
-    });
-    setEditingOptionIndex(null);
-    setIsOptionDialogOpen(true);
-  };
-
-  // Handle save option
-  const handleSaveOption = (data) => {
-    const currentOptions = form.getValues("productOptions") || [];
-    const newOption = {
-      _id: data._id || `temp-id-${Date.now()}`,
-      productId: initialData?._id || "",
-      [data.optionType]: data.optionValue,
-      price: data.price,
-      stock: data.stock,
-    };
-
-    if (editingOptionIndex !== null) {
-      // Edit existing option
-      const updatedOptions = [...currentOptions];
-      updatedOptions[editingOptionIndex] = newOption;
-      form.setValue("productOptions", updatedOptions);
-    } else {
-      // Add new option
-      form.setValue("productOptions", [...currentOptions, newOption]);
-    }
-
-    setIsOptionDialogOpen(false);
-    toast.success(
-      `Product option ${
-        editingOptionIndex !== null ? "updated" : "added"
-      } successfully`
-    );
-  };
-
-  // Handle delete option
-  const handleDeleteOption = (index: number) => {
-    const currentOptions = form.getValues("productOptions") || [];
-    const updatedOptions = currentOptions.filter((_, i) => i !== index);
-    form.setValue("productOptions", updatedOptions);
-    toast.success("Product option removed");
-  };
-
-  async function onSubmit(data: FormValues) {
-    setIsSubmitting(true);
-    try {
-      console.log(data);
-      if (initialData) {
-        // await editProduct(data);
-      } else {
-        await createProduct(data);
-      }
-      toast.success(
-        `Product ${initialData ? "updated" : "created"} successfully`
-      );
-    } catch (error) {
-      console.error("Error submitting product:", error);
-      toast.error(`Failed to ${initialData ? "update" : "create"} product`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
-  const addImageField = () => {
-    const currentImages = form.getValues("productImages");
-    if (currentImages.length < 5) {
-      form.setValue("productImages", [...currentImages, ""]);
-    }
-  };
-
-  const removeImageField = (index: number) => {
-    const currentImages = form.getValues("productImages");
-    if (currentImages.length > 2) {
-      form.setValue(
-        "productImages",
-        currentImages.filter((_, i) => i !== index)
-      );
-    }
-  };
-
-  const addSelectionStep = () => {
-    const currentSteps = form.getValues("productSelectionStep");
-    form.setValue("productSelectionStep", [...currentSteps, ""]);
-  };
-
-  const removeSelectionStep = (index: number) => {
-    const currentSteps = form.getValues("productSelectionStep");
-    if (currentSteps.length > 1) {
-      form.setValue(
-        "productSelectionStep",
-        currentSteps.filter((_, i) => i !== index)
-      );
-    }
-  };
-
-  const getPlaceholder = (type: string) => {
-    switch (type) {
-      case "color":
-        return "e.g., Space Black, Silver, Gold";
-      case "storage":
-        return "e.g., 128GB, 256GB, 512GB";
-      case "size":
-        return "e.g., Small, Medium, Large";
-      case "material":
-        return "e.g., Aluminum, Stainless Steel";
-      case "processor":
-        return "e.g., M1, M2 Pro, M2 Max";
-      case "accessories":
-        return "e.g., Case, Screen Protector";
-      case "carrier":
-        return "e.g., Unlocked, AT&T, Verizon";
-      default:
-        return "Enter value...";
-    }
-  };
-
+  const {
+    addImageField,
+    addSelectionStep,
+    editingOptionIndex,
+    form,
+    formatOption,
+    handleAddOption,
+    handleDeleteOption,
+    handleEditOption,
+    handleSaveOption,
+    isOptionDialogOpen,
+    isSubmitting,
+    onSubmit,
+    productSelectionOptions,
+    removeImageField,
+    removeSelectionStep,
+    setIsOptionDialogOpen,
+    optionForm,
+  } = useProductForm({ initialData: initialData });
   return (
     <>
       <Card className="mx-auto w-full max-w-3xl">

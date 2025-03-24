@@ -2,7 +2,7 @@ import { SidebarInset, SidebarProvider } from "@/src/components/ui/sidebar";
 import Header from "./header";
 import AdminSidebar from "./admin-sidebar";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;

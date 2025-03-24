@@ -1,27 +1,13 @@
 import { useEffect, useState } from "react";
 import { RecentSalesSkeleton } from "../ui/recent-sales-skeleton";
 import { RecentSales } from "../ui/recent-sales";
+import { useGetRecentSales } from "@/src/react-query-hooks/admin/use-analytics";
 
 export default function Sales() {
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useGetRecentSales();
 
-  useEffect(() => {
-    // Mocking a fake API call with a 1000ms delay
-    const mockApiCall = () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(true);
-        }, 1000);
-      });
-    };
-
-    mockApiCall().then(() => {
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <RecentSalesSkeleton />;
   }
-  return <RecentSales />;
+  return <RecentSales data={data} />;
 }

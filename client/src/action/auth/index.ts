@@ -17,6 +17,7 @@ export const editUserProfile = async (data: {
     throw error;
   }
 };
+
 export async function sendVerificationEmail() {
   try {
     await makeAxiosRequest<{ url: string }>("post", "/auth/verify");

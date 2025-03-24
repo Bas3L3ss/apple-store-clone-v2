@@ -3,7 +3,7 @@ import { Active, DataRef, Over } from "@dnd-kit/core";
 import { ColumnDragData } from "../components/board-column";
 import { twMerge } from "tailwind-merge";
 import Axios from "axios";
-import { OrderStatus, ShippingAddress } from "../@types";
+import { OrderStatus, ProductOption, ShippingAddress } from "../@types";
 import { colorHexMap } from "../constants/color";
 import { BACKEND_URL } from "../constants";
 import { TaskDragData } from "../components/dashboard/kanban/components/task-card";
@@ -202,3 +202,44 @@ export function hasDraggableData<T extends Active | Over>(
 
   return false;
 }
+
+export const formatOption = (option) => {
+  for (const key in option) {
+    if (
+      key !== "_id" &&
+      key !== "productId" &&
+      key !== "price" &&
+      key !== "stock" &&
+      key !== "__v" &&
+      key !== "createdAt" &&
+      key !== "updatedAt"
+    ) {
+      return {
+        type: key,
+
+        value: key === "color" ? getColorHex(option[key]) : option[key],
+      };
+    }
+  }
+  return { type: "", value: "" };
+};
+export const getPlaceholder = (type: string) => {
+  switch (type) {
+    case "color":
+      return "e.g., Space Black, Silver, Gold";
+    case "storage":
+      return "e.g., 128GB, 256GB, 512GB";
+    case "size":
+      return "e.g., Small, Medium, Large";
+    case "material":
+      return "e.g., Aluminum, Stainless Steel";
+    case "processor":
+      return "e.g., M1, M2 Pro, M2 Max";
+    case "accessories":
+      return "e.g., Case, Screen Protector";
+    case "carrier":
+      return "e.g., Unlocked, AT&T, Verizon";
+    default:
+      return "Enter value...";
+  }
+};

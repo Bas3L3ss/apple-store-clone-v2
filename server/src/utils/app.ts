@@ -37,7 +37,7 @@ const apiLimiter = rateLimit({
 });
 app.use(apiLimiter);
 
-app.use(timeout("5s"));
+app.use(timeout("1200s"));
 app.use((req, res, next) => {
   if (!req.timedout) next();
 });

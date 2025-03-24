@@ -94,6 +94,8 @@ export const getProductRecommendations = async (
 
 export const createProduct = async (product: FormValues) => {
   try {
+    console.log(product);
+
     const formData = new FormData();
 
     // Append text fields
@@ -116,17 +118,12 @@ export const createProduct = async (product: FormValues) => {
         }
       });
     }
-    console.log(formData.get("productImages"));
     await makeAxiosRequest<{ url: string }>(
       "post",
       "/products/",
       formData,
       true
     );
-
-    toast.success("Success", {
-      description: "Product Created.",
-    });
   } catch (error) {
     console.error("Create product Error:", error);
     toast.error("Create Product Failed", {

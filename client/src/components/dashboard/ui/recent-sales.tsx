@@ -11,7 +11,9 @@ import {
   CardDescription,
 } from "@/src/components/ui/card";
 
-export function RecentSales() {
+export function RecentSales({ data }: { data: any }) {
+  console.log(data);
+
   return (
     <Card>
       <CardHeader>

@@ -79,3 +79,21 @@ export const formSchema = z.object({
     .array(z.string())
     .min(1, { message: "At least one selection step is required" }),
 });
+
+export const extendedFormSchema = formSchema.extend({
+  isFeatured: z.boolean().default(false),
+  productOptions: z
+    .array(
+      z.object({
+        _id: z.string().optional(),
+        productId: z.string().optional(),
+        optionType: z.string().optional(),
+        optionValue: z.string().optional(),
+        price: z.number().positive(),
+        stock: z.number().int().nonnegative(),
+        createdAt: z.string().optional(),
+        updatedAt: z.string().optional(),
+      })
+    )
+    .optional(),
+});

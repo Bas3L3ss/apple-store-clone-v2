@@ -11,6 +11,7 @@ import cartRoutes from "./routes/cart";
 import orderRoutes from "./routes/order";
 import productRoutes from "./routes/product";
 import stripeRoutes from "./routes/checkout";
+import analyticsRoutes from "./routes/analytics";
 import productOptionRoutes from "./routes/product-options";
 import { invalidateAllProductCaches } from "./controllers/product/utils/invalidate-product-cache";
 import { invalidateUserCache } from "./controllers/auth/utils/invalidate-user-cache";
@@ -35,6 +36,7 @@ const bootstrap = async () => {
   app.use("/orders", orderRoutes);
   app.use("/carts", cartRoutes);
   app.use("/checkout", stripeRoutes);
+  app.use("/analytics", analyticsRoutes);
   app.use("/product-options", productOptionRoutes);
 
   await redis.subscribe("product-modified", async (message) => {
