@@ -20,12 +20,17 @@ const CloudinaryImage = ({
   alt?: string;
 }) => {
   const img = cld.image(publicId).format("auto").quality("auto");
-
+  const url = img.toURL();
   return (
-    <AdvancedImage
+    <img
+      onError={(e) => {
+        e.currentTarget.src = "/favicon.ico";
+        e.currentTarget.width = 50;
+        e.currentTarget.height = 50;
+      }}
       className={cn(className, "select-none")}
       alt={alt ?? ""}
-      cldImg={img ?? ""}
+      src={url}
     />
   );
 };
