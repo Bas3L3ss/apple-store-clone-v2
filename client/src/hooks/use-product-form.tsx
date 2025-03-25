@@ -124,12 +124,14 @@ const useProductForm = ({
 
   // Handle save option
   const handleSaveOption = useCallback(
+    /* @ts-expect-error: no prob */
     (data) => {
       const currentOptions = form.getValues("productOptions") || [];
       console.log(currentOptions);
 
       const newOption = {
         _id: data._id || `temp-id-${Date.now()}`,
+        /* @ts-expect-error: no prob */
         productId: initialData?._id || "",
         [data.optionType]: data.optionValue,
         price: data.price,
