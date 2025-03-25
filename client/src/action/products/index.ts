@@ -134,23 +134,44 @@ export const createProduct = async (product: FormValues) => {
   }
 };
 
-export const createProductOption = async (
-  setIsLoading: (loading: boolean) => void,
-  product: ProductOption
-) => {
-  setIsLoading(true);
+export const editProduct = async (_id, product: FormValues) => {
   try {
-    await makeAxiosRequest<{ url: string }>("post", "/products/", { product });
-    toast.success("Success", {
-      description: "Product Created.",
-    });
-  } catch (err) {
-    console.error("Create product options Error:", err);
-    toast.error("Create Product Failed", {
+    console.log(product);
+
+    const formData = new FormData();
+
+    // Append text fields
+    for (const [key, val] of Object.entries(product)) {
+      if (key !== "productImages") {
+        formData.append(
+          key,
+          typeof val === "string" ? val : JSON.stringify(val)
+        );
+      }
+    }
+
+    if (product.productImages) {
+      product.productImages.forEach((file) => {
+        if (typeof file == "string") {
+          formData.append("productImagesPublicIds[]", file);
+        } else {
+          formData.append(`productImages`, file);
+        }
+      });
+    }
+    formData.append("_id", _id);
+    await makeAxiosRequest<{ url: string }>(
+      "put",
+      "/products/",
+      formData,
+      true
+    );
+  } catch (error) {
+    console.error("Edit product Error:", error);
+    toast.error("Edit Product Failed", {
       description:
         "There was an issue creating product, ask maintainer about this issue or view the log.",
     });
-  } finally {
-    setIsLoading(false);
+    throw error;
   }
 };

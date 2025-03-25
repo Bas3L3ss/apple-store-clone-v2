@@ -52,8 +52,64 @@ import { Switch } from "@/src/components/ui/switch";
 import { formatPrice, getPlaceholder } from "@/src/lib/utils";
 import { optionTypes } from "@/src/constants/product-form";
 import useProductForm from "@/src/hooks/use-product-form";
+import { memo } from "react";
+import { UseFormReturn } from "react-hook-form";
 
 export type FormValues = z.infer<typeof extendedFormSchema>;
+
+const ImagesInput = memo(
+  ({
+    form,
+    removeImageField,
+  }: {
+    form: UseFormReturn<FormValues>;
+    removeImageField: (i: number) => void;
+  }) => {
+    return form
+      .watch("productImages")
+      .map((image: string | File, index: number) => {
+        if (image instanceof File) return null;
+
+        return (
+          <div key={image} className="flex gap-3">
+            <FormField
+              control={form.control}
+              name={`productImages.${index}`}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormControl>
+                    <div className="flex">
+                      <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <Input
+                        required
+                        placeholder="https://example.com/image.jpg"
+                        className="rounded-l-none"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => removeImageField(index)}
+              disabled={form.watch("productImages").length <= 2}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">Remove</span>
+            </Button>
+          </div>
+        );
+      });
+  }
+);
 
 export default function ProductForm({
   initialData,
@@ -282,7 +338,7 @@ export default function ProductForm({
                             }}
                             maxFiles={5}
                             maxSize={MAX_FILE_SIZE}
-                            accept={ACCEPTED_IMAGE_TYPES}
+                            accept={{ "image/*": [] }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -291,7 +347,7 @@ export default function ProductForm({
                   />
 
                   {/* URL inputs for image URLs */}
-                  {form.watch("productImages").map((image, index) => {
+                  {/* {form.watch("productImages").map((image, index) => {
                     // Skip file objects, only render inputs for string URLs
                     if (image instanceof File) return null;
 
@@ -308,6 +364,7 @@ export default function ProductForm({
                                     <Upload className="h-4 w-4 text-muted-foreground" />
                                   </div>
                                   <Input
+                                    required
                                     placeholder="https://example.com/image.jpg"
                                     className="rounded-l-none"
                                     {...field}
@@ -331,7 +388,11 @@ export default function ProductForm({
                         </Button>
                       </div>
                     );
-                  })}
+                  })} */}
+                  <ImagesInput
+                    form={form}
+                    removeImageField={removeImageField}
+                  />
                 </div>
               </div>
               <Separator />

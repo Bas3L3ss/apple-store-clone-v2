@@ -124,12 +124,12 @@ export const EditProduct = async (
         _id.toString()
       );
       const keepOptionIds = parsedOptions
-        .map((option: ProductOption) => option._id.toString())
         .filter(
           (option: ProductOption) =>
             // @ts-expect-error: no prob
             option._id && !option._id.startsWith("temp-id-")
-        );
+        )
+        .map((option: ProductOption) => option._id.toString());
 
       const optionsToDelete = existingOptionIds.filter(
         (_id) => !keepOptionIds.includes(_id)

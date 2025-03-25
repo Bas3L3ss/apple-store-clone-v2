@@ -94,15 +94,14 @@ const ShoppingBagDropDown = ({
                 <span className="font-medium">Account Settings</span>
                 <ChevronRight className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
-              <Link
-                to="#"
+              <button
                 className="flex items-center space-x-3 group transition-colors duration-200 hover:text-blue-600"
                 onClick={() => logout()}
               >
                 <LogOut className="h-5 w-5" />
                 <span className="font-medium">Sign Out</span>
                 <ChevronRight className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Link>
+              </button>
             </div>
           </>
         ) : (

@@ -1,11 +1,3 @@
-const ProductSelectionTypes = {
-  Color: "color",
-  Storage: "storage",
-  Size: "size",
-  Model: "model",
-  Material: "material",
-  Design: "design",
-};
 const optionTypes = [
   { value: "color", label: "Color" },
   { value: "storage", label: "Storage" },
@@ -16,4 +8,4 @@ const optionTypes = [
   { value: "carrier", label: "Carrier" },
 ];
 
-export { ProductSelectionTypes, optionTypes };
+export { optionTypes };

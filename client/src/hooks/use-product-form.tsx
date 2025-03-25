@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { ProductSelectionTypes } from "../constants/product-form";
 import { FormValues } from "../components/dashboard/product/product-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +6,8 @@ import { z } from "zod";
 import { formatOption } from "../lib/utils";
 import { toast } from "sonner";
 import { extendedFormSchema } from "../schemas";
-import { createProduct } from "../action/products";
+import { createProduct, editProduct } from "../action/products";
+import { ProductSelectionTypes } from "../@types";
 
 const useProductForm = ({
   initialData,
@@ -33,18 +33,22 @@ const useProductForm = ({
       })),
     []
   );
-
   const defaultValues = useMemo(
     () => ({
       name: initialData?.name || "",
       description: initialData?.description || "",
-      productImages: initialData?.productImages || [""],
+      productImages: initialData?.productImages || [],
       slug: initialData?.slug || "",
       basePrice: initialData?.basePrice || 99,
       category: initialData?.category || "phonecase",
       stock: initialData?.stock || 99,
       isFeatured: initialData?.isFeatured || false,
-      productSelectionStep: initialData?.productSelectionStep || [""],
+      productSelectionStep:
+        typeof initialData?.productSelectionStep == "string"
+          ? JSON.parse(initialData?.productSelectionStep)
+          : initialData?.productSelectionStep
+          ? initialData?.productSelectionStep
+          : [],
       productOptions: initialOptions,
     }),
     [initialData, initialOptions]
@@ -168,7 +172,8 @@ const useProductForm = ({
     try {
       data.productOptions = form.getValues("productOptions");
       if (initialData) {
-        // await editProduct(data);
+        // @ts-expect-error: no prob
+        await editProduct(initialData._id, data);
       } else {
         await createProduct(data);
       }
@@ -191,11 +196,17 @@ const useProductForm = ({
 
   const removeImageField = (index: number) => {
     const currentImages = form.getValues("productImages");
+
     if (currentImages.length > 2) {
-      form.setValue(
-        "productImages",
-        currentImages.filter((_, i) => i !== index)
-      );
+      const newImages: Array<string | File> = [];
+      currentImages.forEach((img, i) => {
+        if (index !== i) {
+          newImages.push(img);
+        }
+      });
+      console.log(newImages);
+
+      form.setValue("productImages", newImages);
     }
   };
 
