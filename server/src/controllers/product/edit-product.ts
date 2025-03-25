@@ -4,6 +4,8 @@ import { ProductModel } from "../../models/Product";
 import { ProductOptionModel } from "../../models/ProductOptions";
 import { saveProductOptions } from "./utils";
 import cloudinary from "../../utils/cloudinary";
+import { ProductOption } from "../../@types";
+import redis from "../../utils/redis";
 
 export const EditProduct = async (
   req: Request,
@@ -36,7 +38,6 @@ export const EditProduct = async (
     const {
       name,
       description,
-      productImages,
       slug,
       basePrice,
       category,
@@ -46,18 +47,25 @@ export const EditProduct = async (
       productOptions,
     } = req.body;
 
-    // Process and upload new images
+    const productImages = req.files;
+    const productImagesPublicIds = req.body.productImagesPublicIds
+      ? Array.isArray(req.body.productImagesPublicIds)
+        ? req.body.productImagesPublicIds
+        : req.body.productImagesPublicIds.split(",")
+      : [];
+
     let newImageUrls: string[] = [];
+
+    // @ts-expect-error: no prob
+
     if (productImages && productImages.length > 0) {
       if (Array.isArray(productImages)) {
         newImageUrls = await cloudinary.uploadImages(productImages);
       }
     }
 
-    // Check if files were uploaded via multer (req.files)
-    if (req.files && Array.isArray(req.files)) {
-      const uploadedFiles = req.files.map((file: any) => file.path);
-      newImageUrls = [...newImageUrls, ...uploadedFiles];
+    if (productImagesPublicIds && Array.isArray(productImagesPublicIds)) {
+      newImageUrls = [...newImageUrls, ...productImagesPublicIds];
     }
 
     // Handle image cleanup - identify and delete unused images
@@ -73,29 +81,11 @@ export const EditProduct = async (
     // Delete unused images from Cloudinary
     if (imagesToDelete.length > 0) {
       await Promise.all(
-        imagesToDelete.map(async (imageUrl) => {
+        imagesToDelete.map(async (publicId) => {
           try {
-            // Extract public ID from Cloudinary URL
-            // Example: https://res.cloudinary.com/cloud-name/image/upload/v1234567890/folder/image-id.jpg
-            const urlParts = imageUrl.split("/");
-            const filenameWithExtension = urlParts[urlParts.length - 1];
-            const publicId = filenameWithExtension.split(".")[0];
-
-            // If the image is in a folder, we need to include the folder name in the public ID
-            const folderIndex = urlParts.indexOf("upload") + 1;
-            if (folderIndex < urlParts.length - 1) {
-              const folderPath = urlParts
-                .slice(folderIndex, urlParts.length - 1)
-                .join("/");
-              const fullPublicId = `${folderPath}/${publicId}`;
-              await cloudinary.deleteImage(fullPublicId);
-              console.log(`✅ Deleted unused image: ${fullPublicId}`);
-            } else {
-              await cloudinary.deleteImage(publicId);
-              console.log(`✅ Deleted unused image: ${publicId}`);
-            }
+            await cloudinary.deleteImage(publicId);
           } catch (error) {
-            console.error(`❌ Failed to delete image ${imageUrl}:`, error);
+            console.error(`❌ Failed to delete image ${publicId}:`, error);
             // Continue with other deletions even if one fails
           }
         })
@@ -130,15 +120,19 @@ export const EditProduct = async (
       }
 
       // Delete existing options that are not in the new options list
-      const existingOptionIds = existingProduct.productOptions.map((id) =>
-        id.toString()
+      const existingOptionIds = existingProduct.productOptions.map((_id) =>
+        _id.toString()
       );
       const keepOptionIds = parsedOptions
-        .filter((option) => option._id && !option._id.startsWith("temp-id-"))
-        .map((option) => option._id.toString());
+        .map((option: ProductOption) => option._id.toString())
+        .filter(
+          (option: ProductOption) =>
+            // @ts-expect-error: no prob
+            option._id && !option._id.startsWith("temp-id-")
+        );
 
       const optionsToDelete = existingOptionIds.filter(
-        (id) => !keepOptionIds.includes(id)
+        (_id) => !keepOptionIds.includes(_id)
       );
 
       if (optionsToDelete.length > 0) {
@@ -157,7 +151,7 @@ export const EditProduct = async (
         existingProduct._id,
         session
       );
-
+      // @ts-expect-error: no prb
       existingProduct.productOptions = updatedOptionIds;
       await existingProduct.save({ session });
     }
@@ -174,11 +168,18 @@ export const EditProduct = async (
       data: updatedProduct,
       message: "Product updated successfully",
     });
+    redis.publish("product-modified", {
+      productId: existingProduct._id,
+      slug: existingProduct.slug,
+    });
+
     return;
   } catch (error) {
     await session.abortTransaction();
 
     // Handle duplicate slug error
+    // @ts-expect-error: no prb
+
     if (error.code === 11000 && error.keyPattern?.slug) {
       res.status(400).json({
         success: false,

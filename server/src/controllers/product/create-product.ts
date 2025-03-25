@@ -36,8 +36,10 @@ export const CreateProduct = async (
         ? req.body.productImagesPublicIds
         : req.body.productImagesPublicIds.split(",")
       : [];
+
     let imageUrls: string[] = [];
 
+    // @ts-expect-error: no prb
     if (productImages && productImages?.length > 0) {
       if (Array.isArray(productImages)) {
         imageUrls = await cloudinary.uploadImages(productImages);
@@ -79,7 +81,6 @@ export const CreateProduct = async (
           parsedOptions = [];
         }
       }
-      console.log(parsedOptions);
 
       const optionIds = await saveProductOptions(
         parsedOptions,
@@ -87,8 +88,7 @@ export const CreateProduct = async (
         session
       );
 
-      // Update product with option references
-
+      // @ts-expect-error: no prb
       product.productOptions = optionIds;
       await product.save({ session });
     }
@@ -123,6 +123,7 @@ export const CreateProduct = async (
     }
     await session.abortTransaction();
     // Handle duplicate slug error
+    // @ts-expect-error: no prb
     if (error.code === 11000 && error.keyPattern?.slug) {
       res.status(400).json({
         success: false,

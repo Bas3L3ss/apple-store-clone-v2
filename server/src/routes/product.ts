@@ -32,7 +32,16 @@ router.post(
   ],
   errorHandler
 );
-// router.put("/", [checkBearerToken, checkAdminRole, EditProduct], errorHandler);
+router.put(
+  "/",
+  [
+    checkBearerToken,
+    checkAdminRole,
+    upload.array("productImages", 10),
+    EditProduct,
+  ],
+  errorHandler
+);
 
 // USER
 // GET: Fetch all products

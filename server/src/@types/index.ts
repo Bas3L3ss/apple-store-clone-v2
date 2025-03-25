@@ -23,7 +23,9 @@ export interface Account {
   createdAt: Date;
   updatedAt: Date;
 }
+
 export interface Product extends Document {
+  _id: Types.ObjectId;
   name: string;
   description: string;
   productImages: string[];
@@ -36,6 +38,8 @@ export interface Product extends Document {
   isFeatured: boolean;
 }
 export interface ProductOption extends Document {
+  _id: Types.ObjectId;
+
   productId: Types.ObjectId;
   color?: string;
   material?: string;
