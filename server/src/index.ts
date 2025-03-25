@@ -51,7 +51,7 @@ const bootstrap = async () => {
   await redis.subscribe("user-modified", async (message) => {
     const data = await helper.safeParse(message);
     if (!data) return;
-    invalidateUserCache(data.userId);
+    invalidateUserCache(data.userId, data.isFromAdminEdit);
   });
 
   await redis.subscribe("featured-product-modified", () => {

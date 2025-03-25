@@ -14,6 +14,7 @@ const errorHandler = (
   logger.error({ statusCode, message, stack: error.stack });
 
   res.status(statusCode).json({ message });
+  return;
 };
 
 export default errorHandler;

@@ -13,6 +13,7 @@ const errorHandlerWithHtml = (
 
   res.status(statusCode).render("error", {
     frontendURL: APP_URL,
+    message,
   });
 };
 

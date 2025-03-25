@@ -2,41 +2,51 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "../../utils/jwt";
 import Account from "../../models/Account";
 import { APP_URL } from "../../constants";
+import redis from "../../utils/redis";
 
 const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     if (!token) {
-      return next({
+      next({
         statusCode: 400,
         message: "Verification token is required",
       });
+      return;
     }
 
     const decoded = await jwt.verifyToken(token);
 
     if (!decoded?.email) {
-      return next({ statusCode: 400, message: "Invalid or expired token" });
+      next({ statusCode: 400, message: "Invalid or expired token" });
+      return;
     }
 
     const account = await Account.findOne({ email: decoded.email });
 
     if (!account) {
-      return next({ statusCode: 404, message: "User not found" });
+      next({ statusCode: 404, message: "User not found" });
+      return;
     }
 
     if (account.verified) {
-      return next({ statusCode: 400, message: "Email already verified" });
+      next({ statusCode: 400, message: "Email already verified" });
+      return;
     }
 
     account.verified = true;
     await account.save();
 
-    return res.render("email-verification", {
+    redis.publish("user-modified", {
+      userId: account._id,
+    });
+    res.render("email-verification", {
       frontendURL: APP_URL,
     });
+    return;
   } catch (error) {
     next(error);
+    return;
   }
 };
 

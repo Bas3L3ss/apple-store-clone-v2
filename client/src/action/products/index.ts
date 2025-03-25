@@ -136,8 +136,6 @@ export const createProduct = async (product: FormValues) => {
 
 export const editProduct = async (_id, product: FormValues) => {
   try {
-    console.log(product);
-
     const formData = new FormData();
 
     // Append text fields

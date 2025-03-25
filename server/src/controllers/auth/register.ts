@@ -3,6 +3,7 @@ import joi from "../../utils/joi";
 import jwt from "../../utils/jwt";
 import crypt from "../../utils/crypt";
 import Account from "../../models/Account";
+import redis from "../../utils/redis";
 
 const register: RequestHandler = async (req, res, next) => {
   try {
@@ -46,6 +47,10 @@ const register: RequestHandler = async (req, res, next) => {
     const token = jwt.signToken({ uid: newAccount._id, role: newAccount.role });
     const { password: _, ...data } = newAccount.toObject();
 
+    redis.publish("user-modified", {
+      userId: newAccount._id,
+      isFromAdminEdit: true,
+    });
     res.status(201).json({
       message: "Successfully registered",
       data,

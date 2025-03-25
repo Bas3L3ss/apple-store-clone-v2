@@ -92,7 +92,7 @@ export const GetDashboardUsers = async ({
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("remember");
 
-    const response = await axios.get("/auth", {
+    const response = await axios.get("/auth/admin", {
       params: { search, type, isVerified, page, limit },
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -132,5 +132,29 @@ export const GetUserById = async ({
     console.log("Error fetching users: ", error);
 
     return null;
+  }
+};
+export const EditAccountAdmin = async ({
+  newUserData,
+  uid,
+}: {
+  newUserData: any;
+  uid: string;
+}) => {
+  try {
+    const formData = new FormData();
+
+    for (const [key, val] of Object.entries(newUserData)) {
+      formData.append(key, val);
+    }
+
+    await makeAxiosRequest("put", `/auth/admin/${uid}`, formData, true);
+  } catch (error) {
+    console.error("Edit user Error:", error);
+    toast.error("Edit user Failed", {
+      description:
+        "There was an issue creating user, ask maintainer about this issue or view the log.",
+    });
+    throw error;
   }
 };

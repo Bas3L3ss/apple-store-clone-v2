@@ -97,3 +97,10 @@ export const extendedFormSchema = formSchema.extend({
     )
     .optional(),
 });
+export const userFormSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  role: z.string(),
+  verified: z.boolean(),
+  avatar: z.any().optional(), // Can be a File object or a string URL
+});

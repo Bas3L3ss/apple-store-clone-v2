@@ -3,22 +3,15 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { EditAccountAdmin } from "../action/auth";
+import { userFormSchema } from "../schemas";
 // Define user roles
 const UserRoles = {
   User: "user",
   Admin: "admin",
 };
 
-// Create schema for form validation
-const userFormSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  role: z.string(),
-  verified: z.boolean(),
-  avatar: z.any().optional(), // Can be a File object or a string URL
-});
-
-type UserFormValues = z.infer<typeof userFormSchema>;
+export type UserFormValues = z.infer<typeof userFormSchema>;
 
 const useUserForm = ({ initialData }: { initialData: any | null }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,14 +38,15 @@ const useUserForm = ({ initialData }: { initialData: any | null }) => {
 
   async function onSubmit(data: UserFormValues) {
     setIsSubmitting(true);
+
     try {
-      console.log("Edit user data:", data);
+      await EditAccountAdmin({ newUserData: data, uid: initialData._id });
+      toast.success("Edited User");
     } catch (error) {
       console.error("Error editing user:", error);
       toast.error("Failed to edit user");
-    } finally {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   }
   return { form, onSubmit, isSubmitting, userRoleOptions };
 };

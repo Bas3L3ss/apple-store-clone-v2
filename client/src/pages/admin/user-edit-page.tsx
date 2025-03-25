@@ -21,5 +21,5 @@ export default function UserEditPage() {
     return <div>User not found</div>;
   }
 
-  return <UserForm initialData={data[0]} pageTitle={"Edit User"} />;
+  return <UserForm initialData={data[0] ?? data} pageTitle={"Edit User"} />;
 }

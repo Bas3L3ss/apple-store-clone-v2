@@ -88,7 +88,11 @@ class CloudinaryClient {
     });
   }
 
-  async uploadImages(images: any[], folder?: string): Promise<string[]> {
+  async uploadImages(
+    images: any[],
+    folder?: string,
+    returnUrl: boolean = false
+  ): Promise<string[]> {
     if (!this.isConfigured) {
       throw new Error("Cloudinary is not configured");
     }
@@ -117,7 +121,10 @@ class CloudinaryClient {
           });
 
           console.log(result);
-          uploadedImageUrls.push(result.public_id);
+
+          uploadedImageUrls.push(
+            !returnUrl ? result.public_id : result.secure_url
+          );
 
           continue;
         }
@@ -125,6 +132,7 @@ class CloudinaryClient {
         console.warn("Skipping unknown image format:", image);
       } catch (error: any) {
         console.log("❌ Error uploading image to Cloudinary:", error.message);
+        return [];
       }
     }
 

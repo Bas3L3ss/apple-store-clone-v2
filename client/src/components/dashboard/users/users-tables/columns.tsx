@@ -1,8 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import CloudinaryImage from "@/src/components/reusable/cloudinary-image";
 import { User } from "@/src/@types";
-import { formatPrice } from "@/src/lib/utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -15,8 +13,8 @@ export const columns: ColumnDef<User>[] = [
       return (
         <div className="h-16 w-16 relative rounded-md overflow-hidden">
           {imageId ? (
-            <CloudinaryImage
-              publicId={imageId}
+            <img
+              src={imageId}
               alt={user.username}
               width={64}
               height={64}

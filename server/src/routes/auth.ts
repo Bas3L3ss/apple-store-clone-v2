@@ -7,12 +7,18 @@ import loginWithToken from "../controllers/auth/login-with-token";
 import editAccount from "../controllers/auth/edit-account";
 import sendVerificationEmail from "../controllers/auth/send-verfication-email";
 import verifyEmail from "../controllers/auth/verify-email";
-import errorHandlerWithHtml from "../middlewares/error-handler";
+import errorHandlerWithHtml from "../middlewares/error-handler-with-html";
 import sendResetPasswordEmail from "../controllers/auth/send-reset-password-email";
 import resetPassword from "../controllers/auth/reset-password";
 import checkAdminRole from "../controllers/auth/check-admin-role";
 import { GetUsers } from "../controllers/auth/get-users";
 import { GetUserById } from "../controllers/auth/get-user-by-id";
+import multer from "multer";
+import editAccountAdmin from "../controllers/auth/edit-account-admin";
+
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage: storage });
 
 // initialize router
 const router = express.Router();
@@ -44,7 +50,18 @@ router.post("/reset-password", [checkBearerToken, resetPassword], errorHandler);
 // ADMIN ONLY
 
 // GET: get users paginated
-router.get("/", [checkBearerToken, checkAdminRole, GetUsers], errorHandler);
+router.get(
+  "/admin",
+  [checkBearerToken, checkAdminRole, GetUsers],
+  errorHandler
+);
+
+// PUT: update account
+router.put(
+  "/admin/:uid",
+  [checkBearerToken, checkAdminRole, upload.single("avatar"), editAccountAdmin],
+  errorHandler
+);
 
 // GET: get user by their id
 router.get(

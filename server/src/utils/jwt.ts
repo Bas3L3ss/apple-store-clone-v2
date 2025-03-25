@@ -35,16 +35,16 @@ class JWT {
         return null;
       }
 
-      const cacheKey = `user:${uid}`;
+      const cacheKey = `users:${uid}`;
 
       const cachedUser = await redis.get<AccountType>(cacheKey);
 
       if (cachedUser) {
-        console.log(`✅ Cache hit for user:${uid}`);
+        console.log(`✅ Cache hit for users:${uid}`);
         return cachedUser;
       }
 
-      console.log(`❌ Cache miss for user:${uid}, fetching from database`);
+      console.log(`❌ Cache miss for users:${uid}, fetching from database`);
 
       const user = await Account.findById(uid).select("-password"); // Exclude sensitive fields
 
@@ -55,7 +55,7 @@ class JWT {
       // Store user in cache for future requests (cache for 15 minutes)
       // Short TTL for user data to ensure permissions/roles are relatively fresh
       await redis.set(cacheKey, user, 900);
-      console.log(`✅ Cached user:${uid} for 15 minutes`);
+      console.log(`✅ Cached users:${uid} for 15 minutes`);
 
       return user;
     } catch (error) {
