@@ -2,20 +2,35 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Order } from "@/src/@types";
 import { formatPrice } from "@/src/lib/utils";
+import { Link } from "react-router";
 
 export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "orderId",
     header: "Order ID",
     cell: ({ row }) => {
-      return <span className="capitalize">{row.original._id}</span>;
+      return (
+        <Link
+          to={`/order/${row.original._id}`}
+          className="capitalize text-blue-500 hover:underline"
+        >
+          {row.original._id}
+        </Link>
+      );
     },
   },
   {
     accessorKey: "userId",
     header: "USER ID",
     cell: ({ row }) => {
-      return <span className="capitalize">{row.original.userId}</span>;
+      return (
+        <Link
+          to={`/dashboard/user/${row.original.userId}`}
+          className="capitalize text-blue-500 hover:underline"
+        >
+          {row.original.userId}
+        </Link>
+      );
     },
   },
   {
@@ -57,7 +72,7 @@ export const columns: ColumnDef<Order>[] = [
     id: "actions",
     cell: ({ row }) => {
       const orderId = row.original._id;
-      return <CellAction orderId={orderId} />;
+      return <CellAction orderStatus={row.original.status} orderId={orderId} />;
     },
   },
 ];

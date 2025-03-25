@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { OrderModel } from "../../models/Order";
 import { AuthenticatedRequest } from "../../middlewares/check-bearer-token";
 import redis from "../../utils/redis";
+import { Order } from "../../@types";
 
 export const GetOrderById = async (
   req: AuthenticatedRequest,
@@ -18,12 +19,23 @@ export const GetOrderById = async (
 
     // Create a cache key based on order ID and user ID
     // Including user ID in the cache key ensures proper authorization
-    const cacheKey = `order:${id}:user:${userId}`;
+    const cacheKey = `orders:user:${userId}:${id}`;
 
     // Try to get order from cache first
-    const cachedOrder = await redis.get(cacheKey);
+    const cachedOrder: {
+      success: boolean;
+      data: Order | null | undefined;
+    } | null = await redis.get(cacheKey);
 
     if (cachedOrder) {
+      if (cachedOrder?.data?.userId.toString() !== userId.toString()) {
+        if (role !== "admin") {
+          return next({
+            statusCode: 403,
+            message: "You are not authorized to view this order",
+          });
+        }
+      }
       console.log(`✅ Cache hit for ${cacheKey}`);
       res.status(200).json(cachedOrder);
       return;

@@ -1,3 +1,4 @@
+import { EnrichedSalesResponse } from "@/src/@types";
 import { makeAxiosRequest } from "@/src/lib/utils";
 
 export const getRevenue = async () => {
@@ -22,7 +23,10 @@ export const getPaymentStatus = async () => {
 
 export const getRecentSales = async () => {
   try {
-    const response = await makeAxiosRequest("get", "/analytics/recent-sales");
+    const response = await makeAxiosRequest<EnrichedSalesResponse>(
+      "get",
+      "/analytics/recent-sales"
+    );
     return response;
   } catch (error) {
     console.error("Error fetching recent sales:", error);
@@ -30,12 +34,18 @@ export const getRecentSales = async () => {
   }
 };
 
-export const getTopCustomers = async () => {
+export const getNewAccounts = async () => {
   try {
-    const response = await makeAxiosRequest("get", "/analytics/top-customers");
+    const response = await makeAxiosRequest<{
+      lastMonth: { count: number };
+      thisMonth: {
+        count: number;
+        percentageChange: number;
+      };
+    }>("get", "/analytics/new-customers");
     return response;
   } catch (error) {
-    console.error("Error fetching top customers:", error);
+    console.error("Error fetching new customers:", error);
     return [];
   }
 };

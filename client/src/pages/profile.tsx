@@ -15,6 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
+
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -54,15 +61,36 @@ import { useForm } from "react-hook-form";
 import { passwordFormSchema, profileFormSchema } from "../schemas";
 import { formatDate } from "../lib/utils";
 import { useAuth } from "../contexts/AuthContext";
-import { editUserProfile, sendVerificationEmail } from "../action/auth";
+import {
+  editUserAvatar,
+  editUserProfile,
+  sendVerificationEmail,
+} from "../action/auth";
 import { Navigate } from "react-router";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import { FileUploader } from "../components/ui/file-uploader";
+import { MAX_FILE_SIZE } from "../constants";
+import LoadingState from "../components/loading";
 
 export default function ProfilePage() {
-  const { account: user } = useAuth();
-  const [loading] = useState(false);
+  const { account: user, isLoading: isAuthUserLoading } = useAuth();
+  const [submitting, setIsSubmitting] = useState(false);
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+  const [avatarInput, setAvatarInput] = useState<File[] | null | undefined>(
+    null
+  );
   const [verificationSent, setVerificationSent] = useState(false);
 
   const profileForm = useForm({
@@ -73,6 +101,7 @@ export default function ProfilePage() {
     },
   });
 
+  const loading = submitting || isVerifying || isEditingAvatar;
   const passwordForm = useForm({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
@@ -85,6 +114,7 @@ export default function ProfilePage() {
     return <Navigate to={"/"} />;
   }
   const onProfileSubmit = async (data: { username: string; email: string }) => {
+    setIsSubmitting(true);
     try {
       await editUserProfile(data);
 
@@ -93,14 +123,18 @@ export default function ProfilePage() {
       console.log(error);
       toast.error("Please try again");
     }
+    setIsSubmitting(false);
   };
 
   const onPasswordSubmit = async (data: {
     newPassword: string;
     confirmPassword: string;
   }) => {
+    setIsSubmitting(true);
+
     // TODO: implement reset password
     console.log(data);
+    setIsSubmitting(false);
   };
 
   const handleSendVerificationEmail = async () => {
@@ -115,44 +149,26 @@ export default function ProfilePage() {
       setIsVerifying(false);
     }
   };
+  const handleEditAvatar = async () => {
+    try {
+      setIsEditingAvatar(true);
+
+      await editUserAvatar(avatarInput?.[0]);
+      setAvatarDialogOpen(false);
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+    } finally {
+      setIsEditingAvatar(false);
+    }
+  };
 
   // Loading state
-  if (loading && !user) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="flex flex-col space-y-6">
-          <div className="flex items-center space-x-4">
-            <div className="h-16 w-16 rounded-full bg-gray-200 animate-pulse"></div>
-            <div className="space-y-2">
-              <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-gray-100 p-6">
-            <div className="h-8 w-40 bg-gray-200 rounded mb-4 animate-pulse"></div>
-            <div className="space-y-4">
-              <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  if (isAuthUserLoading) {
+    return <LoadingState />;
   }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      {loading && (
-        <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50">
-          <div className="flex flex-col items-center">
-            <div className="h-8 w-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
-            <p className="mt-2 text-gray-600">Updating...</p>
-          </div>
-        </div>
-      )}
-
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-gray-900">Apple ID</h1>
         <p className="text-gray-500">
@@ -162,13 +178,57 @@ export default function ProfilePage() {
 
       <div className="bg-gray-50 rounded-xl p-6 mb-8 flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
         <div className="relative">
-          <Avatar className="h-20 w-20 border-2 border-white shadow-sm">
-            <AvatarImage
-              src={user?.avatar || "/api/placeholder/64/64"}
-              alt={user?.username}
-            />
-            <AvatarFallback>{user?.username?.charAt(0) || "U"}</AvatarFallback>
-          </Avatar>
+          <Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
+            <DialogTrigger asChild>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setAvatarDialogOpen(true)}
+                      className="focus:outline-none"
+                    >
+                      <Avatar className="h-20 w-20 border-2 border-white shadow-sm">
+                        <AvatarImage
+                          src={user?.avatar || "/api/placeholder/64/64"}
+                          alt={user?.username}
+                        />
+                        <AvatarFallback>
+                          {user?.username?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to edit your avatar</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Edit avatar</DialogTitle>
+                <DialogDescription></DialogDescription>
+              </DialogHeader>
+              <FileUploader
+                // @ts-expect-error: no prob
+                value={avatarInput}
+                // @ts-expect-error: no prob
+                onValueChange={setAvatarInput}
+                maxFiles={1}
+                maxSize={MAX_FILE_SIZE}
+                accept={{ "image/*": [] }}
+              />
+              <DialogFooter>
+                <Button
+                  disabled={loading || !avatarInput}
+                  onClick={handleEditAvatar}
+                >
+                  {isEditingAvatar ? "Editing..." : "Edit avatar"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           {user?.role == "admin" && (
             <div className="absolute -bottom-2 -right-2">
               <Badge className="bg-blue-600">
@@ -237,7 +297,7 @@ export default function ProfilePage() {
                 </p>
                 <Button
                   onClick={handleSendVerificationEmail}
-                  disabled={isVerifying}
+                  disabled={loading}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   {isVerifying ? "Sending..." : "Send Verification Email"}
@@ -318,15 +378,17 @@ export default function ProfilePage() {
                       <Button
                         type="button"
                         variant="outline"
+                        disabled={loading}
                         onClick={() => setIsEditMode(false)}
                       >
                         Cancel
                       </Button>
                       <Button
                         type="submit"
+                        disabled={loading}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
-                        Save Changes
+                        {submitting ? "Saving..." : "Save Changes"}
                       </Button>
                     </div>
                   </form>
@@ -479,9 +541,10 @@ export default function ProfilePage() {
 
                     <Button
                       type="submit"
+                      disabled={loading}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
-                      Update Password
+                      {submitting ? "Updating..." : "Update Password"}
                     </Button>
                   </form>
                 </Form>

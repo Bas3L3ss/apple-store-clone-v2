@@ -18,6 +18,7 @@ import { invalidateUserCache } from "./controllers/auth/utils/invalidate-user-ca
 import { invalidateFeaturedProductsCache } from "./controllers/product/utils/invalidate-featured-products-cache";
 import { invalidateUserOrderCaches } from "./controllers/order/utils/invalidate-user-order-cache";
 import { invalidateProductsCache } from "./controllers/product/utils/invalidate-products-cache";
+import { invalidateCustomerAnalyticsCache } from "./controllers/order/utils/invalidate.customer.analytics-cache";
 
 const bootstrap = async () => {
   await mongo.connect();
@@ -62,6 +63,7 @@ const bootstrap = async () => {
     const data = await helper.safeParse(message);
     if (!data) return;
     invalidateUserOrderCaches(data.userId);
+    invalidateCustomerAnalyticsCache(data.email);
   });
 
   app.listen(PORT, () => {

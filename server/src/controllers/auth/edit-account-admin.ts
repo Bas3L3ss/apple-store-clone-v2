@@ -22,11 +22,11 @@ const editAccountAdmin: RequestHandler = async (
       return next({ statusCode: 404, message: "Account not found" });
     }
 
+    // @ts-expect-error: no prob
     let avatar: File | string | undefined = req.file;
 
     if (avatar) {
       const newImage = await cloudinary.uploadImages([avatar], "avatar", true);
-      console.log(newImage);
 
       avatar = newImage[0];
       if (avatar) {

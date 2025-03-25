@@ -26,6 +26,7 @@ export default function ProductTableAction() {
         filterKey="categories"
         title="Categories"
         options={CATEGORY_OPTIONS}
+        // @ts-expect-error: no prob
         setFilterValue={setCategoriesFilter}
         filterValue={categoriesFilter}
       />

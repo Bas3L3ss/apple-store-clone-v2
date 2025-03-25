@@ -54,8 +54,6 @@ export const GetUserOrders = async (
       },
     };
 
-    // Store in cache for future requests (cache for 5 minutes)
-    // Short TTL for orders since they change frequently
     await redis.set(cacheKey, result, 300);
     console.log(`✅ Cached ${cacheKey} for 5 minutes`);
 

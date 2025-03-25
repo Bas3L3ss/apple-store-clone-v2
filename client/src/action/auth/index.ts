@@ -31,6 +31,27 @@ export async function sendVerificationEmail() {
     });
   }
 }
+export async function editUserAvatar(avatar?: File | string) {
+  if (!avatar) throw new Error("Please retry");
+  const formData = new FormData();
+  formData.append("avatar", avatar);
+  try {
+    await makeAxiosRequest<{ url: string }>(
+      "put",
+      "/auth/account/avatar",
+      formData,
+      true
+    );
+    toast.success("Your avatar has been edited!", {
+      description: "Please refresh to see your new avatar.",
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    toast.error("Verification Failed", {
+      description: "There was an issue processing your payment.",
+    });
+  }
+}
 
 export async function sendResetPasswordEmail(email: string) {
   try {
@@ -145,6 +166,7 @@ export const EditAccountAdmin = async ({
     const formData = new FormData();
 
     for (const [key, val] of Object.entries(newUserData)) {
+      // @ts-expect-error: no prob
       formData.append(key, val);
     }
 

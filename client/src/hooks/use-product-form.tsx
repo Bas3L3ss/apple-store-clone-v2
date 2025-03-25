@@ -3,7 +3,6 @@ import { FormValues } from "../components/dashboard/product/product-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formatOption } from "../lib/utils";
 import { toast } from "sonner";
 import { extendedFormSchema } from "../schemas";
 import { createProduct, editProduct } from "../action/products";
@@ -92,7 +91,7 @@ const useProductForm = ({
       const options = form.getValues("productOptions") || [];
       const option = options[index];
       if (!option) return;
-
+      // @ts-expect-error: no prob
       const { type, value } = formatOption(option);
 
       optionForm.reset({
@@ -127,7 +126,6 @@ const useProductForm = ({
     /* @ts-expect-error: no prob */
     (data) => {
       const currentOptions = form.getValues("productOptions") || [];
-      console.log(currentOptions);
 
       const newOption = {
         _id: data._id || `temp-id-${Date.now()}`,
@@ -206,7 +204,6 @@ const useProductForm = ({
           newImages.push(img);
         }
       });
-      console.log(newImages);
 
       form.setValue("productImages", newImages);
     }
@@ -234,7 +231,6 @@ const useProductForm = ({
     defaultValues,
     editingOptionIndex,
     form,
-    formatOption,
     handleAddOption,
     handleDeleteOption,
     handleEditOption,

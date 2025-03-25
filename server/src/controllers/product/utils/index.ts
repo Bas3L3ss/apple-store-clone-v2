@@ -34,6 +34,7 @@ async function saveProductOptions(
         ].includes(key) &&
         option[key]
       ) {
+        // @ts-expect-error: no prob
         optionData[key] = option[key];
         break; // Ensure only one option type is set
       }

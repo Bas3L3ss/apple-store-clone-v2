@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "../constants";
+import { MAX_FILE_SIZE, SCHEMA_ACCEPTED_IMAGE_TYPES } from "../constants";
 
 export const profileFormSchema = z.object({
   username: z.string().min(2, {
@@ -43,7 +43,7 @@ const imageSchema = z.union([
     .instanceof(File)
     .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      (file) => SCHEMA_ACCEPTED_IMAGE_TYPES.includes(file.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
     ),
   z.string(),

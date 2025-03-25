@@ -21,7 +21,6 @@ export default function OrderListingPage({ searchParams }: ProductListingPage) {
     search,
     paymentMethod,
   });
-  console.log(data);
 
   if (isLoading) {
     return <DataTableSkeleton columnCount={5} rowCount={10} />;

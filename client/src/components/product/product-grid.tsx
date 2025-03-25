@@ -40,8 +40,8 @@ export default function ProductGrid({
   const { data, isLoading, isError } = useGetProducts({
     search: searchQuery,
     category,
-    page: currentPage,
-    limit: 8,
+    page: `${currentPage}`,
+    limit: "8",
   });
 
   const handlePageChange = (newPage: number) => {

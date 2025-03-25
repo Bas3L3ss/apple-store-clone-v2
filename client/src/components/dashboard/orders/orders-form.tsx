@@ -240,6 +240,7 @@ export default function UserEditForm({
                             field.value instanceof File ? [field.value] : []
                           }
                           onValueChange={(files) => {
+                            // @ts-expect-error: no prob
                             field.onChange(files.length > 0 ? files[0] : "");
                           }}
                           maxFiles={1}

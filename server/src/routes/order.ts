@@ -6,6 +6,7 @@ import { GetUserOrders } from "../controllers/order/get-user-orders";
 import { GetCustomerAnalytics } from "../controllers/stripe/get-customer-analytics";
 import checkAdminRole from "../controllers/auth/check-admin-role";
 import { GetOrders } from "../controllers/order/get-orders";
+import { EditOrder } from "../controllers/order/edit-order";
 
 const router = express.Router();
 
@@ -15,6 +16,11 @@ const router = express.Router();
 router.get(
   "/admin",
   [checkBearerToken, checkAdminRole, GetOrders],
+  errorHandler
+);
+router.put(
+  "/admin",
+  [checkBearerToken, checkAdminRole, EditOrder],
   errorHandler
 );
 

@@ -20,8 +20,6 @@ const OrderStatusCard = ({
   progressPercent,
   createdAt,
 }: OrderStatusCardProps) => {
-  console.log(estimatedDelivery);
-
   return (
     <Card className="shadow-md border-0 mb-6">
       <CardHeader className="border-b bg-gray-50">

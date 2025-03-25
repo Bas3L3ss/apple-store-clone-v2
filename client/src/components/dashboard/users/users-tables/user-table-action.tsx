@@ -28,6 +28,8 @@ export default function UserTableAction() {
         filterKey="type"
         title="User types"
         options={USER_TYPE_OPTIONS}
+        // @ts-expect-error: no prob
+
         setFilterValue={setCategoriesFilter}
         filterValue={typeFilter}
       />
@@ -35,6 +37,8 @@ export default function UserTableAction() {
         filterKey="isVerified"
         title="verified?"
         options={VERIFIED_OPTIONS}
+        // @ts-expect-error: no prob
+
         setFilterValue={setCategoriesFilter}
         filterValue={isVerifiedFilter}
       />

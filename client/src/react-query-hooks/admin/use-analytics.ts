@@ -3,7 +3,7 @@ import {
   getRevenue,
   getPaymentStatus,
   getRecentSales,
-  getTopCustomers,
+  getNewAccounts,
 } from "@/src/action/analytics";
 
 export const useGetRevenue = () => {
@@ -11,6 +11,7 @@ export const useGetRevenue = () => {
     queryKey: ["analytics:revenue"],
     queryFn: getRevenue,
     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+    refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
 };
@@ -20,6 +21,7 @@ export const useGetPaymentStatus = () => {
     queryKey: ["analytics:payment-status"],
     queryFn: getPaymentStatus,
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
 };
@@ -29,15 +31,17 @@ export const useGetRecentSales = () => {
     queryKey: ["analytics:recent-sales"],
     queryFn: getRecentSales,
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
 };
 
-export const useGetTopCustomers = () => {
+export const useGetNewAccounts = () => {
   return useQuery({
-    queryKey: ["analytics:top-customers"],
-    queryFn: getTopCustomers,
+    queryKey: ["analytics:new-accounts"],
+    queryFn: getNewAccounts,
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
 };

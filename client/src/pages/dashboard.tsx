@@ -5,7 +5,7 @@ import { Outlet } from "react-router";
 const AdminDashboard = () => {
   return (
     <DashboardLayout>
-      <DashboardContainer>
+      <DashboardContainer scrollable={false}>
         <Outlet />
       </DashboardContainer>
     </DashboardLayout>

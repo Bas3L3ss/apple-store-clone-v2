@@ -100,3 +100,12 @@ export const getAllOrders = async ({
     };
   }
 };
+export const editOrderStatus = async (orderId: string, status: string) => {
+  try {
+    await makeAxiosRequest("put", "/orders/admin", { orderId, status });
+  } catch (error) {
+    console.log("Something went wrong", error);
+
+    throw error;
+  }
+};

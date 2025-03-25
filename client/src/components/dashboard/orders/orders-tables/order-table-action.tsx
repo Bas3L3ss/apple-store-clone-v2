@@ -28,6 +28,8 @@ export default function OrderTableAction() {
         filterKey="status"
         title="Order Status"
         options={ORDER_STATUS}
+        // @ts-expect-error: no prob
+
         setFilterValue={setCategoriesFilter}
         filterValue={statusFilter}
       />
@@ -35,6 +37,8 @@ export default function OrderTableAction() {
         filterKey="paymentMethod"
         title="Payment method"
         options={PAYMENT_METHOD}
+        // @ts-expect-error: no prob
+
         setFilterValue={setCategoriesFilter}
         filterValue={paymentMethodFilter}
       />

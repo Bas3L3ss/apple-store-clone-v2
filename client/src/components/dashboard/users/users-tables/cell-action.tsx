@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 export const CellAction = ({ userId }: { userId: string }) => {
+  // @ts-expect-error: no prob
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useNavigate();

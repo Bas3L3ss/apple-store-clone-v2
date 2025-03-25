@@ -1,4 +1,4 @@
-import { FetchProductsResponse, Product, ProductOption } from "@/src/@types";
+import { FetchProductsResponse, Product } from "@/src/@types";
 import { FormValues } from "@/src/components/dashboard/product/product-form";
 import { axios, makeAxiosRequest } from "@/src/lib/utils";
 import { toast } from "sonner";
@@ -94,8 +94,6 @@ export const getProductRecommendations = async (
 
 export const createProduct = async (product: FormValues) => {
   try {
-    console.log(product);
-
     const formData = new FormData();
 
     // Append text fields
@@ -134,7 +132,7 @@ export const createProduct = async (product: FormValues) => {
   }
 };
 
-export const editProduct = async (_id, product: FormValues) => {
+export const editProduct = async (_id: string, product: FormValues) => {
   try {
     const formData = new FormData();
 

@@ -37,7 +37,6 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
       const customer = await stripe.customers.retrieve(
         stripeSession.customer as string
       );
-      console.log(stripeSession.metadata);
 
       // ✅ Extract order details
       // @ts-expect-error: no problem
@@ -93,7 +92,10 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         await session.commitTransaction();
         session.endSession();
 
-        redis.publish("user-order-modified", { userId });
+        redis.publish("user-order-modified", {
+          userId,
+          email: stripeSession.customer_details?.email,
+        });
         res.json({ received: true });
       } catch (error) {
         await session.abortTransaction();

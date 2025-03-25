@@ -203,7 +203,7 @@ export function hasDraggableData<T extends Active | Over>(
   return false;
 }
 
-export const formatOption = (option) => {
+export const formatOption = (option: ProductOption) => {
   for (const key in option) {
     if (
       key !== "_id" &&
@@ -216,7 +216,7 @@ export const formatOption = (option) => {
     ) {
       return {
         type: key,
-
+        //@ts-expect-error: no prob
         value: key === "color" ? getColorHex(option[key]) : option[key],
       };
     }

@@ -22,6 +22,7 @@ const editAccountAvatar: RequestHandler = async (
       return next({ statusCode: 401, message: "Unauthorized" });
     }
 
+    // @ts-expect-error: no prob
     let avatar: string | File | undefined = req.file;
 
     if (avatar) {

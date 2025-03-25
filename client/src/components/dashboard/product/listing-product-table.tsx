@@ -25,7 +25,6 @@ export default function ProductListingPage({
   if (isLoading) {
     return <DataTableSkeleton columnCount={5} rowCount={10} />;
   }
-  console.log(data);
 
   return (
     <ProductTable

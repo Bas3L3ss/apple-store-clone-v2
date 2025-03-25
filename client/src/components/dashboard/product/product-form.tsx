@@ -49,7 +49,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Switch } from "@/src/components/ui/switch";
-import { formatPrice, getPlaceholder } from "@/src/lib/utils";
+import { formatOption, formatPrice, getPlaceholder } from "@/src/lib/utils";
 import { optionTypes } from "@/src/constants/product-form";
 import useProductForm from "@/src/hooks/use-product-form";
 import { memo } from "react";
@@ -124,7 +124,6 @@ export default function ProductForm({
     addSelectionStep,
     editingOptionIndex,
     form,
-    formatOption,
     handleAddOption,
     handleDeleteOption,
     handleEditOption,
@@ -493,6 +492,7 @@ export default function ProductForm({
                       <TableBody>
                         {/* @ts-expect-error: no prob */}
                         {form.watch("productOptions").map((option, index) => {
+                          // @ts-expect-error: no prob
                           const { type, value } = formatOption(option);
                           return (
                             <TableRow key={option._id || index}>

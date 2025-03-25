@@ -19,7 +19,6 @@ export const GetProducts = async (
       page?: string;
       limit?: string;
     };
-    console.log(req.query);
 
     const cacheKey = `products:${search || ""}:${
       category || ""

@@ -18,13 +18,11 @@ export async function GetRevenue(
     const endOfLastMonth = moment().subtract(1, "month").endOf("month").unix();
 
     let thisMonthRevenue = 0,
-      lastMonthRevenue = 0,
-      totalSales = 0;
+      lastMonthRevenue = 0;
 
     for (const p of payments) {
       if (p.status === "succeeded") {
-        const amount = p.amount_received / 100; // Convert cents to dollars
-        totalSales++;
+        const amount = p.amount_received / 100;
 
         if (p.created >= startOfThisMonth) {
           thisMonthRevenue += amount;
@@ -36,7 +34,6 @@ export async function GetRevenue(
     }
 
     res.status(200).json({
-      totalSales,
       totalRevenue: thisMonthRevenue,
       lastMonthRevenue,
       revenueComparison:

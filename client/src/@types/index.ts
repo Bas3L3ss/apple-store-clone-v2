@@ -183,3 +183,15 @@ export interface AddressCoordinates {
   lat: number;
   lng: number;
 }
+export interface RecentSales {
+  amount: string;
+  currency: string;
+  customer_email: null;
+  date: string;
+  customer: User;
+}
+export interface EnrichedSalesResponse {
+  sales: RecentSales[];
+  monthlySalesCount: number;
+  monthlyTotalRevenue: number;
+}

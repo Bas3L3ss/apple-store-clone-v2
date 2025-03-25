@@ -262,7 +262,7 @@ export default function UserEditForm({
             )}
 
             <div className="flex justify-end gap-3 pt-4">
-              <Link to={"/dashboard/users"}>
+              <Link to={"/dashboard/user"}>
                 <Button type="button" variant="outline">
                   Cancel
                 </Button>

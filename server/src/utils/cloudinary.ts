@@ -1,7 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import multer from "multer";
-import path from "path";
+
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY,
@@ -36,57 +34,57 @@ class CloudinaryClient {
     }
   }
 
-  createUploadMiddleware(options?: {
-    folder?: string;
-    allowedFormats?: string[];
-    fileSize?: number;
-    transformation?: Array<Record<string, any>>;
-  }) {
-    if (!this.isConfigured) {
-      throw new Error("Cloudinary is not configured");
-    }
+  // createUploadMiddleware(options?: {
+  //   folder?: string;
+  //   allowedFormats?: string[];
+  //   fileSize?: number;
+  //   transformation?: Array<Record<string, any>>;
+  // }) {
+  //   if (!this.isConfigured) {
+  //     throw new Error("Cloudinary is not configured");
+  //   }
 
-    const folder = options?.folder || this.defaultFolder;
-    const allowedFormats =
-      options?.allowedFormats || this.defaultAllowedFormats;
-    const fileSize = options?.fileSize || this.defaultFileSize;
-    const transformation = options?.transformation || [
-      { width: 1000, height: 1000, crop: "limit" },
-    ];
+  //   const folder = options?.folder || this.defaultFolder;
+  //   const allowedFormats =
+  //     options?.allowedFormats || this.defaultAllowedFormats;
+  //   const fileSize = options?.fileSize || this.defaultFileSize;
+  //   const transformation = options?.transformation || [
+  //     { width: 1000, height: 1000, crop: "limit" },
+  //   ];
 
-    const storage = new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: folder,
-        allowed_formats: allowedFormats,
-        transformation: transformation,
-      },
-    });
+  //   const storage = new CloudinaryStorage({
+  //     cloudinary: cloudinary,
+  //     params: {
+  //       folder: folder,
+  //       allowed_formats: allowedFormats,
+  //       transformation: transformation,
+  //     },
+  //   });
 
-    const fileFilter = (
-      req: any,
-      file: Express.Multer.File,
-      cb: multer.FileFilterCallback
-    ) => {
-      const filetypeRegex = new RegExp(allowedFormats.join("|"));
-      const mimetype = filetypeRegex.test(file.mimetype);
-      const extname = filetypeRegex.test(
-        path.extname(file.originalname).toLowerCase()
-      );
+  //   const fileFilter = (
+  //     req: any,
+  //     file: Express.Multer.File,
+  //     cb: multer.FileFilterCallback
+  //   ) => {
+  //     const filetypeRegex = new RegExp(allowedFormats.join("|"));
+  //     const mimetype = filetypeRegex.test(file.mimetype);
+  //     const extname = filetypeRegex.test(
+  //       path.extname(file.originalname).toLowerCase()
+  //     );
 
-      if (mimetype && extname) {
-        return cb(null, true);
-      }
+  //     if (mimetype && extname) {
+  //       return cb(null, true);
+  //     }
 
-      cb(new Error(`Only ${allowedFormats.join(", ")} formats allowed!`));
-    };
+  //     cb(new Error(`Only ${allowedFormats.join(", ")} formats allowed!`));
+  //   };
 
-    return multer({
-      storage: storage,
-      limits: { fileSize: fileSize },
-      fileFilter: fileFilter,
-    });
-  }
+  //   return multer({
+  //     storage: storage,
+  //     limits: { fileSize: fileSize },
+  //     fileFilter: fileFilter,
+  //   });
+  // }
 
   async uploadImages(
     images: any[],
