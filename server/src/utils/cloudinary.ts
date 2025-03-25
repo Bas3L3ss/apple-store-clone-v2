@@ -140,6 +140,7 @@ class CloudinaryClient {
   }
 
   async deleteImage(publicId: string): Promise<any> {
+    if (publicId.length <= 0) return;
     if (!this.isConfigured) {
       throw new Error("Cloudinary is not configured");
     }

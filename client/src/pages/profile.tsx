@@ -99,13 +99,14 @@ export default function ProfilePage() {
     newPassword: string;
     confirmPassword: string;
   }) => {
+    // TODO: implement reset password
     console.log(data);
   };
 
   const handleSendVerificationEmail = async () => {
     try {
       setIsVerifying(true);
-      sendVerificationEmail();
+      await sendVerificationEmail();
       setVerificationSent(true);
     } catch (error) {
       console.error("Error sending verification email:", error);
