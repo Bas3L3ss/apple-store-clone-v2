@@ -1,9 +1,3 @@
-"use client";
-
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Upload, Trash2 } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
@@ -36,23 +30,7 @@ import { Switch } from "@/src/components/ui/switch";
 import { FileUploader } from "../../ui/file-uploader";
 import { Link } from "react-router";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
-
-// Define user roles
-const UserRoles = {
-  User: "user",
-  Admin: "admin",
-};
-
-// Create schema for form validation
-const userFormSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  role: z.string(),
-  verified: z.boolean(),
-  avatar: z.any().optional(), // Can be a File object or a string URL
-});
-
-type UserFormValues = z.infer<typeof userFormSchema>;
+import useUserForm from "@/src/hooks/use-user-form";
 
 export default function UserEditForm({
   initialData,
@@ -61,42 +39,9 @@ export default function UserEditForm({
   initialData: any | null;
   pageTitle: string;
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Convert role enum to array for dropdown
-  const userRoleOptions = Object.entries(UserRoles).map(([label, value]) => ({
-    label,
-    value: value.toString(),
-  }));
-
-  // Initialize form with default values from initialData
-  const defaultValues: Partial<UserFormValues> = {
-    username: initialData?.username || "",
-    email: initialData?.email || "",
-    role: initialData?.role || "user",
-    verified: initialData?.verified || false,
-    avatar: initialData?.avatar || "",
-  };
-
-  const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema),
-    defaultValues,
+  const { form, isSubmitting, onSubmit, userRoleOptions } = useUserForm({
+    initialData,
   });
-
-  async function onSubmit(data: UserFormValues) {
-    setIsSubmitting(true);
-    try {
-      console.log("Submitting user data:", data);
-      // Here you would call your API function, e.g.:
-      // await updateUser(initialData._id, data);
-      // toast.success("User updated successfully");
-    } catch (error) {
-      console.error("Error updating user:", error);
-      // toast.error("Failed to update user");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
 
   return (
     <Card className="mx-auto w-full max-w-3xl">
@@ -188,7 +133,7 @@ export default function UserEditForm({
                 control={form.control}
                 name="verified"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormLabel className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Verified</FormLabel>
                       <FormDescription>
@@ -201,7 +146,7 @@ export default function UserEditForm({
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                  </FormItem>
+                  </FormLabel>
                 )}
               />
             </div>
@@ -240,7 +185,8 @@ export default function UserEditForm({
                             field.value instanceof File ? [field.value] : []
                           }
                           onValueChange={(files) => {
-                            field.onChange(files.length > 0 ? files[0] : "");
+                            // @ts-expect-error: no prob
+                            field.onChange(files.length > 0 ? files?.[0] : "");
                           }}
                           maxFiles={1}
                           maxSize={MAX_FILE_SIZE}

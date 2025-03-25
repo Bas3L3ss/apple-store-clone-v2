@@ -18,7 +18,7 @@ export default function UserEditPage() {
   if (isError || !data) {
     console.log("error?", error);
 
-    return <div>Product not found</div>;
+    return <div>User not found</div>;
   }
 
   return <UserForm initialData={data[0]} pageTitle={"Edit User"} />;
