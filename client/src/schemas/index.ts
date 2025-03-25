@@ -15,22 +15,9 @@ export const passwordFormSchema = z
     currentPassword: z.string().min(8, {
       message: "Password must be at least 8 characters.",
     }),
-    newPassword: z
-      .string()
-      .min(8, {
-        message: "Password must be at least 8 characters.",
-      })
-      .refine(
-        (password) => {
-          return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-            password
-          );
-        },
-        {
-          message:
-            "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character.",
-        }
-      ),
+    newPassword: z.string().min(8, {
+      message: "Password must be at least 8 characters.",
+    }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {

@@ -180,3 +180,22 @@ export const EditAccountAdmin = async ({
     throw error;
   }
 };
+
+export const EditAccountPassword = async ({
+  currentPassword,
+  newPassword,
+}: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  try {
+    await makeAxiosRequest("put", `/auth/account/password`, {
+      currentPassword,
+      newPassword,
+    });
+  } catch (error) {
+    console.error("Edit user Error:", error);
+
+    throw error;
+  }
+};

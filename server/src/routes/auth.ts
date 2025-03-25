@@ -16,6 +16,7 @@ import { GetUserById } from "../controllers/auth/get-user-by-id";
 import multer from "multer";
 import editAccountAdmin from "../controllers/auth/edit-account-admin";
 import editAccountAvatar from "../controllers/auth/edit-account-avatar";
+import editAccountPassword from "../controllers/auth/edit-account-password";
 
 const storage = multer.memoryStorage();
 
@@ -38,6 +39,11 @@ router.put("/account", [checkBearerToken, editAccount], errorHandler);
 router.put(
   "/account/avatar",
   [checkBearerToken, upload.single("avatar"), editAccountAvatar],
+  errorHandler
+);
+router.put(
+  "/account/password",
+  [checkBearerToken, editAccountPassword],
   errorHandler
 );
 
