@@ -61,7 +61,15 @@ export default function AppleAuthPage() {
         };
 
         await register(formdata, setIsLoading);
-        toast.success("Account created successfully!, redirecting...");
+        toast.success("Account created successfully", {
+          action: {
+            label: "Proceed to sign up",
+            onClick: () => {
+              setIsSignIn(true);
+              navigate("/auth?mode=signin", { replace: true });
+            },
+          },
+        });
       } else {
         const formdata = {
           email: email,
@@ -76,7 +84,7 @@ export default function AppleAuthPage() {
       console.error("Auth error:", error);
       setError(
         // @ts-expect-error: no prb
-        error.message ||
+        error ||
           (isSignIn
             ? "Failed to sign in. Please check your credentials."
             : "Failed to create account. Please try again.")

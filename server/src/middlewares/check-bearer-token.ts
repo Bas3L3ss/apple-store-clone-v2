@@ -16,7 +16,11 @@ const checkBearerToken: RequestHandler = async (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    const { deviceId: unHashedDeviceId } = req.body;
+    let { deviceId: unHashedDeviceId } = req.body;
+    if (!unHashedDeviceId) {
+      unHashedDeviceId = req.query.deviceId;
+    }
+
     // **1️⃣ Reject if no token or deviceId is provided**
     if (!token && !unHashedDeviceId) {
       return next({

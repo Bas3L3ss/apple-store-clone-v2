@@ -14,7 +14,8 @@ const authSessionSchema = new mongoose.Schema(
       type: {
         deviceType: String,
         os: String,
-        browser: String,
+        ip: String,
+        name: String,
       },
       required: true,
     },

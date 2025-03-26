@@ -24,9 +24,9 @@ const router = express.Router();
 router.post(
   "/",
   [
+    upload.array("productImages", 10),
     checkBearerToken,
     checkAdminRole,
-    upload.array("productImages", 10),
 
     CreateProduct,
   ],

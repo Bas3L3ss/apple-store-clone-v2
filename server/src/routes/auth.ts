@@ -19,6 +19,8 @@ import editAccountAvatar from "../controllers/auth/edit-account-avatar";
 import editAccountPassword from "../controllers/auth/edit-account-password";
 import logOutAllDevices from "../controllers/auth/log-out-add-devices";
 import getAllDevices from "../controllers/auth/get-all-devices";
+import LogOutSession from "../controllers/auth/log-out-session";
+import loginWithDevice from "../controllers/auth/log-in-with-device";
 
 const storage = multer.memoryStorage();
 
@@ -35,12 +37,16 @@ router.post("/login", [], login, errorHandler);
 
 // GET at path: http://localhost:5000/auth/login
 router.get("/login", [checkBearerToken], loginWithToken, errorHandler);
+router.post("/login/device", [checkBearerToken], loginWithDevice, errorHandler);
+
+// POST: http://localhost:5000/auth/logout
+router.post("/logout", LogOutSession, errorHandler);
 
 // PUT: update account
 router.put("/account", [checkBearerToken, editAccount], errorHandler);
 router.put(
   "/account/avatar",
-  [checkBearerToken, upload.single("avatar"), editAccountAvatar],
+  [upload.single("avatar"), checkBearerToken, editAccountAvatar],
   errorHandler
 );
 
@@ -81,7 +87,7 @@ router.get(
 // PUT: update account
 router.put(
   "/admin/:uid",
-  [checkBearerToken, checkAdminRole, upload.single("avatar"), editAccountAdmin],
+  [upload.single("avatar"), checkBearerToken, checkAdminRole, editAccountAdmin],
   errorHandler
 );
 

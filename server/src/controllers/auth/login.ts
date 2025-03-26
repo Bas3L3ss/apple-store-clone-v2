@@ -12,6 +12,7 @@ const login: RequestHandler = async (req, res, next) => {
         email: joi.instance.string().required(),
         password: joi.instance.string().required(),
         deviceId: joi.instance.string().optional(),
+        device: joi.instance.object().optional(),
       },
       req.body
     );
@@ -24,7 +25,7 @@ const login: RequestHandler = async (req, res, next) => {
     const account = await Account.findOne({ email });
 
     if (!account) {
-      next({ statusCode: 400, message: "Bad credentials" });
+      next({ statusCode: 400, message: "Wrong credentials, please retry" });
       return;
     }
 
@@ -32,7 +33,7 @@ const login: RequestHandler = async (req, res, next) => {
     const passOk = await crypt.validate(password, account.password);
 
     if (!passOk) {
-      next({ statusCode: 400, message: "Bad credentials" });
+      next({ statusCode: 400, message: "Wrong credentials, please retry" });
       return;
     }
 
@@ -50,7 +51,8 @@ const login: RequestHandler = async (req, res, next) => {
         deviceMetadata: {
           deviceType: device.deviceType,
           os: device.os,
-          browser: device.browser,
+          name: device.name,
+          ip: device.ip,
         },
       });
 

@@ -119,8 +119,7 @@ export default function ProfilePage() {
 
       toast.success("Edit profile successfully!");
     } catch (error) {
-      console.log(error);
-      toast.error("Please try again");
+      toast.error(error ?? "Please try again");
     }
     setIsSubmitting(false);
   };
@@ -138,7 +137,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.log(error);
 
-      toast.error("Error, please check your password and retry");
+      toast.error(error ?? "Please try again");
     } finally {
       setIsSubmitting(false);
     }

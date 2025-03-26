@@ -1,5 +1,5 @@
 import { FetchProductsResponse, User } from "@/src/@types";
-import { axios, makeAxiosRequest } from "@/src/lib/utils";
+import { axios, getDeviceInfo, makeAxiosRequest } from "@/src/lib/utils";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
@@ -26,8 +26,8 @@ export async function sendVerificationEmail() {
     });
   } catch (err) {
     console.error("Error:", err);
-    toast.error("Verification Failed", {
-      description: "There was an issue processing your payment.",
+    toast.error("Email sending Failed", {
+      description: "There was an issue sending email.",
     });
   }
 }
@@ -47,9 +47,7 @@ export async function editUserAvatar(avatar?: File | string) {
     });
   } catch (err) {
     console.error("Error:", err);
-    toast.error("Verification Failed", {
-      description: "There was an issue processing your payment.",
-    });
+    toast.error(err ?? "Please try again");
   }
 }
 
@@ -110,11 +108,11 @@ export const GetDashboardUsers = async ({
   limit?: string | number;
 }): Promise<FetchProductsResponse> => {
   try {
-    const token =
-      sessionStorage.getItem("token") || localStorage.getItem("remember");
+    const token = sessionStorage.getItem("token");
+    const deviceId = (await getDeviceInfo()).deviceId;
 
     const response = await axios.get("/auth/admin", {
-      params: { search, type, isVerified, page, limit },
+      params: { search, type, isVerified, page, limit, deviceId },
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
@@ -141,11 +139,12 @@ export const GetUserById = async ({
   userId: string;
 }): Promise<User[] | null> => {
   try {
-    const token =
-      sessionStorage.getItem("token") || localStorage.getItem("remember");
+    const token = sessionStorage.getItem("token");
+    const deviceId = (await getDeviceInfo()).deviceId;
 
     const response = await axios.get(`/auth/admin/${userId}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
+      params: token ? {} : { deviceId },
     });
 
     return response.data;

@@ -7,6 +7,8 @@ import { OrderStatus, ProductOption, ShippingAddress } from "../@types";
 import { colorHexMap } from "../constants/color";
 import { BACKEND_URL } from "../constants";
 import { TaskDragData } from "../components/dashboard/kanban/components/task-card";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import Bowser from "bowser";
 
 export const axios = Axios.create({
   baseURL: BACKEND_URL ?? "http://localhost:5000",
@@ -17,33 +19,50 @@ export const makeAxiosRequest = async <T>(
   data?: unknown,
   isFormData: boolean = false
 ): Promise<T> => {
-  const token =
-    sessionStorage.getItem("token") || localStorage.getItem("remember");
+  const token = sessionStorage.getItem("token");
+  let deviceId: string | undefined;
+
+  if (!token) {
+    const deviceInfo = await getDeviceInfo();
+    deviceId = deviceInfo?.deviceId;
+  }
 
   const headers: Record<string, string> = {};
-
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
-
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
 
-  try {
-    const response = await axios({
-      method,
-      url,
-      data,
-      headers,
-    });
+  if (!data || typeof data !== "object") {
+    data = {};
+  }
 
+  if (deviceId) {
+    if (!isFormData) {
+      (data as Record<string, unknown>)!["deviceId"] = deviceId;
+    } else if (isFormData && data instanceof FormData) {
+      data.append("deviceId", deviceId);
+    }
+  }
+
+  const config: Record<string, unknown> = { method, url, headers };
+
+  if (method === "get") {
+    config.params = data;
+  } else {
+    config.data = data;
+  }
+
+  try {
+    const response = await axios(config);
     return response.data;
   } catch (error) {
-    // @ts-expect-error: fine
     throw error?.response?.data?.message || error.message;
   }
 };
+
 // other utils
 
 export const delay = (ms: number) =>
@@ -243,3 +262,27 @@ export const getPlaceholder = (type: string) => {
       return "Enter value...";
   }
 };
+
+export async function getDeviceInfo() {
+  const fp = await FingerprintJS.load();
+  const { visitorId: deviceId } = await fp.get(); // Unique deviceId
+  const response = await fetch("https://api64.ipify.org?format=json");
+  const parsedRes = await response.json();
+
+  const browser = Bowser.getParser(window.navigator.userAgent);
+  const os = browser.getOSName() || "Unknown OS";
+  const deviceType = browser.getPlatformType() || "Unknown";
+  const ip = parsedRes.ip;
+
+  const name = browser.getBrowserName() || "Unknown Browser";
+
+  return {
+    deviceId, // Unique device fingerprint
+    device: {
+      deviceType,
+      os,
+      name,
+      ip,
+    },
+  };
+}

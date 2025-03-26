@@ -8,28 +8,21 @@ import {
   useCallback,
   Dispatch,
 } from "react";
-import { axios } from "@/src/lib/utils";
+import { axios, getDeviceInfo } from "@/src/lib/utils";
 import { User } from "@/src/@types";
-
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
+
 interface Context {
   token: string | null;
   account: User | null;
   isLoggedIn: boolean;
   register: (
-    payload: {
-      username: string;
-      email: string;
-      password: string;
-    },
+    payload: { username: string; email: string; password: string },
     setIsAuthPageLoading: Dispatch<React.SetStateAction<boolean>>
   ) => Promise<unknown>;
   login: (
-    payload: {
-      email: string;
-      password: string;
-    },
+    payload: { email: string; password: string },
     rememberMe: boolean,
     setIsAuthPageLoading: Dispatch<React.SetStateAction<boolean>>
   ) => Promise<unknown>;
@@ -47,45 +40,35 @@ const initContext: Context = {
   isLoading: false,
 };
 
-// init context
 const AuthContext = createContext(initContext);
 const { Provider } = AuthContext;
-
-// export the consumer
 export const useAuth = () => useContext(AuthContext);
 
-// export the provider
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [token, setToken] = useState(
-    sessionStorage.getItem("token") ||
-      localStorage.getItem("remember") ||
-      initContext.token
-  );
-
+  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+  const [account, setAccount] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [device, setDevice] = useState<Record<string, any> | null>(null);
+  // Fetch device metadata once and store it
   useEffect(() => {
-    if (!token) {
-      sessionStorage.removeItem("token");
-      localStorage.removeItem("remember");
-      return;
-    }
-
-    setToken((prevToken) => {
-      if (localStorage.getItem("remember")) {
-        localStorage.setItem("remember", token);
-      } else {
-        sessionStorage.setItem("token", token);
-      }
-      return prevToken;
-    });
-  }, [token]);
-
-  useEffect(() => {
-    if (token) loginWithToken();
+    (async () => {
+      const { deviceId, ...device } = await getDeviceInfo();
+      setDeviceId(deviceId);
+      setDevice(device);
+    })();
   }, []);
 
-  const [account, setAccount] = useState(initContext.account);
-  const [isLoggedIn, setIsLoggedIn] = useState(initContext.isLoggedIn);
-  const [isLoading, setIsLoading] = useState(false);
+  // Keep token in sessionStorage
+  useEffect(() => {
+    const sessionToken = sessionStorage.getItem("token");
+    if (!sessionToken) {
+      setToken(null);
+    } else {
+      setToken(sessionToken);
+    }
+  }, [token]);
 
   const register = useCallback(
     async (
@@ -95,14 +78,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setIsAuthPageLoading(true);
       try {
         const {
-          data: { data: accountData, token: accessToken },
+          data: { data: accountData },
         } = await axios.post("/auth/register", formData);
         setAccount(accountData);
-        setToken(accessToken);
-        setIsLoggedIn(true);
         return true;
       } catch (error) {
-        // @ts-expect-error: no problem
         throw error?.response?.data?.message || error.message;
       } finally {
         setIsAuthPageLoading(false);
@@ -119,78 +99,93 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     ) => {
       setIsAuthPageLoading(true);
       try {
+        if (rememberMe && deviceId) {
+          formData = { ...formData, device, deviceId };
+        }
+
         const {
           data: { data: accountData, token: JWTToken },
         } = await axios.post("/auth/login", formData);
+
         setAccount(accountData);
         setToken(JWTToken);
         setIsLoggedIn(true);
 
-        sessionStorage.setItem("token", JWTToken);
-        localStorage.removeItem("remember");
-
-        if (rememberMe) {
-          localStorage.setItem("remember", JWTToken);
-          sessionStorage.removeItem("token");
+        if (!rememberMe) {
+          sessionStorage.setItem("token", JWTToken);
         }
+
         return true;
       } catch (error) {
-        // @ts-expect-error: no problem
         throw error?.response?.data?.message || error.message;
       } finally {
         setIsAuthPageLoading(false);
       }
     },
-    []
+    [deviceId, device]
   );
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("remember");
+  const logout = useCallback(async () => {
+    if (deviceId) {
+      await axios.post("/auth/logout", { deviceId });
+    }
     sessionStorage.removeItem("token");
     setIsLoggedIn(false);
     setAccount(null);
     setToken(null);
-  }, []);
+  }, [deviceId]);
 
-  const loginWithToken = useCallback(async () => {
-    if (!token) return;
-
+  const reLoginUser = useCallback(async () => {
     setIsLoading(true);
+    if (!deviceId) return;
     try {
+      const isUsingDeviceLogin = !token;
+
+      const loginEndpoint = isUsingDeviceLogin
+        ? "/auth/login/device"
+        : "/auth/login";
+
+      const requestData = isUsingDeviceLogin
+        ? { deviceId }
+        : { headers: { authorization: `Bearer ${token}` } };
+
       const {
-        data: { data: accountData, token: accessToken },
-      } = await axios("/auth/login", {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        data: { data: accountData, token: JWTToken },
+      } = await (isUsingDeviceLogin
+        ? axios.post(loginEndpoint, requestData)
+        : axios.get(loginEndpoint, requestData));
 
       setAccount(accountData);
-      if (accessToken !== token) setToken(accessToken);
+
+      if (JWTToken && JWTToken !== token) {
+        setToken(JWTToken);
+        sessionStorage.setItem("token", JWTToken);
+      }
+
       setIsLoggedIn(true);
-    } catch (error: unknown) {
-      console.error(error);
-      if (isAxiosError(error)) {
-        if ([400, 401, 404].includes(error.response?.status ?? 0)) {
-          toast.warning("Session expired, logging out...");
-          logout(); // ✅ Logout directly here instead of in useEffect
-        }
+    } catch (error) {
+      if (
+        isAxiosError(error) &&
+        [400, 401, 404].includes(error.response?.status ?? 0)
+      ) {
+        await logout();
       }
     } finally {
       setIsLoading(false);
     }
-  }, [token, logout]); // Fix: Memoized with correct dependency
+  }, [token, logout, deviceId]);
 
+  // Periodically re-login the user
   useEffect(() => {
     if (!isLoggedIn) return;
-
-    const interval = setInterval(() => {
-      loginWithToken();
-    }, 10 * 60 * 1000);
-
+    const interval = setInterval(reLoginUser, 10 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [isLoggedIn, loginWithToken]);
+  }, [isLoggedIn, reLoginUser]);
 
+  // Re-login user on app startup
+  useEffect(() => {
+    reLoginUser();
+  }, [reLoginUser]);
   const value = useMemo(
     () => ({ token, account, isLoggedIn, register, login, logout, isLoading }),
     [token, account, isLoggedIn, isLoading, register, login, logout]

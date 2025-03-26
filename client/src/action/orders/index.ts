@@ -1,5 +1,5 @@
 import { FetchProductsResponse, Order } from "@/src/@types";
-import { axios, makeAxiosRequest } from "@/src/lib/utils";
+import { axios, getDeviceInfo, makeAxiosRequest } from "@/src/lib/utils";
 
 export const getOrdersOfUser = async (
   page = 1,
@@ -76,11 +76,11 @@ export const getAllOrders = async ({
   limit?: string | number;
 }): Promise<FetchProductsResponse> => {
   try {
-    const token =
-      sessionStorage.getItem("token") || localStorage.getItem("remember");
+    const token = sessionStorage.getItem("token");
+    const deviceId = (await getDeviceInfo()).deviceId;
 
     const response = await axios.get("/orders/admin", {
-      params: { search, status, paymentMethod, page, limit },
+      params: { search, status, paymentMethod, page, limit, deviceId },
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
