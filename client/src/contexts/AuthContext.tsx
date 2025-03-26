@@ -11,7 +11,6 @@ import {
 import { axios, getDeviceInfo } from "@/src/lib/utils";
 import { User } from "@/src/@types";
 import { isAxiosError } from "axios";
-import { toast } from "sonner";
 
 interface Context {
   token: string | null;
@@ -50,13 +49,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  const [device, setDevice] = useState<Record<string, any> | null>(null);
+  const [device, setDevice] = useState<Record<string, string> | null>(null);
   // Fetch device metadata once and store it
   useEffect(() => {
     (async () => {
       const { deviceId, ...device } = await getDeviceInfo();
       setDeviceId(deviceId);
-      setDevice(device);
+      setDevice(device.device);
     })();
   }, []);
 
@@ -83,7 +82,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         setAccount(accountData);
         return true;
       } catch (error) {
-        throw error?.response?.data?.message || error.message;
+        // @ts-expect-error: no prob
+        throw error?.response?.data?.message || error.message || error;
       } finally {
         setIsAuthPageLoading(false);
       }
@@ -100,6 +100,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setIsAuthPageLoading(true);
       try {
         if (rememberMe && deviceId) {
+          // @ts-expect-error: no prob
           formData = { ...formData, device, deviceId };
         }
 
@@ -117,7 +118,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
         return true;
       } catch (error) {
-        throw error?.response?.data?.message || error.message;
+        // @ts-expect-error: no prob
+        throw error?.response?.data?.message || error.message || error;
       } finally {
         setIsAuthPageLoading(false);
       }

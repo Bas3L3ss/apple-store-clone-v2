@@ -43,6 +43,7 @@ const checkBearerToken: RequestHandler = async (
 
     // **3️⃣ Handle Device ID Authentication (Session)**
     const authSession = await AuthSession.findOne({ deviceId });
+
     if (!authSession) {
       return next({
         statusCode: 401,
@@ -56,7 +57,7 @@ const checkBearerToken: RequestHandler = async (
       return next({ statusCode: 404, message: "Account not found" });
     }
 
-    req.auth = auth;
+    req.auth = auth; // Add deviceId to auth
     return next();
   } catch (error) {
     return next(error);

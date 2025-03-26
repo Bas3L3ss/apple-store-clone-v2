@@ -30,12 +30,12 @@ app.use(
 // });
 
 // Global Rate Limiting (applies to `/auth`, `/products`, etc.)
-// const apiLimiter = rateLimit({
-//   windowMs: 5 * 60 * 1000, // 15 minutes
-//   max: 100, // Limit each IP to 100 requests per window
-//   message: "Too many requests, please try again later",
-// });
-// app.use(apiLimiter);
+const apiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  message: "Too many requests, please try again later",
+});
+app.use(apiLimiter);
 
 app.use(timeout("900s"));
 app.use((req, res, next) => {

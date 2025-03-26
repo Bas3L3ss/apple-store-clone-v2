@@ -198,3 +198,18 @@ export const EditAccountPassword = async ({
     throw error;
   }
 };
+
+export const getLoggedInDevices = async () => {
+  try {
+    const res = await makeAxiosRequest<{
+      success: boolean;
+      devices: any[];
+    }>("get", `/auth/account/devices`);
+    return res;
+  } catch (error) {
+    console.log(error);
+    toast.error(error);
+
+    throw error;
+  }
+};

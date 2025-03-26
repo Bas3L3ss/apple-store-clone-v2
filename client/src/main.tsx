@@ -9,9 +9,9 @@ import SyncCartLayer from "./provider/SyncCartLayer.tsx";
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <QueryProvider>
-      <Toaster />
       <AuthProvider>
         <SyncCartLayer>
+          <Toaster />
           <App />
         </SyncCartLayer>
       </AuthProvider>

@@ -44,6 +44,8 @@ const login: RequestHandler = async (req, res, next) => {
       }
 
       const deviceId = crypt.hashDeviceId(unHashedDeviceId);
+      console.log(device.device);
+
       await AuthSession.create({
         userId: account._id,
         deviceId,
