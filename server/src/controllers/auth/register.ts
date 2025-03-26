@@ -1,6 +1,6 @@
 import { type RequestHandler } from "express";
 import joi from "../../utils/joi";
-import jwt from "../../utils/jwt";
+
 import crypt from "../../utils/crypt";
 import Account from "../../models/Account";
 import redis from "../../utils/redis";
@@ -44,17 +44,12 @@ const register: RequestHandler = async (req, res, next) => {
 
     await newAccount.save();
 
-    const token = jwt.signToken({ uid: newAccount._id, role: newAccount.role });
-    const { password: _, ...data } = newAccount.toObject();
-
     redis.publish("user-modified", {
       userId: newAccount._id,
       isFromAdminEdit: true,
     });
     res.status(201).json({
       message: "Successfully registered",
-      data,
-      token,
     });
   } catch (error) {
     next(error);

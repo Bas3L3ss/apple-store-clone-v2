@@ -2,6 +2,7 @@ import { type RequestHandler, Request, Response, NextFunction } from "express";
 import jwt from "../utils/jwt";
 import { AuthSession } from "../models/AuthSession";
 import Account from "../models/Account";
+import crypt from "../utils/crypt";
 
 // Extend Request type to include `auth`
 export interface AuthenticatedRequest extends Request {
@@ -15,10 +16,9 @@ const checkBearerToken: RequestHandler = async (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    const { deviceId } = req.body;
-
+    const { deviceId: unHashedDeviceId } = req.body;
     // **1️⃣ Reject if no token or deviceId is provided**
-    if (!token && !deviceId) {
+    if (!token && !unHashedDeviceId) {
       return next({
         statusCode: 400,
         message: "Token or deviceId is required",
@@ -35,6 +35,7 @@ const checkBearerToken: RequestHandler = async (
       req.auth = auth; // Directly assign the verified token payload
       return next();
     }
+    const deviceId = crypt.hashDeviceId(unHashedDeviceId);
 
     // **3️⃣ Handle Device ID Authentication (Session)**
     const authSession = await AuthSession.findOne({ deviceId });

@@ -10,6 +10,14 @@ const authSessionSchema = new mongoose.Schema(
     },
     deviceId: { type: String, required: true, unique: true, index: true },
     loggedInAt: { type: Date, default: Date.now, index: { expires: "30d" } },
+    deviceMetadata: {
+      type: {
+        deviceType: String,
+        os: String,
+        browser: String,
+      },
+      required: true,
+    },
   },
   { timestamps: false }
 );

@@ -4,6 +4,7 @@ import crypt from "../../utils/crypt";
 
 import { AuthenticatedRequest } from "../../middlewares/check-bearer-token";
 import redis from "../../utils/redis";
+import { AuthSession } from "../../models/AuthSession";
 
 const resetPassword: RequestHandler = async (
   req: AuthenticatedRequest,
@@ -31,6 +32,8 @@ const resetPassword: RequestHandler = async (
     if (!updatedAccount) {
       return next({ statusCode: 404, message: "Account not found" });
     }
+    await AuthSession.deleteMany({ userId: updatedAccount._id });
+
     redis.publish("user-modified", { userId: updatedAccount._id });
 
     res.status(200).json({

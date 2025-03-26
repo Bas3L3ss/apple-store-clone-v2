@@ -11,14 +11,14 @@ const login: RequestHandler = async (req, res, next) => {
       {
         email: joi.instance.string().required(),
         password: joi.instance.string().required(),
-        deviceId: joi.instance.string().optional(), // Optional for JWT users
+        deviceId: joi.instance.string().optional(),
       },
       req.body
     );
 
     if (validationError) return next(validationError);
 
-    const { email, password, deviceId } = req.body;
+    const { email, password, deviceId: unHashedDeviceId, device } = req.body;
 
     // **1️⃣ Find Account (No Session Lookups Here)**
     const account = await Account.findOne({ email });
@@ -37,11 +37,21 @@ const login: RequestHandler = async (req, res, next) => {
     }
 
     // **2️⃣ Handle Session-Based Login (Remember Me)**
-    if (deviceId) {
+    if (unHashedDeviceId) {
+      if (!unHashedDeviceId.trim()) {
+        return next({ statusCode: 400, message: "Invalid Device ID" });
+      }
+
+      const deviceId = crypt.hashDeviceId(unHashedDeviceId);
       await AuthSession.create({
         userId: account._id,
         deviceId,
         loggedInAt: new Date(),
+        deviceMetadata: {
+          deviceType: device.deviceType,
+          os: device.os,
+          browser: device.browser,
+        },
       });
 
       res.status(200).json({

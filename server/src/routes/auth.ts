@@ -17,6 +17,8 @@ import multer from "multer";
 import editAccountAdmin from "../controllers/auth/edit-account-admin";
 import editAccountAvatar from "../controllers/auth/edit-account-avatar";
 import editAccountPassword from "../controllers/auth/edit-account-password";
+import logOutAllDevices from "../controllers/auth/log-out-add-devices";
+import getAllDevices from "../controllers/auth/get-all-devices";
 
 const storage = multer.memoryStorage();
 
@@ -47,6 +49,13 @@ router.put(
   [checkBearerToken, editAccountPassword],
   errorHandler
 );
+
+router.delete(
+  "/account/devices",
+  [checkBearerToken, logOutAllDevices],
+  errorHandler
+);
+router.get("/account/devices", [checkBearerToken, getAllDevices], errorHandler);
 
 // POST at route: http://localhost:5000/auth/verify
 router.post("/verify", [checkBearerToken, sendVerificationEmail], errorHandler);

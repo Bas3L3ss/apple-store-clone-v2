@@ -22,7 +22,11 @@ const editAccountPassword: RequestHandler = async (
       return next({ statusCode: 401, message: "Unauthorized" });
     }
 
-    const { newPassword, currentPassword, deviceId } = req.body;
+    const {
+      newPassword,
+      currentPassword,
+      deviceId: unHashedDeviceId,
+    } = req.body;
     const ok = await crypt.validate(currentPassword, existedUser.password);
     if (!ok) {
       return next({
@@ -32,6 +36,13 @@ const editAccountPassword: RequestHandler = async (
     }
 
     const newHashedPassword = await crypt.hash(newPassword);
+
+    if (await crypt.validate(newPassword, existedUser.password)) {
+      return next({
+        statusCode: 400,
+        message: "New password cannot be the same as the current password.",
+      });
+    }
 
     const updatedAccount = await Account.findByIdAndUpdate(
       user._id,
@@ -43,22 +54,24 @@ const editAccountPassword: RequestHandler = async (
       return next({ statusCode: 404, message: "Account not found" });
     }
 
-    if (!deviceId) {
+    if (!unHashedDeviceId?.trim()) {
       await AuthSession.deleteMany({ userId: user._id });
     } else {
+      const deviceId = crypt.hashDeviceId(unHashedDeviceId);
       await AuthSession.deleteMany({
         userId: user._id,
         deviceId: { $ne: deviceId },
       });
     }
 
+    const { password: _, ...sanitizedAccount } = updatedAccount.toObject();
     redis.publish("user-modified", { userId: updatedAccount._id });
 
     res.status(200).json({
       success: true,
       message:
         "Account's password updated successfully. Logged out from all other devices.",
-      account: updatedAccount,
+      account: sanitizedAccount,
     });
   } catch (error) {
     next(error);
