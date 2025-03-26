@@ -41,6 +41,7 @@ router.put(
   [checkBearerToken, upload.single("avatar"), editAccountAvatar],
   errorHandler
 );
+
 router.put(
   "/account/password",
   [checkBearerToken, editAccountPassword],

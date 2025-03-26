@@ -54,7 +54,7 @@ const checkBearerToken: RequestHandler = async (
     req.auth = auth;
     return next();
   } catch (error) {
-    return next({ statusCode: 401, message: "Invalid token" });
+    return next(error);
   }
 };
 
