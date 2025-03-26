@@ -11,6 +11,7 @@ import {
 import { axios, getDeviceInfo } from "@/src/lib/utils";
 import { User } from "@/src/@types";
 import { isAxiosError } from "axios";
+import { toast } from "sonner";
 
 interface Context {
   token: string | null;
@@ -49,6 +50,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [isLoggedInBefore, setIsLoggedInBefore] = useState(
+    localStorage.getItem("isLoggedInBefore") == "true" || false
+  );
   const [device, setDevice] = useState<Record<string, string> | null>(null);
   // Fetch device metadata once and store it
   useEffect(() => {
@@ -59,15 +63,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     })();
   }, []);
 
-  // Keep token in sessionStorage
-  useEffect(() => {
-    const sessionToken = sessionStorage.getItem("token");
-    if (!sessionToken) {
-      setToken(null);
-    } else {
-      setToken(sessionToken);
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   const sessionToken = sessionStorage.getItem("token");
+  //   if (!sessionToken) {
+  //     setToken(null);
+  //   } else {
+  //     setToken(sessionToken);
+  //   }
+  // }, [token]);
 
   const register = useCallback(
     async (
@@ -116,6 +119,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           sessionStorage.setItem("token", JWTToken);
         }
 
+        localStorage.setItem("isLoggedInBefore", "true");
+        setIsLoggedInBefore(true);
         return true;
       } catch (error) {
         // @ts-expect-error: no prob
@@ -132,7 +137,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       await axios.post("/auth/logout", { deviceId });
     }
     sessionStorage.removeItem("token");
+    localStorage.removeItem("isLoggedInBefore");
+
     setIsLoggedIn(false);
+    setIsLoggedInBefore(false);
     setAccount(null);
     setToken(null);
   }, [deviceId]);
@@ -170,12 +178,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         isAxiosError(error) &&
         [400, 401, 404].includes(error.response?.status ?? 0)
       ) {
+        if (isLoggedInBefore) {
+          toast.warning("Your session has been expired");
+        }
         await logout();
       }
     } finally {
       setIsLoading(false);
     }
-  }, [token, logout, deviceId]);
+  }, [token, isLoggedInBefore, logout, deviceId]);
 
   // Periodically re-login the user
   useEffect(() => {
