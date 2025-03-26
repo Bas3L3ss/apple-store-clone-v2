@@ -1,8 +1,33 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { User } from "@/src/@types";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
 export const columns: ColumnDef<User>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="size-5 "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className="size-5"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "Avatar",
     header: "IMAGE",

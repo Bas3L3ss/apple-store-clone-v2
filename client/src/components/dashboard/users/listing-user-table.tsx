@@ -5,9 +5,13 @@ import { useGetUsers } from "@/src/react-query-hooks/admin/use-get-users";
 
 type ProductListingPage = {
   searchParams: URLSearchParams;
+  setSelectedUserIds;
 };
 
-export default function UsersListingPage({ searchParams }: ProductListingPage) {
+export default function UsersListingPage({
+  searchParams,
+  setSelectedUserIds,
+}: ProductListingPage) {
   const page = searchParams.get("page") || "1";
   const search = searchParams.get("q") || "";
   const limit = searchParams.get("limit") || "10";
@@ -42,6 +46,7 @@ export default function UsersListingPage({ searchParams }: ProductListingPage) {
           success: false,
         }
       }
+      setSelectedOption={setSelectedUserIds}
       totalItems={data?.pagination.total || 0}
     />
   );

@@ -48,11 +48,13 @@ interface DataTableProps<TData> {
   loading?: boolean;
   pageSizeOptions?: number[];
   onPageChange?: (page: number, limit: number) => void;
+  setSelectedOption?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function DataTable<TData>({
   columns,
   data,
+  setSelectedOption,
   loading = false,
   pageSizeOptions = [10, 20, 30, 40, 50],
   onPageChange,
@@ -79,6 +81,7 @@ export function DataTable<TData>({
   // Setup table with pagination
   const table = useReactTable({
     data: data?.data || [],
+    enableRowSelection: true,
     columns,
     pageCount: totalPages,
     state: {
@@ -87,6 +90,7 @@ export function DataTable<TData>({
         pageSize: pageSize,
       },
     },
+
     onPaginationChange: (updater) => {
       const state =
         typeof updater === "function"
@@ -106,11 +110,27 @@ export function DataTable<TData>({
         onPageChange(newPage, newLimit);
       }
     },
+
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
   });
+  const selectedData = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original);
 
   // Sync table with URL parameters when they change externally
+  useEffect(() => {
+    if (setSelectedOption && selectedData.length > 0) {
+      const newSelectedIds = selectedData
+        .map((value) => value._id)
+        .filter(Boolean);
+      setSelectedOption((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(newSelectedIds)
+          ? newSelectedIds
+          : prev
+      );
+    }
+  }, [selectedData, setSelectedOption]);
   useEffect(() => {
     table.setPagination({
       pageIndex: currentPage - 1,

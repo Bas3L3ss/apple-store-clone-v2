@@ -5,10 +5,12 @@ import { useGetProducts } from "@/src/react-query-hooks/use-get-products";
 
 type ProductListingPage = {
   searchParams: URLSearchParams;
+  setSelectedProductIds;
 };
 
 export default function ProductListingPage({
   searchParams,
+  setSelectedProductIds,
 }: ProductListingPage) {
   const page = searchParams.get("page") || "1";
   const search = searchParams.get("q") || "";
@@ -27,22 +29,25 @@ export default function ProductListingPage({
   }
 
   return (
-    <ProductTable
-      columns={columns}
-      // @ts-expect-error: no prob
-      data={
-        data || {
-          data: [],
-          pagination: {
-            currentPage: 0,
-            limit: limit,
-            total: 0,
-            totalPages: 0,
-          },
-          success: false,
+    <>
+      <ProductTable
+        columns={columns}
+        // @ts-expect-error: no prob
+        data={
+          data || {
+            data: [],
+            pagination: {
+              currentPage: 0,
+              limit: limit,
+              total: 0,
+              totalPages: 0,
+            },
+            success: false,
+          }
         }
-      }
-      totalItems={data?.pagination.total || 0}
-    />
+        setSelectedOption={setSelectedProductIds}
+        totalItems={data?.pagination.total || 0}
+      />
+    </>
   );
 }

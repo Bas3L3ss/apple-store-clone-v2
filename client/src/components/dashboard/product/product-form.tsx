@@ -343,48 +343,6 @@ export default function ProductForm({
                   />
 
                   {/* URL inputs for image URLs */}
-                  {/* {form.watch("productImages").map((image, index) => {
-                    // Skip file objects, only render inputs for string URLs
-                    if (image instanceof File) return null;
-
-                    return (
-                      <div key={`image-url-${index}`} className="flex gap-3">
-                        <FormField
-                          control={form.control}
-                          name={`productImages.${index}`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormControl>
-                                <div className="flex">
-                                  <div className="bg-muted p-2 flex items-center rounded-l-md border border-r-0 border-input">
-                                    <Upload className="h-4 w-4 text-muted-foreground" />
-                                  </div>
-                                  <Input
-                                    required
-                                    placeholder="https://example.com/image.jpg"
-                                    className="rounded-l-none"
-                                    {...field}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeImageField(index)}
-                          disabled={form.watch("productImages").length <= 2}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className="sr-only">Remove</span>
-                        </Button>
-                      </div>
-                    );
-                  })} */}
                   <ImagesInput
                     form={form}
                     removeImageField={removeImageField}

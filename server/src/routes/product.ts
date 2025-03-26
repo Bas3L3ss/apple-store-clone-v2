@@ -35,9 +35,9 @@ router.post(
 router.put(
   "/",
   [
+    upload.array("productImages", 10),
     checkBearerToken,
     checkAdminRole,
-    upload.array("productImages", 10),
     EditProduct,
   ],
   errorHandler

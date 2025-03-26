@@ -23,6 +23,7 @@ import { FileUploader } from "../ui/file-uploader";
 import { MAX_FILE_SIZE } from "@/src/constants";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate } from "@/src/lib/utils";
+import { Link } from "react-router";
 
 export const ProfileAvatar = ({
   setIsEditingAvatar,
@@ -107,10 +108,12 @@ export const ProfileAvatar = ({
 
         {user?.role == "admin" && (
           <div className="absolute -bottom-2 -right-2">
-            <Badge className="bg-blue-600">
-              <Shield className="h-3 w-3 mr-1" />
-              Admin
-            </Badge>
+            <Link to={"/dashboard"}>
+              <Badge className="bg-blue-600">
+                <Shield className="h-3 w-3 mr-1" />
+                Admin
+              </Badge>
+            </Link>
           </div>
         )}
       </div>

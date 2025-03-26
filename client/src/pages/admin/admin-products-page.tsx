@@ -7,9 +7,11 @@ import { cn } from "@/src/lib/utils";
 import { Heading } from "@/src/components/ui/heading";
 import ProductListingPage from "@/src/components/dashboard/product/listing-product-table";
 import ProductTableAction from "@/src/components/dashboard/product/product-tables/product-table-action";
+import { useState } from "react";
 
 export default function ProductPage() {
   const [searchParams] = useSearchParams();
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
 
   return (
     <div className="flex flex-1 flex-col space-y-4">
@@ -25,7 +27,10 @@ export default function ProductPage() {
       <Separator />
       <ProductTableAction />
 
-      <ProductListingPage searchParams={searchParams} />
+      <ProductListingPage
+        setSelectedProductIds={setSelectedProductIds}
+        searchParams={searchParams}
+      />
     </div>
   );
 }

@@ -3,8 +3,33 @@ import { CellAction } from "./cell-action";
 import CloudinaryImage from "@/src/components/reusable/cloudinary-image";
 import { Product } from "@/src/@types";
 import { formatPrice } from "@/src/lib/utils";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
 export const columns: ColumnDef<Product>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="size-5"
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className="size-5"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "productImages",
     header: "IMAGE",
