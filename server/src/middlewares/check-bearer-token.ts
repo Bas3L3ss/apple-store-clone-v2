@@ -40,6 +40,7 @@ const checkBearerToken: RequestHandler = async (
       return next();
     }
     const deviceId = crypt.hashDeviceId(unHashedDeviceId);
+    console.log(deviceId);
 
     // **3️⃣ Handle Device ID Authentication (Session)**
     const authSession = await AuthSession.findOne({ deviceId });

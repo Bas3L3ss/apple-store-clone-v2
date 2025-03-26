@@ -162,6 +162,7 @@ class RedisClient {
       const serializedMessage =
         typeof message === "string" ? message : JSON.stringify(message);
       await publisher.publish(channel, serializedMessage);
+      console.log("published message to", channel);
     } catch (error: unknown) {
       // @ts-expect-error:no prob
       console.log("❌ Redis publish error:", error.message);

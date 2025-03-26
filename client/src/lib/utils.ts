@@ -265,7 +265,7 @@ export const getPlaceholder = (type: string) => {
 
 export async function getDeviceInfo() {
   const fp = await FingerprintJS.load();
-  const { visitorId: deviceId } = await fp.get(); // Unique deviceId
+  const { visitorId: deviceId } = await fp.get();
   const response = await fetch("https://api64.ipify.org?format=json");
   const parsedRes = await response.json();
 

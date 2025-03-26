@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { extendedFormSchema } from "../schemas";
 import { createProduct, editProduct } from "../action/products";
 import { ProductSelectionTypes } from "../@types";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateAllProductsCache } from "../react-query-hooks/use-get-products";
 
 const useProductForm = ({
   initialData,
@@ -18,7 +20,7 @@ const useProductForm = ({
   const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(
     null
   );
-
+  const queryClient = useQueryClient();
   const initialOptions = useMemo(
     () => initialData?.productOptions || [],
     [initialData]
@@ -180,6 +182,7 @@ const useProductForm = ({
       toast.success(
         `Product ${initialData ? "updated" : "created"} successfully`
       );
+      invalidateAllProductsCache(queryClient);
     } catch (error) {
       console.error("Error submitting product:", error);
     } finally {

@@ -24,7 +24,7 @@ export const GetOrders = async (
     };
 
     // Build cache key
-    const cacheKey = `orders:${search || ""}:${status || ""}:${
+    const cacheKey = `admin:orders:${search || ""}:${status || ""}:${
       paymentMethod || ""
     }:${page}:${limit}`;
 

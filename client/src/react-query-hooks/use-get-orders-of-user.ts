@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getOrdersOfUser } from "../action/orders";
 
 interface UseGetOrdersParams {
@@ -16,4 +16,9 @@ export const useGetOrdersOfUser = ({
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     retry: 2, // Retry twice before failing
   });
+};
+export const invalidateAllOrdersCache = (queryClient: QueryClient) => {
+  queryClient.resetQueries({ queryKey: ["order"], exact: false });
+  queryClient.resetQueries({ queryKey: ["orders"], exact: false });
+  queryClient.resetQueries({ queryKey: ["admin:orders"], exact: false });
 };

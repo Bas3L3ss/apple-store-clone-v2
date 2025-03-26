@@ -62,7 +62,6 @@ export function DataTable<TData>({
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
   // Get current page and limit from URL or use defaults
   const currentPage = parseInt(queryParams.get("page") || "1", 10);
   const pageSize = parseInt(queryParams.get("limit") || "10", 10);
@@ -120,7 +119,7 @@ export function DataTable<TData>({
 
   // Sync table with URL parameters when they change externally
   useEffect(() => {
-    if (setSelectedOption && selectedData.length > 0) {
+    if (setSelectedOption) {
       const newSelectedIds = selectedData
         .map((value) => value._id)
         .filter(Boolean);
@@ -137,6 +136,12 @@ export function DataTable<TData>({
       pageSize,
     });
   }, [currentPage, pageSize, table]);
+
+  if (data?.data.length == 0 && pagination.currentPage > 1) {
+    queryParams.set("page", (pagination.currentPage - 1).toString());
+    queryParams.set("limit", (10).toString());
+    navigate({ search: queryParams.toString() });
+  }
 
   return (
     <div className="flex flex-1 flex-col space-y-4">

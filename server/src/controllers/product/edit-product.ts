@@ -163,14 +163,14 @@ export const EditProduct = async (
       .populate("productOptions")
       .exec();
 
+    redis.publish("product-modified", {
+      productId: existingProduct._id,
+      slug: existingProduct.slug,
+    });
     res.status(200).json({
       success: true,
       data: updatedProduct,
       message: "Product updated successfully",
-    });
-    redis.publish("product-modified", {
-      productId: existingProduct._id,
-      slug: existingProduct.slug,
     });
 
     return;

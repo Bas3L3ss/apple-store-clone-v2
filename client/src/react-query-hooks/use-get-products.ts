@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getProducts } from "../action/products";
 
 interface UseGetProductsParams {
@@ -20,4 +20,8 @@ export const useGetProducts = ({
     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
     retry: 2, // Retry fetching twice before failing
   });
+};
+
+export const invalidateAllProductsCache = (queryClient: QueryClient) => {
+  queryClient.resetQueries({ queryKey: ["products"], exact: false });
 };

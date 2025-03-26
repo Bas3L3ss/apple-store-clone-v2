@@ -139,15 +139,9 @@ export const GetUserById = async ({
   userId: string;
 }): Promise<User[] | null> => {
   try {
-    const token = sessionStorage.getItem("token");
-    const deviceId = (await getDeviceInfo()).deviceId;
+    const response = await makeAxiosRequest("get", `/auth/admin/${userId}`);
 
-    const response = await axios.get(`/auth/admin/${userId}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      params: token ? {} : { deviceId },
-    });
-
-    return response.data;
+    return response;
   } catch (error) {
     console.log("Error fetching users: ", error);
 
@@ -210,6 +204,16 @@ export const getLoggedInDevices = async () => {
     console.log(error);
     toast.error(error);
 
+    throw error;
+  }
+};
+
+export const deleteUsers = async (userIds: string[]) => {
+  try {
+    await makeAxiosRequest("delete", "/auth/account", { userIds });
+    toast.success("Succesfully delete users");
+  } catch (error) {
+    toast.error(error);
     throw error;
   }
 };

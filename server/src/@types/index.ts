@@ -103,3 +103,9 @@ export interface ShippingAddress {
     lng: number;
   };
 }
+
+// Define valid subjects as a TypeScript union type
+export type EmailSubject =
+  | "Payment Succeeded"
+  | "User Logged In"
+  | "Order Status Changed";

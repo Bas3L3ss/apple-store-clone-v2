@@ -10,6 +10,7 @@ import { GetProductBySlug } from "../controllers/product/get-product-by-slug";
 import { GetProductRecommendations } from "../controllers/product/get-product-recommendations";
 import { EditProduct } from "../controllers/product/edit-product";
 import multer from "multer";
+import { deleteProducts } from "../controllers/product/delete-product";
 
 // import { CreateMockProduct } from "../controllers/product/create-random-mockdata";
 
@@ -40,6 +41,11 @@ router.put(
     checkAdminRole,
     EditProduct,
   ],
+  errorHandler
+);
+router.delete(
+  "/",
+  [checkBearerToken, checkAdminRole, deleteProducts],
   errorHandler
 );
 

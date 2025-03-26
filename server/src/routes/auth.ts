@@ -21,6 +21,7 @@ import logOutAllDevices from "../controllers/auth/log-out-add-devices";
 import getAllDevices from "../controllers/auth/get-all-devices";
 import LogOutSession from "../controllers/auth/log-out-session";
 import loginWithDevice from "../controllers/auth/log-in-with-device";
+import { deleteUsers } from "../controllers/auth/delete-users";
 
 const storage = multer.memoryStorage();
 
@@ -61,6 +62,7 @@ router.delete(
   [checkBearerToken, logOutAllDevices],
   errorHandler
 );
+
 router.get("/account/devices", [checkBearerToken, getAllDevices], errorHandler);
 
 // POST at route: http://localhost:5000/auth/verify
@@ -97,5 +99,7 @@ router.get(
   [checkBearerToken, checkAdminRole, GetUserById],
   errorHandler
 );
+
+router.delete("/account", [checkBearerToken, checkAdminRole, deleteUsers]);
 
 export default router;

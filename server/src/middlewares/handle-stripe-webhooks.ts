@@ -96,6 +96,18 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           userId,
           email: stripeSession.customer_details?.email,
         });
+        redis.publish("send-email", {
+          subject: "Payment Succeeded",
+          email: stripeSession.customer_details?.email,
+          data: {
+            orderId: newOrder._id.toString(),
+            total: stripeSession.amount_total! / 100,
+            estimatedDelivery: newOrder.estimatedDelivery.toISOString(),
+            // @ts-expect-error: no prob
+            shippingAddress: JSON.parse(newOrder.shippingAddress).fullAddress,
+          },
+        });
+
         res.json({ received: true });
       } catch (error) {
         await session.abortTransaction();

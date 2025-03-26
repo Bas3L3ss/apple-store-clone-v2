@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { EditAccountAdmin } from "../action/auth";
 import { userFormSchema } from "../schemas";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateAllUsersCache } from "../react-query-hooks/admin/use-get-user-by-id";
 // Define user roles
 const UserRoles = {
   User: "user",
@@ -15,7 +17,7 @@ export type UserFormValues = z.infer<typeof userFormSchema>;
 
 const useUserForm = ({ initialData }: { initialData: any | null }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const queryClient = useQueryClient();
   // Convert role enum to array for dropdown
   const userRoleOptions = Object.entries(UserRoles).map(([label, value]) => ({
     label,
@@ -41,7 +43,9 @@ const useUserForm = ({ initialData }: { initialData: any | null }) => {
 
     try {
       await EditAccountAdmin({ newUserData: data, uid: initialData._id });
+
       toast.success("Edited User");
+      invalidateAllUsersCache(queryClient);
     } catch (error) {
       console.error("Error editing user:", error);
       toast.error("Failed to edit user");

@@ -15,7 +15,8 @@ const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const decoded = await jwt.verifyToken(token);
+    const data = await jwt.verifyToken(token);
+    const decoded = Array.isArray(data) ? data[0] : data;
 
     if (!decoded?.email) {
       next({ statusCode: 400, message: "Invalid or expired token" });

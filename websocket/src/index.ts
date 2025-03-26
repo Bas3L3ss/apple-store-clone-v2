@@ -4,7 +4,6 @@ import mongo from "./utils/mongo";
 import { CartItemModel } from "./models/CartItem";
 import { PORT } from "./constants";
 import mongoose from "mongoose";
-import { CartItem } from "./@types";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -33,7 +32,6 @@ async function bootstrap() {
     }
     console.log(`User connected: ${userId}`);
 
-    // Listen for cart updates from the client
     socket.on("cart:update", async (cartItems, callback) => {
       try {
         await CartItemModel.updateOne(
@@ -50,7 +48,6 @@ async function bootstrap() {
       }
     });
 
-    // Handle cart sync (similar to update but with callback)
     socket.on("cart:sync", async (data, callback) => {
       try {
         const { items } = data;
@@ -127,10 +124,8 @@ async function bootstrap() {
           );
         }
 
-        // 🔥 Fetch the entire updated cart (excluding the deleted one)
         const updatedCart = await CartItemModel.find({ userId });
 
-        // 🔄 Send the entire updated cart back to the user
         io.to(`user:${userId}`).emit("cart:updated", updatedCart);
         console.log(`Cart updated for user: ${userId}`);
       } catch (err) {
@@ -156,7 +151,6 @@ async function bootstrap() {
       }
     });
 
-    // Handle get cart
     socket.on("cart:get", async (_, callback) => {
       try {
         const cart = await CartItemModel.find({ userId });
@@ -170,7 +164,6 @@ async function bootstrap() {
       }
     });
 
-    // Handle disconnection
     socket.on("disconnect", () => {
       console.log(`Client disconnected: ${socket.id}`);
     });

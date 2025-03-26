@@ -171,3 +171,13 @@ export const editProduct = async (_id: string, product: FormValues) => {
     throw error;
   }
 };
+
+export const deleteProducts = async (productIds: string[]) => {
+  try {
+    await makeAxiosRequest("delete", "/products", { productIds });
+    toast.success("Succesfully delete products");
+  } catch (error) {
+    toast.error(error);
+    throw error;
+  }
+};

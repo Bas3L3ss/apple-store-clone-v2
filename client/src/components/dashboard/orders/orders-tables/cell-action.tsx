@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { invalidateAllOrdersCache } from "@/src/react-query-hooks/use-get-orders-of-user";
+import { useQueryClient } from "@tanstack/react-query";
 import { Edit, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -38,6 +40,7 @@ export const CellAction = ({
   orderId: string;
   orderStatus: OrderStatus;
 }) => {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [orderStatusInput, setOrderStatusInput] = useState(orderStatus);
@@ -45,6 +48,7 @@ export const CellAction = ({
     setLoading(true);
     try {
       await editOrderStatus(orderId, orderStatusInput);
+      invalidateAllOrdersCache(queryClient);
       toast.success("Updated order status");
     } catch (error) {
       toast.error("Something went wrong, please retry");

@@ -52,8 +52,6 @@ class JWT {
         return null;
       }
 
-      // Store user in cache for future requests (cache for 15 minutes)
-      // Short TTL for user data to ensure permissions/roles are relatively fresh
       await redis.set(cacheKey, user, 900);
       console.log(`✅ Cached users:${uid} for 15 minutes`);
 

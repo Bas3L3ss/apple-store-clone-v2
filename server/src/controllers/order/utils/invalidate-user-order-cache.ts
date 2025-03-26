@@ -5,8 +5,9 @@ export const invalidateUserOrderCaches = async (
 ): Promise<void> => {
   try {
     // Get all keys matching the user's order pattern
-    const keys = await redis.client.keys(`orders:user:${userId}:*`);
-
+    const userKeys = await redis.client.keys(`orders:user:${userId}:*`);
+    const orderKeys = await redis.client.keys(`admin:orders:*`);
+    const keys = [...userKeys, ...orderKeys];
     if (keys.length > 0) {
       // Delete all matching keys
       await redis.client.del(...keys);

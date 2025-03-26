@@ -4,6 +4,7 @@ import jwt from "../../utils/jwt";
 import crypt from "../../utils/crypt";
 import Account from "../../models/Account";
 import { AuthSession } from "../../models/AuthSession";
+import redis from "../../utils/redis";
 
 const login: RequestHandler = async (req, res, next) => {
   try {
@@ -57,7 +58,19 @@ const login: RequestHandler = async (req, res, next) => {
           ip: device.ip,
         },
       });
-
+      if (account.email) {
+        redis.publish(
+          "send-email",
+          JSON.stringify({
+            subject: "User Logged In",
+            email: account.email,
+            data: {
+              ip: device?.ip || "Unknown",
+              device: device?.name || "Unknown",
+            },
+          })
+        );
+      }
       res.status(200).json({
         message: "Successfully logged-in via session",
         data: account,

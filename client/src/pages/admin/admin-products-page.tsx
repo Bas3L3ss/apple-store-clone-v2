@@ -2,7 +2,6 @@ import { buttonVariants } from "@/src/components/ui/button";
 import { Separator } from "@/src/components/ui/separator";
 import { Plus } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-
 import { cn } from "@/src/lib/utils";
 import { Heading } from "@/src/components/ui/heading";
 import ProductListingPage from "@/src/components/dashboard/product/listing-product-table";
@@ -25,7 +24,10 @@ export default function ProductPage() {
         </Link>
       </div>
       <Separator />
-      <ProductTableAction />
+      <ProductTableAction
+        setSelectedProductIds={setSelectedProductIds}
+        selectedProductIds={selectedProductIds}
+      />
 
       <ProductListingPage
         setSelectedProductIds={setSelectedProductIds}

@@ -16,7 +16,10 @@ export default function AdminUsersPage() {
         <Heading title="Users" description="Manage users" />
       </div>
       <Separator />
-      <UserTableAction />
+      <UserTableAction
+        selectedUserIds={selectedUserIds}
+        setSelectedUserIds={setSelectedUserIds}
+      />
 
       <UsersListingPage
         setSelectedUserIds={setSelectedUserIds}
