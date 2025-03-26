@@ -40,7 +40,7 @@ A comprehensive e-commerce platform for Apple products built with the MERN stack
 
 **🔐 Seamless User Authentication**
 
-- **Register and verify users effortlessly**
+- **Register and verify users effortlessly ("remember me" option will will allow user to be logged in for 30d as opposed of 1d)**
 
   ![Authentication Demo](assets/register-user-ezgif.com-video-to-gif-converter.gif)
 
@@ -70,11 +70,12 @@ A comprehensive e-commerce platform for Apple products built with the MERN stack
 
 - **🛒 Real-time Shopping Cart:** Instant updates using WebSockets
 - **💳 Secure Checkout:** Integration with Stripe payment gateway
-- **👤 User Authentication:** JWT-based secure authentication system
+- **🔒 Authorization:** Auth session management and JWT stateless auth
+- **👤 User management:** Full control over your account and logged in devices
 - **📱 Responsive Design:** Optimized for all device sizes
-- **🔍 Product Search & Filtering:** Advanced search capabilities
-- **🚚 Order Tracking:** Real-time order status updates
-- **👨‍💼 Admin Dashboard:** Comprehensive product and order management
+- **🔍 Product Search & Filtering:** Full-text search capabilities
+- **🚚 Order Tracking:** Keep track of your orders
+- **👨‍💼 Admin Dashboard:** Comprehensive product and order management (Will soon showcase on my readme)
 - **🔒 Secure API:** Protected endpoints with proper authorization
 
 ## 👩‍💻 Tech Stack
