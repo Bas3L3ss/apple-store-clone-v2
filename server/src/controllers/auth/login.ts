@@ -3,6 +3,7 @@ import joi from "../../utils/joi";
 import jwt from "../../utils/jwt";
 import crypt from "../../utils/crypt";
 import Account from "../../models/Account";
+import { AuthSession } from "../../models/AuthSession";
 
 const login: RequestHandler = async (req, res, next) => {
   try {
@@ -10,50 +11,59 @@ const login: RequestHandler = async (req, res, next) => {
       {
         email: joi.instance.string().required(),
         password: joi.instance.string().required(),
+        deviceId: joi.instance.string().optional(), // Optional for JWT users
       },
       req.body
     );
 
-    if (validationError) {
-      return next(validationError);
-    }
+    if (validationError) return next(validationError);
 
-    const { email, password } = req.body;
+    const { email, password, deviceId } = req.body;
 
-    // Get account from DB, and verify existance
+    // **1️⃣ Find Account (No Session Lookups Here)**
     const account = await Account.findOne({ email });
 
     if (!account) {
-      next({
-        statusCode: 400,
-        message: "Bad credentials",
-      });
+      next({ statusCode: 400, message: "Bad credentials" });
       return;
     }
 
     // Verify password hash
     const passOk = await crypt.validate(password, account.password);
-    console.log(password, account.password, passOk);
 
     if (!passOk) {
-      next({
-        statusCode: 400,
-        message: "Bad credentials",
+      next({ statusCode: 400, message: "Bad credentials" });
+      return;
+    }
+
+    // **2️⃣ Handle Session-Based Login (Remember Me)**
+    if (deviceId) {
+      await AuthSession.create({
+        userId: account._id,
+        deviceId,
+        loggedInAt: new Date(),
+      });
+
+      res.status(200).json({
+        message: "Successfully logged-in via session",
+        data: account,
       });
       return;
     }
 
-    // Generate access token
+    // **3️⃣ Handle JWT Login (No Remember Me)**
     const token = jwt.signToken({ uid: account._id, role: account.role });
 
     // Remove password from response data
     const { password: _, ...accountData } = account.toObject();
 
     res.status(200).json({
-      message: "Succesfully logged-in",
+      message: "Successfully logged-in",
       data: accountData,
       token,
     });
+
+    return;
   } catch (error) {
     next(error);
   }

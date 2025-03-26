@@ -29,7 +29,7 @@ const router = express.Router();
 router.post("/register", [], register, errorHandler);
 
 // POST at path: http://localhost:5000/auth/login
-router.post("/login", [], login, errorHandler);
+router.post("/login", [], login, errorHandler); // DONE WITH AUTH SESSION
 
 // GET at path: http://localhost:5000/auth/login
 router.get("/login", [checkBearerToken], loginWithToken, errorHandler);
