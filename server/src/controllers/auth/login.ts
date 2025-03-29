@@ -45,7 +45,6 @@ const login: RequestHandler = async (req, res, next) => {
       const deviceId = crypt.hashDeviceId(unHashedDeviceId);
 
       await AuthSession.findOneAndDelete({ deviceId: deviceId });
-
       const newSession = await AuthSession.create({
         userId: account._id,
         deviceId,
@@ -56,7 +55,7 @@ const login: RequestHandler = async (req, res, next) => {
           name: device.name,
           ip: device.ip,
         },
-      });
+      }); // Set TTL to 30 days
       if (account.email) {
         redis.publish(
           "send-email",
@@ -70,10 +69,13 @@ const login: RequestHandler = async (req, res, next) => {
           })
         );
       }
-      const token = jwt.signToken({
-        sessionId: newSession._id,
-        deviceId: newSession.deviceId,
-      });
+      const token = jwt.signToken(
+        {
+          sessionId: newSession._id,
+          deviceId: newSession.deviceId,
+        },
+        "30d"
+      );
 
       res.status(200).json({
         message: "Successfully logged-in via session",

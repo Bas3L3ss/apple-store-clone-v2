@@ -9,7 +9,7 @@ const authSessionSchema = new mongoose.Schema(
       required: true,
     },
     deviceId: { type: String, required: true, unique: true, index: true },
-    loggedInAt: { type: Date, default: Date.now, index: { expires: "30d" } },
+    loggedInAt: { type: Date, default: Date.now, expires: "30d" },
     deviceMetadata: {
       deviceType: String,
       os: String,
