@@ -22,7 +22,6 @@ const login: RequestHandler = async (req, res, next) => {
 
     const { email, password, deviceId: unHashedDeviceId, device } = req.body;
 
-    // **1️⃣ Find Account (No Session Lookups Here)**
     const account = await Account.findOne({ email });
 
     if (!account) {
@@ -38,16 +37,16 @@ const login: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // **2️⃣ Handle Session-Based Login (Remember Me)**
     if (unHashedDeviceId) {
       if (!unHashedDeviceId.trim()) {
-        return next({ statusCode: 400, message: "Invalid Device ID" });
+        return next({ statusCode: 400, message: "No device ID found" });
       }
 
       const deviceId = crypt.hashDeviceId(unHashedDeviceId);
-      console.log(device.device);
 
-      await AuthSession.create({
+      await AuthSession.findOneAndDelete({ deviceId: deviceId });
+
+      const newSession = await AuthSession.create({
         userId: account._id,
         deviceId,
         loggedInAt: new Date(),
@@ -71,14 +70,19 @@ const login: RequestHandler = async (req, res, next) => {
           })
         );
       }
+      const token = jwt.signToken({
+        sessionId: newSession._id,
+        deviceId: newSession.deviceId,
+      });
+
       res.status(200).json({
         message: "Successfully logged-in via session",
         data: account,
+        token,
       });
       return;
     }
 
-    // **3️⃣ Handle JWT Login (No Remember Me)**
     const token = jwt.signToken({ uid: account._id, role: account.role });
 
     // Remove password from response data

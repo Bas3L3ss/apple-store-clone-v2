@@ -18,5 +18,3 @@ export function sendEmail(html: string, email: string, subject: string) {
   };
   return transporter.sendMail(mailConfigurations);
 }
-
-export const generateHtml = (subject: string) => {};

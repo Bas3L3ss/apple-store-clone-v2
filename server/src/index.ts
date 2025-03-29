@@ -45,19 +45,19 @@ const bootstrap = async () => {
   await redis.subscribe("product-modified", async (message) => {
     const data = await helper.safeParse(message);
     if (!data) return;
-    invalidateAllProductCaches(data.productId, data.slug);
+    await invalidateAllProductCaches(data.productId, data.slug);
   });
   await redis.subscribe("product-created", async () => {
-    invalidateProductsCache();
+    await invalidateProductsCache();
   });
   await redis.subscribe("product-deleted", async () => {
-    invalidateProductsCache();
+    await invalidateProductsCache();
   });
 
   await redis.subscribe("user-modified", async (message) => {
     const data = await helper.safeParse(message);
     if (!data) return;
-    invalidateUserCache(data.userId, data.isFromAdminEdit);
+    await invalidateUserCache(data.userId, data.isFromAdminEdit);
   });
   await redis.subscribe("user-deleted", async () => {
     invalidateUsersCache();
@@ -70,12 +70,17 @@ const bootstrap = async () => {
   await redis.subscribe("user-order-modified", async (message) => {
     const data = await helper.safeParse(message);
     if (!data) return;
-    invalidateUserOrderCaches(data.userId);
-    invalidateCustomerAnalyticsCache(data.email);
+    await invalidateUserOrderCaches(data.userId);
+  });
+
+  await redis.subscribe("user-order-modified", async (message) => {
+    const data = await helper.safeParse(message);
+    if (!data) return;
+    await invalidateCustomerAnalyticsCache(data.email);
   });
 
   await redis.subscribe("send-email", async (message) => {
-    handleEmailMessage(message);
+    await handleEmailMessage(message);
   });
 
   app.listen(PORT, () => {

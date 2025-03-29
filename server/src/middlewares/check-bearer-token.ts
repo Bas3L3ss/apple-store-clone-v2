@@ -1,8 +1,6 @@
 import { type RequestHandler, Request, Response, NextFunction } from "express";
 import jwt from "../utils/jwt";
-import { AuthSession } from "../models/AuthSession";
 import Account from "../models/Account";
-import crypt from "../utils/crypt";
 
 // Extend Request type to include `auth`
 export interface AuthenticatedRequest extends Request {
@@ -16,13 +14,12 @@ const checkBearerToken: RequestHandler = async (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    let { deviceId: unHashedDeviceId } = req.body;
-    if (!unHashedDeviceId) {
-      unHashedDeviceId = req.query.deviceId;
+    let { deviceId: deviceIdAndSessionId } = req.body;
+    if (!deviceIdAndSessionId) {
+      deviceIdAndSessionId = req.query.deviceId;
     }
 
-    // **1️⃣ Reject if no token or deviceId is provided**
-    if (!token && !unHashedDeviceId) {
+    if (!token && !deviceIdAndSessionId) {
       return next({
         statusCode: 400,
         message: "Token or deviceId is required",
@@ -39,11 +36,16 @@ const checkBearerToken: RequestHandler = async (
       req.auth = auth; // Directly assign the verified token payload
       return next();
     }
-    const deviceId = crypt.hashDeviceId(unHashedDeviceId);
-    console.log(deviceId);
-
-    // **3️⃣ Handle Device ID Authentication (Session)**
-    const authSession = await AuthSession.findOne({ deviceId });
+    const parts = deviceIdAndSessionId.split(":");
+    const sessionJWT = parts[1];
+    if (!sessionJWT) {
+      return next({
+        statusCode: 401,
+        message: "Your session has expired. Please log in again.",
+      });
+    }
+    const decodedJWT = await jwt.verifyToken(sessionJWT);
+    const authSession = decodedJWT;
 
     if (!authSession) {
       return next({
@@ -53,7 +55,7 @@ const checkBearerToken: RequestHandler = async (
     }
 
     // Fetch user account
-    const auth = await Account.findById(authSession.userId);
+    const auth = await Account.findById(authSession.userId!);
     if (!auth) {
       return next({ statusCode: 404, message: "Account not found" });
     }

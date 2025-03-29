@@ -264,6 +264,7 @@ export const getPlaceholder = (type: string) => {
 };
 
 export async function getDeviceInfo() {
+  const sessionId = localStorage.getItem("sessionToken");
   const fp = await FingerprintJS.load();
   const { visitorId: deviceId } = await fp.get();
   const response = await fetch("https://api64.ipify.org?format=json");
@@ -277,7 +278,7 @@ export async function getDeviceInfo() {
   const name = browser.getBrowserName() || "Unknown Browser";
 
   return {
-    deviceId, // Unique device fingerprint
+    deviceId: sessionId ? `${deviceId}:${sessionId}` : deviceId,
     device: {
       deviceType,
       os,

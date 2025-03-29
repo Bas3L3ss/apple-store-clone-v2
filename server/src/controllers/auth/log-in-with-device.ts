@@ -3,6 +3,7 @@ import { type RequestHandler } from "express";
 const loginWithDevice: RequestHandler = async (req, res, next) => {
   try {
     const account = req.auth || {};
+    console.log(account);
 
     if (!account) {
       return next({

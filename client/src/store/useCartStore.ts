@@ -75,8 +75,6 @@ export const useCartStore = create<CartState>()(
         });
 
         socket.on("cart:updated", (updatedCart: CartItem[]) => {
-          console.log(updatedCart);
-
           set({ userItems: updatedCart });
         });
 

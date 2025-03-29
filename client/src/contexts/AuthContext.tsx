@@ -46,6 +46,9 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+  const [sessionToken, setSessionToken] = useState(
+    localStorage.getItem("sessionToken") || null
+  );
   const [account, setAccount] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,16 +64,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setDeviceId(deviceId);
       setDevice(device.device);
     })();
-  }, []);
-
-  // useEffect(() => {
-  //   const sessionToken = sessionStorage.getItem("token");
-  //   if (!sessionToken) {
-  //     setToken(null);
-  //   } else {
-  //     setToken(sessionToken);
-  //   }
-  // }, [token]);
+  }, [sessionToken]);
 
   const register = useCallback(
     async (
@@ -112,11 +106,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         } = await axios.post("/auth/login", formData);
 
         setAccount(accountData);
-        setToken(JWTToken);
         setIsLoggedIn(true);
 
         if (!rememberMe) {
+          setToken(JWTToken);
           sessionStorage.setItem("token", JWTToken);
+        } else {
+          setSessionToken(JWTToken);
+          localStorage.setItem("sessionToken", JWTToken);
         }
 
         localStorage.setItem("isLoggedInBefore", "true");
@@ -134,19 +131,24 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const logout = useCallback(async () => {
     if (deviceId) {
-      await axios.post("/auth/logout", { deviceId });
+      await axios.post("/auth/logout", {
+        deviceId: `${deviceId}:${sessionToken}`,
+      });
     }
     sessionStorage.removeItem("token");
     localStorage.removeItem("isLoggedInBefore");
+    localStorage.removeItem("sessionToken");
 
     setIsLoggedIn(false);
     setIsLoggedInBefore(false);
+    setSessionToken(null);
     setAccount(null);
     setToken(null);
-  }, [deviceId]);
+  }, [deviceId, sessionToken]);
 
   const reLoginUser = useCallback(async () => {
     setIsLoading(true);
+
     if (!deviceId) return;
     try {
       const isUsingDeviceLogin = !token;
@@ -156,7 +158,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         : "/auth/login";
 
       const requestData = isUsingDeviceLogin
-        ? { deviceId }
+        ? { deviceId: `${deviceId}:${sessionToken}` }
         : { headers: { authorization: `Bearer ${token}` } };
 
       const {
@@ -186,7 +188,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsLoading(false);
     }
-  }, [token, isLoggedInBefore, logout, deviceId]);
+  }, [token, isLoggedInBefore, logout, deviceId, sessionToken]);
 
   // Periodically re-login the user
   useEffect(() => {

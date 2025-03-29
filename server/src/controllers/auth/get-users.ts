@@ -65,7 +65,6 @@ export const GetUsers = async (
     if (isVerified !== "None" && isVerified !== "") {
       filter.verified = isVerified === "true";
     }
-    console.log(filter);
 
     // Convert pagination values to numbers
     const pageNumber = parseInt(page, 10) || 1;

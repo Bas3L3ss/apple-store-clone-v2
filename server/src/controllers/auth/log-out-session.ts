@@ -1,8 +1,8 @@
 import { type RequestHandler } from "express";
 import { AuthenticatedRequest } from "../../middlewares/check-bearer-token";
 import { AuthSession } from "../../models/AuthSession";
-import crypt from "../../utils/crypt";
 import redis from "../../utils/redis";
+import jwt from "../../utils/jwt";
 
 const LogOutSession: RequestHandler = async (
   req: AuthenticatedRequest,
@@ -10,17 +10,23 @@ const LogOutSession: RequestHandler = async (
   next
 ) => {
   try {
-    const { deviceId: unHashedDeviceId } = req.body;
-
-    if (!unHashedDeviceId?.trim()) {
+    const { deviceId: deviceIdAndSessionId } = req.body;
+    if (!deviceIdAndSessionId?.trim()) {
       return next({ statusCode: 400, message: "deviceId is required" });
     }
 
-    // Hash deviceId
-    const deviceId = crypt.hashDeviceId(unHashedDeviceId);
+    const parts = deviceIdAndSessionId.split(":");
 
-    // Delete the session and get the deleted document in one query
-    const session = await AuthSession.findOneAndDelete({ deviceId });
+    const sessionJWT = parts[1];
+    if (!sessionJWT) {
+      return next({
+        statusCode: 404,
+        message: "No session found. user is logged out",
+      });
+    }
+    const authSession = await jwt.verifyToken(sessionJWT);
+
+    const session = await AuthSession.findByIdAndDelete(authSession._id);
 
     if (!session) {
       res.status(200).json({
