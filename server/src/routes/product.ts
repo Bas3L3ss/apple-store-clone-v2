@@ -65,10 +65,9 @@ router.get("/slug/:slug", GetProductBySlug, errorHandler);
 // GET: Fetch a single product by ID
 router.get("/:id", GetProductById, errorHandler);
 
+export default router;
 // router.post(
 //   "/test",
 //   [checkBearerToken, checkAdminRole, CreateMockProduct],
 //   errorHandler
 // );
-
-export default router;

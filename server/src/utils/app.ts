@@ -24,11 +24,6 @@ app.use(
   })
 );
 
-// // 🔹 Place `/upload` BEFORE `express.json()` because files are NOT JSON
-// app.post("/upload", upload.single("file"), (req, res) => {
-//   res.json({ success: true, filePath: req.file?.path });
-// });
-
 // Global Rate Limiting (applies to `/auth`, `/products`, etc.)
 const apiLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
