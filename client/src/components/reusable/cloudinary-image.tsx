@@ -1,8 +1,5 @@
-import { Cloudinary } from "@cloudinary/url-gen";
-import { AdvancedImage } from "@cloudinary/react";
+import { cld } from "@/src/lib/cld";
 import { cn } from "@/src/lib/utils";
-
-const cld = new Cloudinary({ cloud: { cloudName: "dz1d1qgk2" } });
 
 const CloudinaryImage = ({
   publicId,

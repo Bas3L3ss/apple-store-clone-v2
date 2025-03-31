@@ -8,7 +8,6 @@ import CloudinaryImage from "../reusable/cloudinary-image";
 const ProductBuyingGallery = ({ product }: { product: Product }) => {
   const [activeImage, setActiveImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
-  // TODO: if this is unecessary get rid of it
 
   // Handle keyboard navigation
   useEffect(() => {

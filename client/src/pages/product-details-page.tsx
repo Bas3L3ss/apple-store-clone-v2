@@ -48,16 +48,16 @@ const ItemDetails = () => {
       <SEO
         title={`${product.name} - Buy Now | Apple Store`}
         description={product.description}
-        canonical={`https://yourstore.com/shop/${product.slug}`}
+        canonical={`https://apple-store.com/shop/${product.slug}`}
         image={
           product.productImages?.[0] ||
-          "https://yourstore.com/default-image.jpg"
+          "https://apple-store.com/default-image.jpg"
         }
         language="en"
         type="product"
         twitterCard="summary_large_image"
-        twitterSite="@yourstore"
-        twitterCreator="@yourstore"
+        twitterSite="@apple-store"
+        twitterCreator="@apple-store"
         structuredData={{
           "@context": "https://schema.org/",
           "@type": "Product",
@@ -73,7 +73,7 @@ const ItemDetails = () => {
             price: product.basePrice,
             priceCurrency: "USD",
             availability: product.stock > 0 ? "InStock" : "OutOfStock",
-            url: `https://yourstore.com/shop/${product.slug}`,
+            url: `https://apple-store.com/shop/${product.slug}`,
           },
         }}
       />

@@ -265,20 +265,25 @@ export const getPlaceholder = (type: string) => {
 
 export async function getDeviceInfo() {
   const sessionId = localStorage.getItem("sessionToken");
-  const fp = await FingerprintJS.load();
-  const { visitorId: deviceId } = await fp.get();
   const response = await fetch("https://api64.ipify.org?format=json");
   const parsedRes = await response.json();
 
   const browser = Bowser.getParser(window.navigator.userAgent);
+
   const os = browser.getOSName() || "Unknown OS";
   const deviceType = browser.getPlatformType() || "Unknown";
   const ip = parsedRes.ip;
-
   const name = browser.getBrowserName() || "Unknown Browser";
 
+  const sanitizedDeviceType = deviceType.replace(/:/g, "");
+  const sanitizedOs = os.replace(/:/g, "");
+  const sanitizedName = name.replace(/:/g, "");
+  const sanitizedIp = ip.replace(/:/g, "");
+
+  const newDeviceId = `${sanitizedDeviceType}-${sanitizedOs}-${sanitizedName}-${sanitizedIp}`;
+
   return {
-    deviceId: sessionId ? `${deviceId}:${sessionId}` : deviceId,
+    deviceId: sessionId ? `${newDeviceId}:${sessionId}` : newDeviceId,
     device: {
       deviceType,
       os,

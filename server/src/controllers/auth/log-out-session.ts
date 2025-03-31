@@ -24,8 +24,16 @@ const LogOutSession: RequestHandler = async (
         message: "No session found. user is logged out",
       });
     }
+
     const authSession = await jwt.verifyToken(sessionJWT);
 
+    if (!authSession) {
+      res.status(200).json({
+        success: true,
+        message: "Session is not found",
+      });
+      return;
+    }
     const session = await AuthSession.findByIdAndDelete(authSession._id);
 
     if (!session) {

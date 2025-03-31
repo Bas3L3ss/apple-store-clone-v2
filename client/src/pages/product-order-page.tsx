@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useProductGetBySlug } from "../react-query-hooks/use-get-product-by-slug";
 import GlobalLoader from "../components/global-loader";
 import SEO from "../components/SEO";
+import { cld } from "../lib/cld";
 
 const MemoizedProductBuyingHeader = memo(ProductBuyingHeader);
 const MemoizedProductBuyingGallery = memo(ProductBuyingGallery);
@@ -93,16 +94,19 @@ const ProductOrderPage = () => {
       <SEO
         title={`${product.name} - Buy Now | Apple Store`}
         description={product.description}
-        canonical={`https://yourstore.com/shop/${product.slug}`}
+        canonical={`https://apple-store.com/shop/${product.slug}`}
         image={
-          product.productImages?.[0] ||
-          "https://yourstore.com/default-image.jpg"
+          cld
+            .image(product.productImages?.[0])
+            .format("auto")
+            .quality("auto")
+            .toURL() || "https://apple-store.com/default-image.jpg"
         }
         language="en"
         type="product"
         twitterCard="summary_large_image"
-        twitterSite="@yourstore"
-        twitterCreator="@yourstore"
+        twitterSite="@apple-store"
+        twitterCreator="@apple-store"
         structuredData={{
           "@context": "https://schema.org/",
           "@type": "Product",
@@ -118,7 +122,7 @@ const ProductOrderPage = () => {
             price: product.basePrice,
             priceCurrency: "USD",
             availability: product.stock > 0 ? "InStock" : "OutOfStock",
-            url: `https://yourstore.com/shop/${product.slug}`,
+            url: `https://apple-store.com/shop/${product.slug}`,
           },
         }}
       />

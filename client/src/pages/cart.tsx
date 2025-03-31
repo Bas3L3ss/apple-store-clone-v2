@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCartStore } from "../store/useCartStore";
+import { useCartStore } from "@/src/store/useCartStore";
 import { ArrowLeft, ShoppingBag, MapPin, MessageSquare } from "lucide-react";
-import { EmptyCart } from "../components/cart/empty-cart";
-import { GuestCartAlert } from "../components/cart/sync-cart-alert";
-import { CartItem } from "../components/cart/cart-item";
-import { CartSummary } from "../components/cart/cart-summary";
-import { useAuth } from "../contexts/AuthContext";
-import { handleStripeCheckout } from "../action/checkout";
-import { Button } from "../components/ui/button";
+import { EmptyCart } from "@/src/components/cart/empty-cart";
+import { GuestCartAlert } from "@/src/components/cart/sync-cart-alert";
+import { CartItem } from "@/src/components/cart/cart-item";
+import { CartSummary } from "@/src/components/cart/cart-summary";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { handleStripeCheckout } from "@/src/action/checkout";
+import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,12 +16,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
-import NotesForm from "../components/cart/notes-form";
-import { ShippingAddress } from "../@types";
-import AddressForm from "../components/cart/address-form";
-import { formatAddress } from "../lib/utils";
+import NotesForm from "@/src/components/cart/notes-form";
+import { ShippingAddress } from "@/src/@types";
+import AddressForm from "@/src/components/cart/address-form";
+import { formatAddress } from "@/src/lib/utils";
 import { toast } from "sonner";
-import SEO from "../components/SEO";
+import SEO from "@/src/components/SEO";
 
 const Cart = () => {
   const { userItems, guestItems, clearCart } = useCartStore();
