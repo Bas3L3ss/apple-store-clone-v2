@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 const ORIGIN = "*";
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || 3001;
 const ISDEVELOPMENT = process.env.NODE_ENV == "development";
 const APP_URL = process.env.APP_URL ?? "http://localhost:5173";
 

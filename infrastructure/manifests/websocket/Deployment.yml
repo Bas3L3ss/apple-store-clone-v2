@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: websocket-deployment
+  name: websocket
   labels:
-    app: frontend
+    app: websocket
 spec:
-  replicas: 3
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
+      maxUnavailable: 0
+      maxSurge: 2
   selector:
     matchLabels:
       app: websocket
@@ -28,7 +28,7 @@ spec:
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 5000
+            - containerPort: 3001
           envFrom:
             - configMapRef:
                 name: websocket-configmap

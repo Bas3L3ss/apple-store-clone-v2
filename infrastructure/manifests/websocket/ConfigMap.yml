@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: websocket-configmap
 data:
-  BACKEND_URL: "http://backend-service:5000"
+  BACKEND_URL: "http://backend:5000"
+  PORT: "3001"

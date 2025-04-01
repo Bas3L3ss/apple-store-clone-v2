@@ -1,7 +1,8 @@
-// api url (where your server is hosted at)
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const WEBSOCKET_URL =
   import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:3001";
+
+export { BACKEND_URL, WEBSOCKET_URL };
 
 export type Product = {
   photo_url: string;
@@ -123,5 +124,3 @@ export const SCHEMA_ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const ACCEPTED_IMAGE_TYPES = { "image/*": [] };
-
-export { BACKEND_URL, WEBSOCKET_URL };
