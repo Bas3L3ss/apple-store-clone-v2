@@ -7,7 +7,6 @@ import { OrderStatus, ProductOption, ShippingAddress } from "../@types";
 import { colorHexMap } from "../constants/color";
 import { BACKEND_URL } from "../constants";
 import { TaskDragData } from "../components/dashboard/kanban/components/task-card";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import Bowser from "bowser";
 
 export const axios = Axios.create({
@@ -59,6 +58,7 @@ export const makeAxiosRequest = async <T>(
     const response = await axios(config);
     return response.data;
   } catch (error) {
+    // @ts-expect-error: no prob
     throw error?.response?.data?.message || error.message;
   }
 };

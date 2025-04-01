@@ -5,7 +5,7 @@ import { useGetUsers } from "@/src/react-query-hooks/admin/use-get-users";
 
 type ProductListingPage = {
   searchParams: URLSearchParams;
-  setSelectedUserIds;
+  setSelectedUserIds: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export default function UsersListingPage({

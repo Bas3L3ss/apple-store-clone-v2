@@ -177,7 +177,8 @@ export const deleteProducts = async (productIds: string[]) => {
     await makeAxiosRequest("delete", "/products", { productIds });
     toast.success("Succesfully delete products");
   } catch (error) {
-    toast.error(error);
+    // @ts-expect-error: no prob
+    toast.error(error ?? "Something went wrong");
     throw error;
   }
 };

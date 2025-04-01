@@ -5,7 +5,8 @@ import { useGetProducts } from "@/src/react-query-hooks/use-get-products";
 
 type ProductListingPage = {
   searchParams: URLSearchParams;
-  setSelectedProductIds;
+
+  setSelectedProductIds: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export default function ProductListingPage({

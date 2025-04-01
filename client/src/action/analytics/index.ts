@@ -3,7 +3,10 @@ import { makeAxiosRequest } from "@/src/lib/utils";
 
 export const getRevenue = async () => {
   try {
-    const response = await makeAxiosRequest("get", "/analytics/revenue");
+    const response = await makeAxiosRequest<{
+      totalRevenue: number;
+      revenueComparison: string;
+    } | null>("get", "/analytics/revenue");
     return response;
   } catch (error) {
     console.error("Error fetching revenue:", error);
@@ -38,14 +41,33 @@ export const getNewAccounts = async () => {
   try {
     const response = await makeAxiosRequest<{
       lastMonth: { count: number };
+
       thisMonth: {
         count: number;
         percentageChange: number;
       };
-    }>("get", "/analytics/new-customers");
+    } | null>("get", "/analytics/new-customers");
     return response;
   } catch (error) {
     console.error("Error fetching new customers:", error);
     return [];
+  }
+};
+export const getAnalytics = async () => {
+  try {
+    const response = await makeAxiosRequest<{
+      dailySales: number[];
+      monthlyTotals: {
+        totalRevenue: number;
+        totalSales: number;
+        averageOrderValue: number;
+      };
+      salesByPlatform: { desktop: number; mobile: number };
+    } | null>("get", "/analytics/stripe");
+    return response;
+  } catch (error) {
+    console.log(error);
+
+    throw error;
   }
 };

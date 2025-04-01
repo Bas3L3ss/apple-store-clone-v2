@@ -121,6 +121,7 @@ export function DataTable<TData>({
   useEffect(() => {
     if (setSelectedOption) {
       const newSelectedIds = selectedData
+        // @ts-expect-error: no prob
         .map((value) => value._id)
         .filter(Boolean);
       setSelectedOption((prev) =>

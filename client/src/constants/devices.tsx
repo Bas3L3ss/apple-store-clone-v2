@@ -1,4 +1,4 @@
-import { Smartphone, Monitor, Laptop, Apple } from "lucide-react";
+import { Smartphone, Monitor, Laptop } from "lucide-react";
 import { FaWindows, FaApple, FaLinux, FaAndroid } from "react-icons/fa";
 import { JSX } from "react";
 import AppleLogo from "../icon/Apple";

@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import {
   getRevenue,
   getPaymentStatus,
   getRecentSales,
   getNewAccounts,
+  getAnalytics,
 } from "@/src/action/analytics";
 
 export const useGetRevenue = () => {
@@ -43,5 +44,11 @@ export const useGetNewAccounts = () => {
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,
     retry: 2,
+  });
+};
+export const useGetSalesAnalytics = () => {
+  return useSuspenseQuery({
+    queryKey: ["stripeAnalytics"],
+    queryFn: getAnalytics,
   });
 };

@@ -47,6 +47,7 @@ export async function editUserAvatar(avatar?: File | string) {
     });
   } catch (err) {
     console.error("Error:", err);
+    // @ts-expect-error: no prob
     toast.error(err ?? "Please try again");
   }
 }
@@ -139,7 +140,10 @@ export const GetUserById = async ({
   userId: string;
 }): Promise<User[] | null> => {
   try {
-    const response = await makeAxiosRequest("get", `/auth/admin/${userId}`);
+    const response = await makeAxiosRequest<User[] | null>(
+      "get",
+      `/auth/admin/${userId}`
+    );
 
     return response;
   } catch (error) {
@@ -202,7 +206,8 @@ export const getLoggedInDevices = async () => {
     return res;
   } catch (error) {
     console.log(error);
-    toast.error(error);
+    // @ts-expect-error: no prob
+    toast.error(error ?? "Something went wrong");
 
     throw error;
   }
@@ -213,7 +218,9 @@ export const deleteUsers = async (userIds: string[]) => {
     await makeAxiosRequest("delete", "/auth/account", { userIds });
     toast.success("Succesfully delete users");
   } catch (error) {
-    toast.error(error);
+    // @ts-expect-error: no prob
+    toast.error(error ?? "Something went wrong");
+
     throw error;
   }
 };

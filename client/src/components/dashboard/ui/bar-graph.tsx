@@ -13,8 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/src/components/ui/chart";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { makeAxiosRequest } from "@/src/lib/utils";
+import { useGetSalesAnalytics } from "@/src/react-query-hooks/admin/use-analytics";
 
 // Chart configuration
 const chartConfig = {
@@ -30,22 +29,19 @@ const chartConfig = {
 
 export function BarGraph() {
   // Fetch analytics data
-  const { data: analyticsData } = useSuspenseQuery({
-    queryKey: ["stripeAnalytics"],
-    queryFn: async () => {
-      const response = await makeAxiosRequest("get", "/analytics/stripe");
-      return response;
-    },
-  });
+  const { data: analyticsData } = useGetSalesAnalytics();
 
   const [activeChart, setActiveChart] = React.useState<"desktop" | "mobile">(
     "desktop"
   );
 
-  // Calculate totals
+  if (!analyticsData) {
+    return null;
+  }
+
   const total = {
-    desktop: analyticsData.salesByPlatform.desktop,
-    mobile: analyticsData.salesByPlatform.mobile,
+    desktop: analyticsData?.salesByPlatform?.desktop,
+    mobile: analyticsData?.salesByPlatform?.mobile,
   };
 
   return (
@@ -128,21 +124,21 @@ export function BarGraph() {
               <CardTitle>Total Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              ${analyticsData.monthlyTotals.totalRevenue.toLocaleString()}
+              ${analyticsData?.monthlyTotals.totalRevenue.toLocaleString()}
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>Total Sales</CardTitle>
             </CardHeader>
-            <CardContent>{analyticsData.monthlyTotals.totalSales}</CardContent>
+            <CardContent>{analyticsData?.monthlyTotals.totalSales}</CardContent>
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>Avg. Order Value</CardTitle>
             </CardHeader>
             <CardContent>
-              ${analyticsData.monthlyTotals.averageOrderValue.toLocaleString()}
+              ${analyticsData?.monthlyTotals.averageOrderValue.toLocaleString()}
             </CardContent>
           </Card>
         </div>

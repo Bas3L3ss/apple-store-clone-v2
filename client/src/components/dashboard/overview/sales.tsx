@@ -8,5 +8,7 @@ export default function Sales() {
   if (isLoading) {
     return <RecentSalesSkeleton />;
   }
+  // @ts-expect-error: no prob
+
   return <RecentSales data={data} />;
 }

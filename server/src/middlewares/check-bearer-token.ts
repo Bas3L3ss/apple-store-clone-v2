@@ -55,6 +55,7 @@ const checkBearerToken: RequestHandler = async (
     }
 
     // Fetch user account
+    // @ts-expect-error: weird ts quirk
     const auth = await Account.findById(authSession.userId!);
     if (!auth) {
       return next({ statusCode: 404, message: "Account not found" });

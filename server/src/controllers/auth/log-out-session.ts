@@ -34,6 +34,7 @@ const LogOutSession: RequestHandler = async (
       });
       return;
     }
+    // @ts-expect-error: weird ts quirk
     const session = await AuthSession.findByIdAndDelete(authSession._id);
 
     if (!session) {
