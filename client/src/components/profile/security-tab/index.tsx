@@ -83,8 +83,8 @@ export const SecurityTab = ({
       });
     } catch (error) {
       console.log(error);
-
-      toast.error(error);
+      // @ts-expect-error: no prob
+      toast.error(error ?? "Something went wrong please try again");
     } finally {
       setIsLogginOut(false);
     }
