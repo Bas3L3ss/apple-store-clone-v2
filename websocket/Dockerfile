@@ -34,4 +34,4 @@ RUN npm install --production
 EXPOSE 5000
 
 # Command to run the application
-CMD ["node", "dist/index.js"]
+CMD ["npm","start"]
