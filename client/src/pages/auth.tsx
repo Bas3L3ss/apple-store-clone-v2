@@ -25,7 +25,7 @@ export default function AppleAuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, register, token } = useAuth();
+  const { login, register, account } = useAuth();
 
   useEffect(() => {
     const newParams = new URLSearchParams(location.search);
@@ -98,7 +98,7 @@ export default function AppleAuthPage() {
     document.title = `${isSignIn ? "Sign In" : "Sign Up"} - Apple Store`;
   }, [isSignIn]);
 
-  if (token) {
+  if (account) {
     toast.info("You're already logged in, redirecting...");
     return <Navigate to={redirectUrl} />;
   }
