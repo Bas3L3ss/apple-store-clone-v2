@@ -9,7 +9,6 @@ import {
   clearUserCart,
   updateCartItemQuantity,
 } from "../action/cart";
-import { WEBSOCKET_URL } from "../constants";
 import { toast } from "sonner";
 
 export interface CartInput {
@@ -48,9 +47,9 @@ export const useCartStore = create<CartState>()(
       hasGuestCart: false,
 
       connectSocket: (userId: string) => {
-        const socket = io(WEBSOCKET_URL, {
+        const socket = io("/", {
           query: { userId },
-          // secure: true,
+          path: "/socket.io", // secure: true,
           transports: ["polling", "websocket"], //required
         });
 

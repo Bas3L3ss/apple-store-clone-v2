@@ -16,7 +16,7 @@ COPY . .
 # Set environment variables for Vite
 # Set build-time arguments (these can be overridden at build time)
 ARG VITE_BACKEND_URL="http://test.local/api"
-ARG VITE_WEBSOCKET_URL="ws://test.local/ws"
+ARG VITE_WEBSOCKET_URL="http://test.local/ws"
 
 
 # Make sure Vite picks up these env variables during build

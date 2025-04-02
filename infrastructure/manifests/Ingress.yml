@@ -37,8 +37,8 @@ spec:
     - host: test.local
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: frontend
@@ -51,27 +51,21 @@ kind: Ingress
 metadata:
   name: websocket-ingress
   annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+    # Important annotations for WebSocket support
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    # Enable WebSocket
+    nginx.ingress.kubernetes.io/websocket-services: "websocket"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "7200"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "7200"
-    nginx.ingress.kubernetes.io/upgrade: "websocket"
 spec:
   ingressClassName: nginx
   rules:
     - host: test.local
       http:
         paths:
-          - path: /socket.io
+          - path: /socket.io/(.*)
             pathType: ImplementationSpecific
-            backend:
-              service:
-                name: websocket
-                port:
-                  number: 3001
-          - path: /ws
-            pathType: Prefix
             backend:
               service:
                 name: websocket
