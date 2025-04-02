@@ -18,11 +18,11 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/src/components/ui/sidebar";
-import { navItems } from "@/src/constants";
 import { ChevronRight, Plus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Icons } from "./Icons";
 import AppleLogo from "@/src/icon/Apple";
+import { navItems } from "@/src/constants/others";
 
 export default function AdminSidebar() {
   const { pathname } = useLocation();

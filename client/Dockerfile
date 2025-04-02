@@ -14,12 +14,16 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Set environment variables for Vite
-ARG VITE_BACKEND_URL="http://backend:5000"
-ARG VITE_WEBSOCKET_URL="ws://websocket:3001"
+# Set build-time arguments (these can be overridden at build time)
+ARG VITE_BACKEND_URL="http://test.local/api"
+ARG VITE_WEBSOCKET_URL="ws://test.local/ws"
+
 
 # Make sure Vite picks up these env variables during build
 ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 ENV VITE_WEBSOCKET_URL=${VITE_WEBSOCKET_URL}
+
+RUN npm install -g http-server
 
 # Build the application with the correct environment variables
 RUN npm run build
@@ -28,6 +32,6 @@ RUN npm run build
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm", "run","preview"]
+CMD ["npm", "start"]
 
 

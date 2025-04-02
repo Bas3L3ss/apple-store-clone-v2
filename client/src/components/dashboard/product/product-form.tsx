@@ -30,7 +30,6 @@ import {
 import { Separator } from "@/src/components/ui/separator";
 import { FileUploader } from "../../ui/file-uploader";
 import { extendedFormSchema } from "@/src/schemas";
-import { MAX_FILE_SIZE } from "@/src/constants";
 import { Link } from "react-router";
 import {
   Table,
@@ -54,6 +53,7 @@ import { optionTypes } from "@/src/constants/product-form";
 import useProductForm from "@/src/hooks/use-product-form";
 import { memo } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { MAX_FILE_SIZE } from "@/src/constants/images";
 
 export type FormValues = z.infer<typeof extendedFormSchema>;
 

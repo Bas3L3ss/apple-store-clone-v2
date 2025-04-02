@@ -9,6 +9,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0",
+    "start": "http-server dist -p 3000 --cors",
     "tsc": "tsc   --noEmit"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "cmdk": "1.0.0",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.4.7",
+    "http-server": "^14.1.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.483.0",
     "motion": "^12.4.7",

@@ -27,7 +27,7 @@ spec:
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 4173
+            - containerPort: 3000
           envFrom:
             - configMapRef:
                 name: frontend-configmap

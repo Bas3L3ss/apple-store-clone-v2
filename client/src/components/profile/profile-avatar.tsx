@@ -20,7 +20,7 @@ import { AlertCircle, CheckCircle, Shield } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FileUploader } from "../ui/file-uploader";
-import { MAX_FILE_SIZE } from "@/src/constants";
+import { MAX_FILE_SIZE } from "@/src/constants/images";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate } from "@/src/lib/utils";
 import { Link } from "react-router";

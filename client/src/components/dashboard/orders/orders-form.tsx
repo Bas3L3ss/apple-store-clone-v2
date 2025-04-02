@@ -35,7 +35,7 @@ import { Separator } from "@/src/components/ui/separator";
 import { Switch } from "@/src/components/ui/switch";
 import { FileUploader } from "../../ui/file-uploader";
 import { Link } from "react-router";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/src/constants/images";
 
 // Define user roles
 const UserRoles = {

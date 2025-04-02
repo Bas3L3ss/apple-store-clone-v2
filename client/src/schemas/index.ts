@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { MAX_FILE_SIZE, SCHEMA_ACCEPTED_IMAGE_TYPES } from "../constants";
+import {
+  MAX_FILE_SIZE,
+  SCHEMA_ACCEPTED_IMAGE_TYPES,
+} from "../constants/images";
 
 export const profileFormSchema = z.object({
   username: z.string().min(2, {

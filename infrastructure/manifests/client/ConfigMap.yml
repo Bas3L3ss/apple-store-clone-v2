@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: frontend-configmap
 data:
-  VITE_BACKEND_URL: "http://backend:5000"
-  VITE_WEBSOCKET_URL: "ws://websocket:3001"
+  VITE_BACKEND_URL: "http://test.local/api"
+  VITE_WEBSOCKET_URL: "ws://test.local/ws"
