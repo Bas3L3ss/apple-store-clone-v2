@@ -50,6 +50,8 @@ export const useCartStore = create<CartState>()(
       connectSocket: (userId: string) => {
         const socket = io(WEBSOCKET_URL, {
           query: { userId },
+          // secure: true,
+          transports: ["polling", "websocket"], //required
         });
 
         socket.on("connect", () => {

@@ -4,6 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 export default defineConfig({
+  preview: {
+    allowedHosts: ["test.local"],
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

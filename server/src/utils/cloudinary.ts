@@ -118,8 +118,6 @@ class CloudinaryClient {
             uploadStream.end(image.buffer);
           });
 
-          console.log(result);
-
           uploadedImageUrls.push(
             !returnUrl ? result.public_id : result.secure_url
           );
