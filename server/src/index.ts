@@ -31,7 +31,7 @@ const bootstrap = async () => {
   });
 
   app.get("/healthz", (req, res) => {
-    res.status(204).end();
+    res.status(200).json({ status: "ok" });
   });
 
   app.use("/auth", authRoutes);

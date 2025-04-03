@@ -10,6 +10,7 @@ import {
   updateCartItemQuantity,
 } from "../action/cart";
 import { toast } from "sonner";
+import { WEBSOCKET_URL } from "../constants";
 
 export interface CartInput {
   selectedOptions: string[];
@@ -47,11 +48,16 @@ export const useCartStore = create<CartState>()(
       hasGuestCart: false,
 
       connectSocket: (userId: string) => {
-        const socket = io("/", {
-          query: { userId },
-          path: "/socket.io", // secure: true,
-          transports: ["polling", "websocket"], //required
-        });
+        const socket =
+          WEBSOCKET_URL == "ws://localhost:3001"
+            ? io(WEBSOCKET_URL, {
+                query: { userId },
+              })
+            : io("/", {
+                query: { userId },
+                path: "/socket.io",
+                transports: ["polling", "websocket"], //required
+              });
 
         socket.on("connect", () => {
           set({ isConnected: true });
@@ -62,6 +68,7 @@ export const useCartStore = create<CartState>()(
             (response: { success: boolean; data: { items: CartItem[] } }) => {
               if (response.success && response.data) {
                 set({ userItems: response.data.items });
+                console.log("Connected to Websocket");
               } else {
                 console.error("Failed to fetch cart data");
               }

@@ -71,7 +71,7 @@ const ProductBuyingGallery = ({ product }: { product: Product }) => {
               variant="secondary"
               size="icon"
               className={cn(
-                "absolute left-4 rounded-full shadow-md bg-white/90 dark:bg-gray-800/90 transition-opacity duration-200 p-10",
+                "absolute left-4 rounded-full shadow-md bg-white/90 dark:bg-gray-800/90 transition-opacity duration-200 p-5 md:p-10",
                 activeImage === 0
                   ? "opacity-50 cursor-not-allowed"
                   : "opacity-90 hover:opacity-100"
@@ -80,14 +80,14 @@ const ProductBuyingGallery = ({ product }: { product: Product }) => {
               disabled={activeImage === 0}
               aria-label="Previous image"
             >
-              <ArrowLeft className="size-10" />
+              <ArrowLeft className="size-6 md:size-10" />
             </Button>
 
             <Button
               variant="secondary"
               size="icon"
               className={cn(
-                "absolute right-4 rounded-full shadow-md bg-white/90 dark:bg-gray-800/90 transition-opacity duration-200 p-10",
+                "absolute right-4 rounded-full shadow-md bg-white/90 dark:bg-gray-800/90 transition-opacity duration-200 p-5 md:p-10",
                 activeImage === product.productImages.length - 1
                   ? "opacity-50 cursor-not-allowed"
                   : "opacity-90 hover:opacity-100"
@@ -96,7 +96,7 @@ const ProductBuyingGallery = ({ product }: { product: Product }) => {
               disabled={activeImage === product.productImages.length - 1}
               aria-label="Next image"
             >
-              <ArrowRight className="size-10" />
+              <ArrowRight className="size-6 md:size-10" />
             </Button>
           </>
         )}
