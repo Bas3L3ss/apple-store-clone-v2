@@ -62,8 +62,14 @@ export const GetUsers = async (
       }
     }
     // Add verification filter if specified
-    if (isVerified !== "None" && isVerified !== "") {
-      filter.verified = isVerified === "true";
+
+    if (isVerified && isVerified !== "None") {
+      const verifiedValues = isVerified.split(",");
+      if (verifiedValues.includes("true")) {
+        filter.verified = true;
+      } else if (verifiedValues.includes("no")) {
+        filter.verified = false;
+      }
     }
 
     // Convert pagination values to numbers

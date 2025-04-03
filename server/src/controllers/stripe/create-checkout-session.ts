@@ -19,7 +19,6 @@ export const createCheckoutSession: RequestHandler = async (
       orderNotes: string;
       shippingAddress: ShippingAddress;
     } = req.body;
-    console.log(req.body);
 
     if (!req.auth) {
       return next({ statusCode: 401, message: "Unauthorized" });
@@ -35,6 +34,20 @@ export const createCheckoutSession: RequestHandler = async (
     let customer;
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
+      if (
+        customer.metadata.userId !== userId ||
+        customer.metadata.role !== role
+      ) {
+        customer = await stripe.customers.update(customer.id, {
+          name: username, // Also update name in case it changed
+          metadata: {
+            ...customer.metadata,
+            userId,
+            role,
+          },
+        });
+        console.log("updated user's info in stripe");
+      }
     } else {
       customer = await stripe.customers.create({
         email,

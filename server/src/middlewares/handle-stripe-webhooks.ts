@@ -41,6 +41,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
       // ✅ Extract order details
       // @ts-expect-error: no problem
       const userId = customer.metadata.userId;
+
       if (!userId) throw new Error("User ID not found in metadata");
 
       // Start MongoDB transaction

@@ -63,7 +63,7 @@ export default function AppleAuthPage() {
         await register(formdata, setIsLoading);
         toast.success("Account created successfully", {
           action: {
-            label: "Proceed to sign up",
+            label: "Proceed to sign in",
             onClick: () => {
               setIsSignIn(true);
               navigate("/auth?mode=signin", { replace: true });
